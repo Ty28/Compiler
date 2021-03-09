@@ -1,0 +1,11 @@
+int main()
+{
+	int i = 1;
+	float j = 1.222;
+	/*
+	comment
+	/*
+	nested comment
+	
+	int j = 2;
+}
