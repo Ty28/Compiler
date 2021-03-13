@@ -33,8 +33,10 @@ void preOrder(node root_) {
 		printf(" ");
     // print content, need to classify the type;
     printf("%s: %s\n", root_->name, root_->val);
-    root_->child->tabs = root_->child ? root_->tabs + 1 : root_->child->tabs;
-    root_->sibling->tabs = root_->sibling ? root_->tabs : root_->sibling->tabs;
+    if(root_->child)
+        root_->child->tabs = root_->tabs + 1;
+    if(root_->sibling)
+        root_->sibling->tabs = root_->tabs;
     preOrder(root_->child);
     preOrder(root_->sibling);
 }
