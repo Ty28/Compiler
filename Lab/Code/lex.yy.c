@@ -1057,7 +1057,7 @@ YY_RULE_SETUP
 {
     debug_log("RB");
     yylval.type_node = createNode("LB", yytext, yylineno, 8);
-    return LB;
+    return RB;
 }
 	YY_BREAK
 case 28:
