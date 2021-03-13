@@ -147,7 +147,7 @@ OTHER .
 }
 {OTHER} {
     lexicalError += 1;
-    printf("Error type A at Line %d: Mysterious characters \'%s'\n",yylineno,yytext);
+    printf("Error type A at Line %d: Mysterious character \'%s'\n",yylineno,yytext);
 }
 %%
 int main(int argc, char** argv) {
@@ -158,5 +158,6 @@ int main(int argc, char** argv) {
         }
     }
     while(yylex() != 0);
+    printf("Lexical Error : %d", lexicalError);
     return 0;
 }

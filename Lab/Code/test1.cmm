@@ -1,11 +1,8 @@
 int main()
 {
-	int i = 1;
-	float j = 1.222;
-	/*
-	comment
-	/*
-	nested comment
-	
-	int j = 2;
+// line comment
+4 /*
+5 block comment
+6 */
+7 int i = 1;
 }
