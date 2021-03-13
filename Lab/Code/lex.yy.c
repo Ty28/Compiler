@@ -1056,8 +1056,8 @@ YY_RULE_SETUP
 #line 186 "./lexical.l"
 {
     debug_log("RB");
-    yylval.type_node = createNode("LB", yytext, yylineno, 8);
-    return LB;
+    yylval.type_node = createNode("RB", yytext, yylineno, 8);
+    return RB;
 }
 	YY_BREAK
 case 28:

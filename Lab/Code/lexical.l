@@ -185,8 +185,8 @@ OTHER .
 }
 {RB} {
     debug_log("RB");
-    yylval.type_node = createNode("LB", yytext, yylineno, 8);
-    return LB;
+    yylval.type_node = createNode("RB", yytext, yylineno, 8);
+    return RB;
 }
 {LC} {
     debug_log("LC");
