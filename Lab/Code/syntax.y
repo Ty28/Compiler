@@ -118,15 +118,6 @@ Specifier ExtDecList SEMI {
     insertNode($$, $1);
     insertNode($$, $2);
     insertNode($$, $3);
-}
-| error SEMI {
-    syntaxError += 1;
-}
-| Specifier error SEMI {
-    syntaxError += 1;
-}
-| error Specifier SEMI {
-    syntaxError += 1;
 };
 
 ExtDecList :

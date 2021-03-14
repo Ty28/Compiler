@@ -2,6 +2,12 @@
 // #define debug
 #include "syntax.tab.h"
 #include "treeNode.h"
+int yycolumn = 1;
+#define YY_USER_ACTION \
+    yylloc.first_line=yylloc.last_line=yylineno; \
+    yylloc.first_column=yycolumn; \
+    yylloc.last_column=yycolumn+yyleng-1; \
+    yycolumn+=yyleng; 
 int lexicalError = 0;
 extern node ROOT;
 void debug_log(char *mytext) {
@@ -10,6 +16,7 @@ void debug_log(char *mytext) {
     #endif
 }
 %}
+
 
 %option yylineno
 ws [ \t\r\n]+
@@ -75,42 +82,42 @@ OTHER .
 }
 {TYPE} {
     debug_log("TYPE");
-    yylval.type_node = createNode("TYPE", yytext, yylineno, 3);
+    yylval.type_node = createNode("TYPE", yytext, yylineno, 16);
     return TYPE;
 }
 {STRUCT} {
     debug_log("STRUCT");
-    yylval.type_node = createNode("STRUCT", yytext, yylineno, 3);
+    yylval.type_node = createNode("STRUCT", yytext, yylineno, 23);
     return STRUCT;
 }
 {RETURN} {
     debug_log("RETURN");
-    yylval.type_node = createNode("RETURN", yytext, yylineno, 3);
+    yylval.type_node = createNode("RETURN", yytext, yylineno, 24);
     return RETURN;
 }
 {IF} {
     debug_log("IF");
-    yylval.type_node = createNode("IF", yytext, yylineno, 3);
+    yylval.type_node = createNode("IF", yytext, yylineno, 25);
     return IF;
 }
 {ELSE} {
     debug_log("ELSE");
-    yylval.type_node = createNode("ELSE", yytext, yylineno, 3);
+    yylval.type_node = createNode("ELSE", yytext, yylineno, 26);
     return ELSE;
 }
 {WHILE} {
     debug_log("WHILE");
-    yylval.type_node = createNode("WHILE", yytext, yylineno, 3);
+    yylval.type_node = createNode("WHILE", yytext, yylineno, 27);
     return WHILE;
 }
 {ID} {
     debug_log("ID");
-    yylval.type_node = createNode("ID", yytext, yylineno, 4);
+    yylval.type_node = createNode("ID", yytext, yylineno, 3);
     return ID;
 }
 {SEMI} {
     debug_log("SEMI");
-    yylval.type_node = createNode("SEMI", yytext, yylineno, 5);
+    yylval.type_node = createNode("SEMI", yytext, yylineno, 4);
     return SEMI;
 }
 {COMMA} {
@@ -130,72 +137,72 @@ OTHER .
 }
 {PLUS} {
     debug_log("PLUS");
-    yylval.type_node = createNode("PLUS", yytext, yylineno, 6);
+    yylval.type_node = createNode("PLUS", yytext, yylineno, 8);
     return PLUS;
 }
 {MINUS} {
     debug_log("MINUS");
-    yylval.type_node = createNode("MINUS", yytext, yylineno, 6);
+    yylval.type_node = createNode("MINUS", yytext, yylineno, 9);
     return MINUS;
 }
 {STAR} {
     debug_log("STAR");
-    yylval.type_node = createNode("STAR", yytext, yylineno, 6);
+    yylval.type_node = createNode("STAR", yytext, yylineno, 10);
     return STAR;
 }
 {DIV} {
     debug_log("DIV");
-    yylval.type_node = createNode("DIV", yytext, yylineno, 6);
+    yylval.type_node = createNode("DIV", yytext, yylineno, 11);
     return DIV;
 }
 {AND} {
     debug_log("AND");
-    yylval.type_node = createNode("AND", yytext, yylineno, 6);
+    yylval.type_node = createNode("AND", yytext, yylineno, 12);
     return AND;
 }
 {OR} {
     debug_log("OR");
-    yylval.type_node = createNode("OR", yytext, yylineno, 6);
+    yylval.type_node = createNode("OR", yytext, yylineno, 13);
     return OR;
 }
 {DOT} {
     debug_log("DOT");
-    yylval.type_node = createNode("DOT", yytext, yylineno, 5);
+    yylval.type_node = createNode("DOT", yytext, yylineno, 14);
     return DOT;
 }
 {NOT} {
     debug_log("NOT");
-    yylval.type_node = createNode("NOT", yytext, yylineno, 6);
+    yylval.type_node = createNode("NOT", yytext, yylineno, 15);
     return NOT;
 }
 {LP} {
     debug_log("LP");
-    yylval.type_node = createNode("LP", yytext, yylineno, 8);
+    yylval.type_node = createNode("LP", yytext, yylineno, 17);
     return LP;
 }
 {RP} {
     debug_log("RP");
-    yylval.type_node = createNode("RP", yytext, yylineno, 8);
+    yylval.type_node = createNode("RP", yytext, yylineno, 18);
     return RP;
 }
 {LB} {
     debug_log("LB");
-    yylval.type_node = createNode("LB", yytext, yylineno, 8);
+    yylval.type_node = createNode("LB", yytext, yylineno, 19);
     return LB;
 }
 {RB} {
     debug_log("RB");
-    yylval.type_node = createNode("LB", yytext, yylineno, 8);
+    yylval.type_node = createNode("RB", yytext, yylineno, 20);
     return RB;
 }
 {LC} {
     debug_log("LC");
-    yylval.type_node = createNode("LC", yytext, yylineno, 8);
+    yylval.type_node = createNode("LC", yytext, yylineno, 21);
     return LC;
 }
 {RC} {
     debug_log("RC");
-    yylval.type_node = createNode("RC", yytext, yylineno, 8);
+    yylval.type_node = createNode("RC", yytext, yylineno, 22);
     return RC;
 }
 {ws} {

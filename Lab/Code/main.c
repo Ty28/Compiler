@@ -19,9 +19,14 @@ int main(int argc, char** argv) {
         perror(argv[1]);
         return 1;
     }
-    yylineno = 1;
     yyrestart(f);
     yyparse();
-    preOrder(ROOT);
+    if(lexicalError == 0 && syntaxError == 0)
+         preOrder(ROOT);
+    else
+    {
+        printf("l: %d  s: %d ", lexicalError, syntaxError);
+    }
+    
     return 0;
 }
