@@ -1,11 +1,6 @@
 %{
-    #include <stdio.h>
-    #include <stdlib.h>
+    #include "extern.h"
     #include "treeNode.h"
-    #include "lex.yy.c"
-    extern node ROOT;
-    extern int yylineno;
-    extern void yyerror(char*);
     int syntaxError = 0;
 %}
 
@@ -95,8 +90,8 @@ ExtDefList :
 ExtDef ExtDefList {
     $$ = createNode("ExtDefList", " ", @$.first_line, 0);
     insertNode($$, 2, $1, $2);
-}
-|  {
+} |
+/*empty case*/  {
     $$ = NULL;
 };
 
@@ -104,32 +99,44 @@ ExtDef :
 Specifier ExtDecList SEMI {
     $$ = createNode("ExtDef", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-}
-| Specifier SEMI {
+} | 
+Specifier SEMI {
     $$ = createNode("ExtDef", " ", @$.first_line, 0);
     insertNode($$, 2, $1, $2);
-}
-| Specifier FunDec CompSt {
+} | 
+Specifier FunDec CompSt {
     $$ = createNode("ExtDef", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
+} |
+error SEMI {
+    syntaxError += 1;
+} |
+Specifier error SEMI {
+    syntaxError += 1;
+} |
+error Specifier SEMI {
+    syntaxError += 1;
 };
 
 ExtDecList :
 VarDec {
     $$ = createNode("ExtDecList", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-}
-| VarDec COMMA ExtDecList {
+} | 
+VarDec COMMA ExtDecList {
     $$ = createNode("ExtDecList", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
+} |
+VarDec error ExtDefList {
+    syntaxError += 1;
 };
 
 Specifier :
 TYPE {
     $$ = createNode("Specifier", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-} 
-| StructSpecifier {
+} | 
+StructSpecifier {
     $$ = createNode("Specifier", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
 };
@@ -138,8 +145,8 @@ StructSpecifier :
 STRUCT OptTag LC DefList RC {
     $$ = createNode("StructSpecifier", " ", @$.first_line, 0);
     insertNode($$, 5, $1, $2, $3, $4, $5);
-}
-| STRUCT Tag {
+} |
+STRUCT Tag {
     $$ = createNode("StructSpecifier", " ", @$.first_line, 0);
     insertNode($$, 2, $1, $2);
 };
@@ -148,8 +155,8 @@ OptTag :
 ID {
     $$ = createNode("OptTag", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-} 
-| {
+} |
+ {
     $$ = NULL;
 };
 
@@ -163,28 +170,37 @@ VarDec :
 ID {
     $$ = createNode("VarDec", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-}
-| VarDec LB INT RB {
+} |
+VarDec LB INT RB {
     $$ = createNode("VarDec", " ", @$.first_line, 0);
     insertNode($$, 4, $1, $2, $3, $4);
+} |
+VarDec LB error RB {
+    syntaxError += 1;
 };
 
 FunDec :
 ID LP VarList RP {
     $$ = createNode("FunDec", " ", @$.first_line, 0);
     insertNode($$, 4, $1, $2, $3, $4);
-}
-| ID LP RP {
+} |
+ID LP RP {
     $$ = createNode("FunDec", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
+} |
+ID LP error RP{
+    syntaxError += 1;
+} |
+error LP VarList RP {
+    syntaxError += 1;
 };
 
 VarList :
 ParamDec COMMA VarList {
     $$ = createNode("VarList", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-}
-| ParamDec {
+} |
+ParamDec {
     $$ = createNode("VarList", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
 };
@@ -198,6 +214,7 @@ Specifier VarDec {
 CompSt :
 LC DefList StmtList RC {
     $$ = createNode("CompSt", " ", @$.first_line, 0);
+    
     insertNode($$, 4, $1, $2, $3, $4);
 };
 
@@ -205,8 +222,8 @@ StmtList :
 Stmt StmtList {
     $$ = createNode("StmtList", " ", @$.first_line, 0);
     insertNode($$, 2, $1, $2);
-} 
-| {
+} |
+ {
     $$ = NULL;
 };
 
@@ -214,34 +231,46 @@ Stmt :
 Exp SEMI {
     $$ = createNode("Stmt", " ", @$.first_line, 0);
     insertNode($$, 2, $1, $2); 
-}
-| CompSt {
+} |
+CompSt {
     $$ = createNode("Stmt", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-}
-| RETURN Exp SEMI{
+} |
+RETURN Exp SEMI{
     $$ = createNode("Stmt", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3); 
-}
-| IF LP Exp RP Stmt %prec LOWER_THAN_ELSE{
+} |
+IF LP Exp RP Stmt %prec LOWER_THAN_ELSE{
     $$ = createNode("Stmt", " ", @$.first_line, 0);
     insertNode($$, 5, $1, $2, $3, $4, $5);
-}
-| IF LP Exp RP Stmt ELSE Stmt {
+} |
+IF LP Exp RP Stmt ELSE Stmt {
     $$ = createNode("Stmt", " ", @$.first_line, 0);
     insertNode($$, 7, $1, $2, $3, $4, $5, $6, $7);
-}
-| WHILE LP Exp RP Stmt {
+} |
+WHILE LP Exp RP Stmt {
     $$ = createNode("Stmt", " ", @$.first_line, 0);
     insertNode($$, 5, $1, $2, $3, $4, $5);
+} |
+error SEMI {
+    syntaxError += 1;
+} |
+Exp error SEMI {
+    syntaxError += 1;
+} |
+RETURN Exp error {
+    syntaxError += 1;
+} |
+RETURN error SEMI {
+    syntaxError += 1;
 };
 
 DefList :
 Def DefList {
     $$ = createNode("DefList", " ", @$.first_line, 0);
     insertNode($$, 2, $1, $2); 
-}
-| {
+} |
+ {
     $$ = NULL;
 };
 
@@ -249,14 +278,20 @@ Def :
 Specifier DecList SEMI {
     $$ = createNode("Def", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
+} |
+Specifier error SEMI {
+    syntaxError += 1;
+} |
+Specifier DecList error {
+    syntaxError += 1;
 };
 
 DecList : 
 Dec {
     $$ = createNode("DecList", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-}
-| Dec COMMA DecList {
+} |
+Dec COMMA DecList {
     $$ = createNode("DecList", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
 };
@@ -265,8 +300,8 @@ Dec :
 VarDec {
     $$ = createNode("Dec", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-} 
-| VarDec ASSIGNOP Exp {
+} |
+VarDec ASSIGNOP Exp {
     $$ = createNode("Dec", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
 };
@@ -275,74 +310,113 @@ Exp :
 Exp ASSIGNOP Exp {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-}
-| Exp AND Exp {
+} |
+Exp AND Exp {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-}
-| Exp OR Exp {
+} |
+Exp OR Exp {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-}
-| Exp RELOP Exp {
+} |
+Exp RELOP Exp {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-}
-| Exp PLUS Exp {
+} |
+Exp PLUS Exp {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-}
-| Exp MINUS Exp {
+} |
+Exp MINUS Exp {
     $$ = createNode("Exp", " ", @$.first_line, 0); 
     insertNode($$, 3, $1, $2, $3);
-}
-| Exp STAR Exp {
+} | 
+Exp STAR Exp {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-}
-| Exp DIV Exp {
+} |
+Exp DIV Exp {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-}
-| LP Exp RP {
+} |
+LP Exp RP {
     $$ = createNode("Exp", " ", @$.first_line, 0); 
     insertNode($$, 3, $1, $2, $3);
-}
-| MINUS Exp %prec NEG{
+} |
+MINUS Exp %prec NEG{
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 2, $1, $2); 
-}
-| NOT Exp {
+} |
+NOT Exp {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 2, $1, $2); 
-}
-| ID LP Args RP {
+} |
+ID LP Args RP {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 4, $1, $2, $3, $4);
-}
-| ID LP RP {
+} |
+ID LP RP {
     $$ = createNode("Exp", " ", @$.first_line, 0); 
     insertNode($$, 3, $1, $2, $3);
-}
-| Exp LB Exp RB {
+} |
+Exp LB Exp RB {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 4, $1, $2, $3, $4);
-}
-| Exp DOT ID {
+} |
+Exp DOT ID {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-}
-| ID {
+} |
+ID {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-}
-| INT {
+} |
+INT {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-}
-| FLOAT {
+} |
+FLOAT {
     $$ = createNode("Exp", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
+} |
+Exp ASSIGNOP error {
+    syntaxError += 1;
+} |
+Exp AND error {
+    syntaxError += 1;
+} |
+Exp OR error {
+    syntaxError += 1;
+} |
+Exp RELOP error {
+    syntaxError += 1;
+} |
+Exp PLUS error {
+    syntaxError += 1;
+} |
+Exp MINUS error {
+    syntaxError += 1;
+} |
+Exp STAR error {
+    syntaxError += 1;
+} | 
+Exp DIV error {
+    syntaxError += 1;
+} |
+LP error RP {
+    syntaxError += 1;
+} |
+MINUS error {
+    syntaxError += 1;
+} |
+NOT error {
+    syntaxError += 1;
+} |
+ID LP error RP {
+    syntaxError += 1;
+} |
+Exp LB error RB {
+    syntaxError += 1;
 };
 
 Args :
@@ -355,7 +429,8 @@ Exp COMMA Args {
     insertNode($$, 1, $1);
 };
 %%
+#include "lex.yy.c"
 void yyerror(char* msg) {
     syntaxError += 1;
-    printf("Error type B at Line %d: %s\n", yylineno, msg);
+    printf("Error type B at Line %d: %s.\n", yylineno, msg);
 }

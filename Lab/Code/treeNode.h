@@ -19,7 +19,9 @@ struct treeNode {
 
 node createNode(char name_[], char val_[], int lineno_, int type_);
 void insertNode(node root_, int args, ...);
+void printNode(node root_);
 void preOrder(node root_, int depth);
 
 node ROOT;
+extern int yylineno;
 #endif

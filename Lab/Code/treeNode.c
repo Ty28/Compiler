@@ -12,6 +12,7 @@ node createNode(char name_[], char val_[], int lineno_, int type_) {
     return root_;
 }
 void insertNode(node root_, int args, ...) {
+    // reference on https://blog.csdn.net/ithomer/article/details/6189072
     va_list s;
     va_start(s, args);
     node c = va_arg(s, node);
@@ -23,6 +24,36 @@ void insertNode(node root_, int args, ...) {
     }
     return;
 }
+void printNode(node root_)
+{
+    if (root_->type == 0)
+        printf("%s (%d)\n", root_->name, root_->lineno);
+    else
+    {
+        //all nodes need to print their names
+        printf("%s", root_->name); 
+        switch (root_->type)
+        {
+        case (1): 
+            printf(": %d\n", atoi(root_->val));
+            break;
+            //case 1 for INT
+        case (2): 
+            printf(": %f\n", atof(root_->val));
+            break;
+            //case 2 for FLOAT
+        case (3): 
+        case (16):  
+            printf(": %s\n", root_->val);
+            break;
+            //case 3 for ID
+            //case 16 for TYPE
+        default:
+            printf("\n");
+            break;
+        }
+    }
+}
 void preOrder(node root_, int depth) {
     if(!root_)
         return;
@@ -30,7 +61,8 @@ void preOrder(node root_, int depth) {
     for(int i = 0; i < depth; i++)
 		printf("  ");
     // print content, need to classify the type;
-    printf("%s: %s\n", root_->name, root_->val);
+    printNode(root_);
+    // if child, child.depth = parent.depth + 1, if sibling, sibling.depth = child.depth
     preOrder(root_->child, depth + 1);
     preOrder(root_->sibling, depth);
 }

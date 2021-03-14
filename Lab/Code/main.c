@@ -1,15 +1,5 @@
-#include <stdio.h>
 #include "treeNode.h"
-
-extern FILE* yyin;
-extern int yylex(void);
-extern int yyparse(void);
-extern void yyrestart(FILE*);
-extern void yyerror(char*);
-extern int yylineno;
-extern int lexicalError;
-extern int syntaxError;
-extern node ROOT;
+#include "extern.h"
 
 int main(int argc, char** argv) {
     if (argc <= 1) return 1;
@@ -22,11 +12,6 @@ int main(int argc, char** argv) {
     yyrestart(f);
     yyparse();
     if(lexicalError == 0 && syntaxError == 0)
-         preOrder(ROOT, 0);
-    else
-    {
-        printf("l: %d  s: %d ", lexicalError, syntaxError);
-    }
-    
+        preOrder(ROOT, 0);
     return 0;
 }
