@@ -68,8 +68,6 @@ void preOrder(node root_)
     if (!root_)
         return;
     // print tabs
-    for (int i = 0; i < root_->tabs; i++)
-        printf(" ");
     // print content, need to classify the type;
     // printf("%s: %s (%d)\n", root_->name, root_->val, root_->lineno); 
     printNode(root_);
