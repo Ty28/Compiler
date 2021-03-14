@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 typedef struct treeNode *node;
 
@@ -12,14 +13,13 @@ struct treeNode {
     char val[32];
     int lineno;
     int type;
-    int tabs;
     node child;
     node sibling;
 };
 
 node createNode(char name_[], char val_[], int lineno_, int type_);
-void insertNode(node root_, node child_);
-void preOrder(node root_);
+void insertNode(node root_, int args, ...);
+void preOrder(node root_, int depth);
 
 node ROOT;
 #endif

@@ -5,5 +5,7 @@ struct Complex
 int main()
 {
 	struct Complex x;
+	int a[1][2];
 	x.image = 3.5;
+
 }

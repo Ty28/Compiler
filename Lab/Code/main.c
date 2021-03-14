@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     yyrestart(f);
     yyparse();
     if(lexicalError == 0 && syntaxError == 0)
-         preOrder(ROOT);
+         preOrder(ROOT, 0);
     else
     {
         printf("l: %d  s: %d ", lexicalError, syntaxError);
