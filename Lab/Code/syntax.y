@@ -2,6 +2,7 @@
     #include "extern.h"
     #include "treeNode.h"
     int syntaxError = 0;
+    int yydebug=1;
 %}
 
 /* declared types */

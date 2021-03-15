@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-
+#define YYDEBUG 1
 typedef struct treeNode *node;
 
 struct treeNode {
