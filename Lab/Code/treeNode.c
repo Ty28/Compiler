@@ -66,3 +66,48 @@ void preOrder(node root_, int depth) {
     preOrder(root_->child, depth + 1);
     preOrder(root_->sibling, depth);
 }
+
+void preOrder_nonrecursion(node root_) {
+    if(!root_)
+        return;
+    st stk = (st)malloc(sizeof(struct myStack));
+    initStack(stk);
+    while(root_ || !isEmpty(stk)) {
+        while(root_) {
+            printNode(root_);
+            push(stk, root_);
+            root_ = root_->child;
+        }
+        if(!isEmpty(stk)) {
+            root_ = pop(stk);
+            root_ = root_->sibling;
+        }
+    }
+}
+void initStack(st S) {
+    S = (st)malloc(sizeof(struct myStack));
+    if(!S)
+        exit(OVERFLOW);
+    S->top = 0;
+}
+
+int push(st S, node t) {
+    if(S->top == MAXSIZE - 1)
+        return 0;
+    S->top += 1;
+    S->data[S->top] = t;
+    return 1;
+}
+
+node pop(st S){
+    if(S->top == 0)
+        return NULL;
+    node res = (node)malloc(sizeof(struct treeNode));
+    res = S->data[S->top];
+    S->top--;
+    return res;
+}
+
+int isEmpty(st S) {
+    return S->top == 0;
+}

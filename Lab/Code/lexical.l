@@ -55,7 +55,12 @@ OTHER .
 {LINECOMMENT} { 
     char c = input();
     while(c!='\n')
+    {
         c = input();
+        if(c == '\0')
+            break;
+    }
+        
 }
 {BLOCKCOMMENT} {
     char pre = input(), cur = input();

@@ -1,6 +1,7 @@
 %{
     #include "extern.h"
     #include "treeNode.h"
+    //int yydebug = 1;
     int syntaxError = 0;
 %}
 
@@ -93,6 +94,7 @@ ExtDef ExtDefList {
 } |
 /*empty case*/  {
     $$ = NULL;
+    @$.first_line = yylineno + 1;
 };
 
 ExtDef : 
