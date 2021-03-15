@@ -1,6 +1,7 @@
 %{
     #include "extern.h"
     #include "treeNode.h"
+    //int yydebug = 1;
     int syntaxError = 0;
     int yydebug=1;
 %}
@@ -94,6 +95,7 @@ ExtDef ExtDefList {
 } |
 /*empty case*/  {
     $$ = NULL;
+    @$.first_line = yylineno + 1;
 };
 
 ExtDef : 
@@ -285,6 +287,7 @@ Specifier error SEMI {
 } |
 Specifier DecList error {
     syntaxError += 1;
+    
 };
 
 DecList : 

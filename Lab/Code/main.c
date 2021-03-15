@@ -1,4 +1,3 @@
-#include "treeNode.h"
 #include "extern.h"
 
 int main(int argc, char** argv) {
