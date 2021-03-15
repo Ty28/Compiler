@@ -1523,8 +1523,8 @@ yyreduce:
   case 4:
 #line 95 "./syntax.y" /* yacc.c:1646  */
     {
+        (yyloc).first_line = yylineno;
     (yyval.type_node) = NULL;
-    (yyloc).first_line = yylineno + 1;
 }
 #line 1530 "./syntax.tab.c" /* yacc.c:1646  */
     break;

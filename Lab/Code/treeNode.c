@@ -8,6 +8,8 @@ node createNode(char name_[], char val_[], int lineno_, int type_) {
     strcpy(root_->val, val_);
     root_->lineno = lineno_;
     root_->type = type_;
+    root_->child = NULL;
+    root_->sibling = NULL;
     // return root;
     return root_;
 }
@@ -35,7 +37,7 @@ void printNode(node root_)
         switch (root_->type)
         {
         case (1): 
-            printf(": %d\n", atoi(root_->val));
+            printf(": %s\n", root_->val);
             break;
             //case 1 for INT
         case (2): 
@@ -74,7 +76,9 @@ void preOrder_nonrecursion(node root_) {
     initStack(stk);
     while(root_ || !isEmpty(stk)) {
         while(root_) {
+            printf("%ld ", stk->top);
             printNode(root_);
+            printf("%ld ", stk->top);
             push(stk, root_);
             root_ = root_->child;
         }

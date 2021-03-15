@@ -1,8 +1,8 @@
 #ifndef _TREENODE_H
 #define _TREENODE_H
 
-//#define YYDEBUG 1
-#define MAXSIZE 1000000000010
+#define YYDEBUG 1
+#define MAXSIZE 100000010
 #define OVERFLOW 0
 
 #include <stdio.h>
