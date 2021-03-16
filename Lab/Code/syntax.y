@@ -3,6 +3,10 @@
     #include "treeNode.h"
     //int yydebug = 1;
     int syntaxError = 0;
+    void my_yyerror(char* msg) {
+        syntaxError += 1;
+        printf("My Error type B at Line %d: %s.\n", yylineno, msg);
+    }
 %}
 
 /* declared types */
