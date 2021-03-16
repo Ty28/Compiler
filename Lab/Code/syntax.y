@@ -93,8 +93,8 @@ ExtDef ExtDefList {
     insertNode($$, 2, $1, $2);
 } |
 /*empty case*/  {
+        @$.first_line = yylineno;
     $$ = NULL;
-    @$.first_line = yylineno + 1;
 };
 
 ExtDef : 
