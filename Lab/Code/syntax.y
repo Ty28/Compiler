@@ -3,7 +3,6 @@
     #include "treeNode.h"
     //int yydebug = 1;
     int syntaxError = 0;
-    int yydebug=1;
 %}
 
 /* declared types */
@@ -287,7 +286,6 @@ Specifier error SEMI {
 } |
 Specifier DecList error {
     syntaxError += 1;
-    
 };
 
 DecList : 
