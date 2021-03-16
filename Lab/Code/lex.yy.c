@@ -1110,7 +1110,7 @@ YY_RULE_SETUP
 #line 218 "./lexical.l"
 {
     lexicalError += 1;
-    printf("Error type A at Line %d: Mysterious character \'%s'.\n",yylineno,yytext);
+    printf("Error type A at Line %d: mysterious character \'%s'.\n",yylineno,yytext);
 }
 	YY_BREAK
 case 33:

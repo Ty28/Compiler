@@ -1,7 +1,128 @@
+/** Testbench by Tao Zhou */
+
+int global1, global2;
+
+int;
+
+/* anonymous structure */
+struct
+{
+    int field1;
+};
+
+struct
+{
+    int field1;
+    float field2;
+} s1, s2;
+
+/* structure */
+struct Complex
+{
+    int real;
+    int imag;
+} c1, c2, carray[100], multi_dim[1][2][3];
+
+/* nested structure */
+struct Complex_pair
+{
+    struct Complex x;
+    struct Complex y;
+    struct withname
+    {
+        int field;
+    } s1;
+    struct
+    {
+        float field;
+    } s2;
+};
+
+// Note: function declaration not allowed
+
 int main()
 {
-	float a[10][2];
-	int i;
-	a[5,,3] = 1;
-	if(a[1][2] == 0) i = 1 else i = 0; 
+    /* local variable declarations */
+    int a;
+    int barray[10][2];
+    int i = 0;
+    int a1, a2, a3;
+    struct Complex c;
+    struct Complex_pair cp;
+
+    /* main body */
+    nonexist_func(1, 2, a, barray[1], barray);
+    1;
+    {
+        int x;
+    }
+
+    true = 1;
+    false = true - 1;
+    if (true) {
+        return false;
+    }
+
+    /* dangling-else problem */
+    if (a && true)
+        if (a && false)
+            return true;
+        else
+            return which_if;
+
+    while (i > 0) {
+        i = i + 1;
+        if (some_condition(1, 2, 3)) {
+            do_nothing();
+        }
+    }
+
+    /* member access */
+    c.imag = 1;
+    c.real = 2;
+    c.real = c.imag + c.real;
+    cp.s1.field = 1;
+    multi_dim[0][some_func()][0].real = 1;
+
+    /* precedence of operators */
+    non_exist_bool = true && false || (1 + 2) != (1 + 2 * 3)
+                                                 > barray[7] <= c.imag = (!a / 8) == 9;
+
+    /* associativity of operators */
+    a = -- --b;
+    a = !!!!!b;
+    a = b * c * d;
+    a = b / c / d;
+    a = b + c + d;
+    a = b - c - d;
+    a = b < c < d;
+    a = b <= c <= d;
+    a = b > c > d;
+    a = b >= c >= d;
+    a = b == c == d;
+    a = b != c != d;
+    a = b && c && d;
+    a = b || c || d;
+    a = b = c = d = 1;
+
+    return nonexist_func();
+}
+
+/*
+ * block comment
+ * @#$%^&*()
+ */
+
+// line comment #$%^&*()~!@#$%^&*()_+
+
+/* function definition */
+int func(int ival, float fval, float arr[10])
+{
+    int a = 1;
+}
+
+/* Extra requirements */
+
+int extra()
+{
 }

@@ -1,11 +1,10 @@
 %{
     #include "extern.h"
     #include "treeNode.h"
-    //int yydebug = 1;
+    // int yydebug = 1;
     int syntaxError = 0;
     void my_yyerror(char* msg) {
-        syntaxError += 1;
-        printf("My Error type B at Line %d: %s.\n", yylineno, msg);
+        printf("Error type B at Line %d: syntax error: %s.\n", yylineno, msg);
     }
 %}
 
@@ -116,12 +115,15 @@ Specifier FunDec CompSt {
 } |
 error SEMI {
     syntaxError += 1;
+    my_yyerror("error 0");
 } |
 Specifier error SEMI {
     syntaxError += 1;
+    my_yyerror("initialized or invalid global variable");
 } |
 error Specifier SEMI {
     syntaxError += 1;
+    my_yyerror("error 2");
 };
 
 ExtDecList :
@@ -132,9 +134,6 @@ VarDec {
 VarDec COMMA ExtDecList {
     $$ = createNode("ExtDecList", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-} |
-VarDec error ExtDefList {
-    syntaxError += 1;
 };
 
 Specifier :
@@ -183,6 +182,7 @@ VarDec LB INT RB {
 } |
 VarDec LB error RB {
     syntaxError += 1;
+    my_yyerror("invalid expression between \'[]\'");
 };
 
 FunDec :
@@ -196,9 +196,15 @@ ID LP RP {
 } |
 ID LP error RP{
     syntaxError += 1;
+    my_yyerror("invalid varlist");
 } |
 error LP VarList RP {
     syntaxError += 1;
+    my_yyerror("invalid function name");
+} |
+error LP RP {
+    syntaxError += 1;
+    my_yyerror("invalid function name");
 };
 
 VarList :
@@ -260,15 +266,19 @@ WHILE LP Exp RP Stmt {
 } |
 error SEMI {
     syntaxError += 1;
+    my_yyerror("invalid statement or cannot define variable before \';\'");
 } |
 Exp error SEMI {
     syntaxError += 1;
+    my_yyerror("invalid expression near \';\'");
 } |
 RETURN Exp error {
     syntaxError += 1;
+    my_yyerror("invalid expression near \'return\'");
 } |
 RETURN error SEMI {
     syntaxError += 1;
+    my_yyerror("invalid expression between \'return\' and \';\'");
 };
 
 DefList :
@@ -287,9 +297,11 @@ Specifier DecList SEMI {
 } |
 Specifier error SEMI {
     syntaxError += 1;
+    my_yyerror("invalid variable or expected expression before \';\'");
 } |
 Specifier DecList error {
     syntaxError += 1;
+    my_yyerror("missing \';\' or invalid token");
 };
 
 DecList : 
@@ -387,42 +399,55 @@ FLOAT {
 } |
 Exp ASSIGNOP error {
     syntaxError += 1;
+    my_yyerror("invalid token near \'=\'");
 } |
 Exp AND error {
     syntaxError += 1;
+    my_yyerror("invalid token near \'&&\'");
 } |
 Exp OR error {
     syntaxError += 1;
+    my_yyerror("invalid token near \'||\'");
 } |
 Exp RELOP error {
     syntaxError += 1;
+    my_yyerror("invalid token near \'RELOP\'");
 } |
 Exp PLUS error {
     syntaxError += 1;
+    my_yyerror("invalid token near \'+\'");
 } |
 Exp MINUS error {
     syntaxError += 1;
+    my_yyerror("invalid token near \'-\'");
 } |
 Exp STAR error {
     syntaxError += 1;
+    my_yyerror("invalid token near \'*\'");
 } | 
 Exp DIV error {
     syntaxError += 1;
+    my_yyerror("invalid token near \'/\'");
 } |
 LP error RP {
     syntaxError += 1;
+    my_yyerror("invalid token between \'()\'");
 } |
 MINUS error {
     syntaxError += 1;
+    my_yyerror("invalid token after \'-\'");
 } |
 NOT error {
     syntaxError += 1;
+    my_yyerror("invalid token after \'!\'");
 } |
 ID LP error RP {
     syntaxError += 1;
+    my_yyerror("invalid tokens between \'()\'");
 } |
 Exp LB error RB {
     syntaxError += 1;
+    my_yyerror("invalid expression between \'[]\'");
 };
 
 Args :
@@ -437,6 +462,6 @@ Exp COMMA Args {
 %%
 #include "lex.yy.c"
 void yyerror(char* msg) {
-    syntaxError += 1;
-    printf("Error type B at Line %d: %s.\n", yylineno, msg);
+    // syntaxError += 1;
+    // printf("Error type B at Line %d: %s.\n", yylineno, msg);
 }
