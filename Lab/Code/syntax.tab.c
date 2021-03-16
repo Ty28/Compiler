@@ -1559,7 +1559,7 @@ yyreduce:
   case 8:
 #line 113 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",21);
 }
 #line 1565 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1567,7 +1567,7 @@ yyreduce:
   case 9:
 #line 116 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",22);
 }
 #line 1573 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1575,7 +1575,7 @@ yyreduce:
   case 10:
 #line 119 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",23);
 }
 #line 1581 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1601,7 +1601,7 @@ yyreduce:
   case 13:
 #line 132 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",24);
 }
 #line 1607 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1689,7 +1689,7 @@ yyreduce:
   case 23:
 #line 180 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",25);
 }
 #line 1695 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1715,7 +1715,7 @@ yyreduce:
   case 26:
 #line 193 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",26);
 }
 #line 1721 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1723,7 +1723,7 @@ yyreduce:
   case 27:
 #line 196 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",27);
 }
 #line 1729 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1839,7 +1839,7 @@ yyreduce:
   case 40:
 #line 257 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",28);
 }
 #line 1845 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1847,7 +1847,7 @@ yyreduce:
   case 41:
 #line 260 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",29);
 }
 #line 1853 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1855,7 +1855,7 @@ yyreduce:
   case 42:
 #line 263 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",30);
 }
 #line 1861 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1863,7 +1863,7 @@ yyreduce:
   case 43:
 #line 266 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",31);
 }
 #line 1869 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1897,7 +1897,7 @@ yyreduce:
   case 47:
 #line 284 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",32);
 }
 #line 1903 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1905,7 +1905,7 @@ yyreduce:
   case 48:
 #line 287 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",33);
 }
 #line 1911 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2111,7 +2111,7 @@ yyreduce:
   case 71:
 #line 384 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",34);
 }
 #line 2117 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2119,7 +2119,7 @@ yyreduce:
   case 72:
 #line 387 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",35);
 }
 #line 2125 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2127,7 +2127,7 @@ yyreduce:
   case 73:
 #line 390 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",36);
 }
 #line 2133 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2135,7 +2135,7 @@ yyreduce:
   case 74:
 #line 393 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",37);
 }
 #line 2141 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2143,7 +2143,7 @@ yyreduce:
   case 75:
 #line 396 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",38);
 }
 #line 2149 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2151,7 +2151,7 @@ yyreduce:
   case 76:
 #line 399 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",39);
 }
 #line 2157 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2159,7 +2159,7 @@ yyreduce:
   case 77:
 #line 402 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",40);
 }
 #line 2165 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2167,7 +2167,7 @@ yyreduce:
   case 78:
 #line 405 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",41);
 }
 #line 2173 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2175,7 +2175,7 @@ yyreduce:
   case 79:
 #line 408 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",42);
 }
 #line 2181 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2183,7 +2183,7 @@ yyreduce:
   case 80:
 #line 411 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",43);
 }
 #line 2189 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2191,7 +2191,7 @@ yyreduce:
   case 81:
 #line 414 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",44);
 }
 #line 2197 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2199,7 +2199,7 @@ yyreduce:
   case 82:
 #line 417 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",45);
 }
 #line 2205 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2207,7 +2207,7 @@ yyreduce:
   case 83:
 #line 420 "./syntax.y" /* yacc.c:1646  */
     {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",46);
 }
 #line 2213 "./syntax.tab.c" /* yacc.c:1646  */
     break;

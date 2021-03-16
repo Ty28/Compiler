@@ -111,13 +111,13 @@ Specifier FunDec CompSt {
     insertNode($$, 3, $1, $2, $3);
 } |
 error SEMI {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",21);
 } |
 Specifier error SEMI {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",22);
 } |
 error Specifier SEMI {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",23);
 };
 
 ExtDecList :
@@ -130,7 +130,7 @@ VarDec COMMA ExtDecList {
     insertNode($$, 3, $1, $2, $3);
 } |
 VarDec error ExtDefList {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",24);
 };
 
 Specifier :
@@ -178,7 +178,7 @@ VarDec LB INT RB {
     insertNode($$, 4, $1, $2, $3, $4);
 } |
 VarDec LB error RB {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",25);
 };
 
 FunDec :
@@ -191,10 +191,10 @@ ID LP RP {
     insertNode($$, 3, $1, $2, $3);
 } |
 ID LP error RP{
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",26);
 } |
 error LP VarList RP {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",27);
 };
 
 VarList :
@@ -255,16 +255,16 @@ WHILE LP Exp RP Stmt {
     insertNode($$, 5, $1, $2, $3, $4, $5);
 } |
 error SEMI {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",28);
 } |
 Exp error SEMI {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",29);
 } |
 RETURN Exp error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",30);
 } |
 RETURN error SEMI {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",31);
 };
 
 DefList :
@@ -282,10 +282,10 @@ Specifier DecList SEMI {
     insertNode($$, 3, $1, $2, $3);
 } |
 Specifier error SEMI {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",32);
 } |
 Specifier DecList error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",33);
 };
 
 DecList : 
@@ -382,43 +382,43 @@ FLOAT {
     insertNode($$, 1, $1);
 } |
 Exp ASSIGNOP error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",34);
 } |
 Exp AND error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",35);
 } |
 Exp OR error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",36);
 } |
 Exp RELOP error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",37);
 } |
 Exp PLUS error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",38);
 } |
 Exp MINUS error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",39);
 } |
 Exp STAR error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",40);
 } | 
 Exp DIV error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",41);
 } |
 LP error RP {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",42);
 } |
 MINUS error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",43);
 } |
 NOT error {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",44);
 } |
 ID LP error RP {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",45);
 } |
 Exp LB error RB {
-    syntaxError += 1;
+    syntaxError +=1 ;printf("error id:%d\n",46);
 };
 
 Args :
