@@ -217,7 +217,7 @@ OTHER .
 }
 {OTHER} {
     lexicalError += 1;
-    printf("Error type A at Line %d: Mysterious character \'%s'.\n",yylineno,yytext);
+    printf("Error type A at Line %d: mysterious character \'%s'.\n",yylineno,yytext);
 }
 %%
 // int main(int argc, char** argv) {

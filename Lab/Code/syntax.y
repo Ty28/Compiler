@@ -1,7 +1,7 @@
 %{
     #include "extern.h"
     #include "treeNode.h"
-    //int yydebug = 1;
+    // int yydebug = 1;
     int syntaxError = 0;
     void missing(char* c)
     {
@@ -11,9 +11,9 @@
     {
         printf("    fault id:%d\n",_id);
     }
+
     void my_yyerror(char* msg) {
-        syntaxError += 1;
-        printf("My Error type B at Line %d: %s.", yylineno, msg);
+        printf("Error type B at Line %d: syntax error: %s.\n", yylineno, msg);
     }
 %}
 
@@ -130,12 +130,17 @@ Specifier FunDec CompSt {
     $$ = createNode("ExtDef", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
 } |
-Specifier ExtDecList error{
-    printf("missing SEMI,fault number 1607\n");
+error SEMI {
+    syntaxError += 1;
+    my_yyerror("error 0");
 } |
-error
-{
-    my_yyerror("ExtDef error");fault(161958);
+Specifier error SEMI {
+    syntaxError += 1;
+    my_yyerror("initialized or invalid global variable");
+} |
+error Specifier SEMI {
+    syntaxError += 1;
+    my_yyerror("error 2");
 };
 
 ExtDecList :
@@ -145,16 +150,8 @@ VarDec {
 } | 
 VarDec COMMA ExtDecList {
     $$ = createNode("ExtDecList", " ", @$.first_line, 0);
-    insertNode($$, 3, $1, $2, $3);
-} |
-VarDec error ExtDefList {
-    syntaxError +=1 ;
-    missing("COMMA");fault(1611);
-} |
-error
-{
-    my_yyerror("ExtDecList error");fault(161959);
-};
+}
+;
 
 Specifier :
 TYPE {
@@ -223,23 +220,8 @@ ID error{
     my_yyerror("something after identifier gets wrong");fault(162103);
 } |
 VarDec LB error RB {
-    syntaxError +=1 ;
-    printf("contents between LB and RB error");
-    fault(1619);
-} |
-VarDec LB INT error {
-    syntaxError +=1 ;
-    missing("RB");
-    fault(1620);
-} |
-VarDec error INT {
-    syntaxError +=1 ;
-    missing("LB");
-    fault(1621);
-} |
-error
-{
-    my_yyerror("VarDec error");fault(1620012);
+    syntaxError += 1;
+    my_yyerror("invalid expression between \'[]\'");
 };
 
 FunDec :
@@ -256,17 +238,16 @@ ID LP VarList error{
     fault(1622);
 } |
 ID LP error RP{
-    syntaxError +=1 ;
-    printf("content between LP and RP error");
-    fault(1623);
+    syntaxError += 1;
+    my_yyerror("invalid varlist");
 } |
-ID error{
-    missing("LP");
-    fault(1624);
+error LP VarList RP {
+    syntaxError += 1;
+    my_yyerror("invalid function name");
 } |
-error{
-    printf("Func ID error");
-    fault(1627);
+error LP RP {
+    syntaxError += 1;
+    my_yyerror("invalid function name");
 };
 
 VarList :
@@ -359,9 +340,6 @@ Exp error{
 RETURN Exp error{
     my_yyerror("missing \";\"");fault(161850);
 } |
-RETURN error SEMI{
-    my_yyerror("missing returning value");fault(161853);
-} |
 RETURN error{
     my_yyerror("missing returning value and \";\"");fault(161900);
 } |
@@ -382,6 +360,22 @@ WHILE LP error RP Stmt {
 } |
 WHILE error Exp RP Stmt {
     my_yyerror("missing left parenthesis");fault(161929);
+} | //////////////////////////////////////////////////////
+error SEMI {
+    syntaxError += 1;
+    my_yyerror("invalid statement or cannot define variable before \';\'");
+} |
+Exp error SEMI {
+    syntaxError += 1;
+    my_yyerror("invalid expression near \';\'");
+} |
+RETURN Exp error {
+    syntaxError += 1;
+    my_yyerror("invalid expression near \'return\'");
+} |
+RETURN error SEMI {
+    syntaxError += 1;
+    my_yyerror("invalid expression between \'return\' and \';\'");
 };
 
 DefList :
@@ -399,11 +393,13 @@ Specifier DecList SEMI {
     $$ = createNode("Def", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
 } |
-Specifier error SEMI{
-    my_yyerror("invalid");
+Specifier error SEMI {
+    syntaxError += 1;
+    my_yyerror("invalid variable or expected expression before \';\'");
 } |
 Specifier DecList error {
-    printf("error");
+    syntaxError += 1;
+    my_yyerror("missing \';\' or invalid token");
 };
 
 DecList : 
@@ -502,47 +498,56 @@ FLOAT {
     insertNode($$, 1, $1);
 } |
 Exp ASSIGNOP error {
-    syntaxError +=1 ;printf("error id:%d\n",34);
+    syntaxError += 1;
+    my_yyerror("invalid token near \'=\'");
 } |
 Exp AND error {
-    syntaxError +=1 ;printf("error id:%d\n",35);
+    syntaxError += 1;
+    my_yyerror("invalid token near \'&&\'");
 } |
 Exp OR error {
-    syntaxError +=1 ;printf("error id:%d\n",36);
+    syntaxError += 1;
+    my_yyerror("invalid token near \'||\'");
 } |
 Exp RELOP error {
-    syntaxError +=1 ;printf("error id:%d\n",37);
+    syntaxError += 1;
+    my_yyerror("invalid token near \'RELOP\'");
 } |
 Exp PLUS error {
-    syntaxError +=1 ;printf("error id:%d\n",38);
+    syntaxError += 1;
+    my_yyerror("invalid token near \'+\'");
 } |
 Exp MINUS error {
-    syntaxError +=1 ;printf("error id:%d\n",39);
+    syntaxError += 1;
+    my_yyerror("invalid token near \'-\'");
 } |
 Exp STAR error {
-    syntaxError +=1 ;printf("error id:%d\n",40);
+    syntaxError += 1;
+    my_yyerror("invalid token near \'*\'");
 } | 
 Exp DIV error {
-    syntaxError +=1 ;printf("error id:%d\n",41);
+    syntaxError += 1;
+    my_yyerror("invalid token near \'/\'");
 } |
 LP error RP {
-    syntaxError +=1 ;printf("error id:%d\n",42);
+    syntaxError += 1;
+    my_yyerror("invalid token between \'()\'");
 } |
 MINUS error {
-    syntaxError +=1 ;printf("error id:%d\n",43);
+    syntaxError += 1;
+    my_yyerror("invalid token after \'-\'");
 } |
 NOT error {
-    syntaxError +=1 ;printf("error id:%d\n",44);
+    syntaxError += 1;
+    my_yyerror("invalid token after \'!\'");
 } |
 ID LP error RP {
-    syntaxError +=1 ;printf("error id:%d\n",45);
+    syntaxError += 1;
+    my_yyerror("invalid tokens between \'()\'");
 } |
 Exp LB error RB {
-    syntaxError +=1 ;printf("error id:%d\n",46);
-} |
-error
-{
-    my_yyerror("Exp error");fault(162006);
+    syntaxError += 1;
+    my_yyerror("invalid expression between \'[]\'");
 };
 
 Args :
@@ -559,5 +564,6 @@ Exp COMMA Args {
 %%
 #include "lex.yy.c"
 void yyerror(char* msg) {
-    printf("yyerror");
+    // syntaxError += 1;
+    // printf("Error type B at Line %d: %s.\n", yylineno, msg);
 }
