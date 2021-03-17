@@ -15,5 +15,6 @@ extern int yylineno;
 extern node ROOT;
 extern int lexicalError;
 extern int syntaxError;
+extern int preErrorLine;
 
 #endif

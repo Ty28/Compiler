@@ -3,8 +3,15 @@
     #include "treeNode.h"
     // int yydebug = 1;
     int syntaxError = 0;
+    int preErrorLine = 0;
     void my_yyerror(char* msg) {
-        printf("Error type B at Line %d: syntax error: %s.\n", yylineno, msg);
+        if(yylineno != preErrorLine) {
+            printf("\nError type B at Line %d: syntax error: %s.\n",yylineno, msg);
+        }
+        else {
+            printf(", %s.", msg);
+        }
+        preErrorLine = yylineno;
     }
 %}
 
@@ -462,6 +469,6 @@ Exp COMMA Args {
 %%
 #include "lex.yy.c"
 void yyerror(char* msg) {
-    // syntaxError += 1;
-    // printf("Error type B at Line %d: %s.\n", yylineno, msg);
+    printf("\nError type B at Line %d: %s: near \'%s\'",yylineno, msg, yylval.type_node->val);
+    preErrorLine = yylineno;
 }
