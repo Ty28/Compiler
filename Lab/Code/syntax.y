@@ -3,6 +3,18 @@
     #include "treeNode.h"
     //int yydebug = 1;
     int syntaxError = 0;
+    void missing(char* c)
+    {
+        printf("missing %s",c);
+    }
+    void fault(int _id)
+    {
+        printf("    fault id:%d\n",_id);
+    }
+    void my_yyerror(char* msg) {
+        syntaxError += 1;
+        printf("My Error type B at Line %d: %s.", yylineno, msg);
+    }
 %}
 
 /* declared types */
@@ -85,6 +97,10 @@ ExtDefList {
     $$ = createNode("Program", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
     ROOT = $$;
+} |
+error
+{
+    my_yyerror("StructSpecifier error");fault(162001);
 };
 
 ExtDefList : 
@@ -95,6 +111,10 @@ ExtDef ExtDefList {
 /*empty case*/  {
         @$.first_line = yylineno;
     $$ = NULL;
+} |
+error
+{
+    my_yyerror("StructSpecifier error");fault(162001);
 };
 
 ExtDef : 
@@ -110,14 +130,12 @@ Specifier FunDec CompSt {
     $$ = createNode("ExtDef", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
 } |
-error SEMI {
-    syntaxError +=1 ;printf("error id:%d\n",21);
+Specifier ExtDecList error{
+    printf("missing SEMI,fault number 1607\n");
 } |
-Specifier error SEMI {
-    syntaxError +=1 ;printf("error id:%d\n",22);
-} |
-error Specifier SEMI {
-    syntaxError +=1 ;printf("error id:%d\n",23);
+error
+{
+    my_yyerror("ExtDef error");fault(161958);
 };
 
 ExtDecList :
@@ -130,7 +148,12 @@ VarDec COMMA ExtDecList {
     insertNode($$, 3, $1, $2, $3);
 } |
 VarDec error ExtDefList {
-    syntaxError +=1 ;printf("error id:%d\n",24);
+    syntaxError +=1 ;
+    missing("COMMA");fault(1611);
+} |
+error
+{
+    my_yyerror("ExtDecList error");fault(161959);
 };
 
 Specifier :
@@ -141,7 +164,12 @@ TYPE {
 StructSpecifier {
     $$ = createNode("Specifier", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-};
+}|
+error
+{
+    my_yyerror("Specifier error");fault(162000);
+}
+;
 
 StructSpecifier :
 STRUCT OptTag LC DefList RC {
@@ -151,7 +179,14 @@ STRUCT OptTag LC DefList RC {
 STRUCT Tag {
     $$ = createNode("StructSpecifier", " ", @$.first_line, 0);
     insertNode($$, 2, $1, $2);
-};
+} |
+STRUCT OptTag LC DefList error{
+    missing("RC");fault(1613);
+} |
+STRUCT OptTag error DefList RC{
+    missing("LC");fault(1616);
+}
+;
 
 OptTag :
 ID {
@@ -160,12 +195,19 @@ ID {
 } |
  {
     $$ = NULL;
+} |
+error
+{
+    my_yyerror("OptTag error");fault(162001);
 };
 
 Tag :
 ID {
     $$ = createNode("Tag", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
+} |
+error{
+    printf("OptTag error");fault(1618);
 };
 
 VarDec :
@@ -177,8 +219,27 @@ VarDec LB INT RB {
     $$ = createNode("VarDec", " ", @$.first_line, 0);
     insertNode($$, 4, $1, $2, $3, $4);
 } |
+ID error{
+    my_yyerror("something after identifier gets wrong");fault(162103);
+} |
 VarDec LB error RB {
-    syntaxError +=1 ;printf("error id:%d\n",25);
+    syntaxError +=1 ;
+    printf("contents between LB and RB error");
+    fault(1619);
+} |
+VarDec LB INT error {
+    syntaxError +=1 ;
+    missing("RB");
+    fault(1620);
+} |
+VarDec error INT {
+    syntaxError +=1 ;
+    missing("LB");
+    fault(1621);
+} |
+error
+{
+    my_yyerror("VarDec error");fault(1620012);
 };
 
 FunDec :
@@ -190,11 +251,22 @@ ID LP RP {
     $$ = createNode("FunDec", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
 } |
-ID LP error RP{
-    syntaxError +=1 ;printf("error id:%d\n",26);
+ID LP VarList error{
+    missing("RP");
+    fault(1622);
 } |
-error LP VarList RP {
-    syntaxError +=1 ;printf("error id:%d\n",27);
+ID LP error RP{
+    syntaxError +=1 ;
+    printf("content between LP and RP error");
+    fault(1623);
+} |
+ID error{
+    missing("LP");
+    fault(1624);
+} |
+error{
+    printf("Func ID error");
+    fault(1627);
 };
 
 VarList :
@@ -205,12 +277,24 @@ ParamDec COMMA VarList {
 ParamDec {
     $$ = createNode("VarList", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
+} |
+ParamDec error VarList {
+    missing("COMMA");
+    fault(1628);
+} |
+error
+{
+    my_yyerror("VarList error");fault(162002);
 };
 
 ParamDec :
 Specifier VarDec {
     $$ = createNode("ParamDec", " ", @$.first_line, 0);
     insertNode($$, 2, $1, $2);
+}|
+error
+{
+    my_yyerror("ParamDec error");fault(162003);
 };
 
 CompSt :
@@ -218,7 +302,21 @@ LC DefList StmtList RC {
     $$ = createNode("CompSt", " ", @$.first_line, 0);
     
     insertNode($$, 4, $1, $2, $3, $4);
-};
+} |
+LC DefList StmtList error {
+    my_yyerror("missing \"}\"");fault(161942);
+} |
+LC error RC{
+    my_yyerror("contents between \"{ }\" gets wrong");fault(161944);
+} |
+DefList StmtList RC {
+    my_yyerror("missing \"{\"");fault(161945);
+} |
+error
+{
+    my_yyerror("CompSt error");fault(1620031);
+}
+;
 
 StmtList :
 Stmt StmtList {
@@ -227,7 +325,8 @@ Stmt StmtList {
 } |
  {
     $$ = NULL;
-};
+}
+;
 
 Stmt :
 Exp SEMI {
@@ -254,17 +353,35 @@ WHILE LP Exp RP Stmt {
     $$ = createNode("Stmt", " ", @$.first_line, 0);
     insertNode($$, 5, $1, $2, $3, $4, $5);
 } |
-error SEMI {
-    syntaxError +=1 ;printf("error id:%d\n",28);
+Exp error{
+    my_yyerror("missing \";\"");fault(161850);
 } |
-Exp error SEMI {
-    syntaxError +=1 ;printf("error id:%d\n",29);
+RETURN Exp error{
+    my_yyerror("missing \";\"");fault(161850);
 } |
-RETURN Exp error {
-    syntaxError +=1 ;printf("error id:%d\n",30);
+RETURN error SEMI{
+    my_yyerror("missing returning value");fault(161853);
 } |
-RETURN error SEMI {
-    syntaxError +=1 ;printf("error id:%d\n",31);
+RETURN error{
+    my_yyerror("missing returning value and \";\"");fault(161900);
+} |
+IF LP Exp error Stmt %prec LOWER_THAN_ELSE{
+    my_yyerror("missing right parenthesis");fault(161911);
+} |
+IF LP error RP Stmt %prec LOWER_THAN_ELSE{
+    my_yyerror("condition for \"if\" gets wrong");fault(161916);
+} |
+IF error Exp RP Stmt %prec LOWER_THAN_ELSE{
+    my_yyerror("missing left parenthesis");fault(161917);
+} |
+WHILE LP Exp error Stmt {
+    my_yyerror("missing right parenthesis");fault(161925);
+} |
+WHILE LP error RP Stmt {
+    my_yyerror("condition for \"while\" gets wrong");fault(161929);
+} |
+WHILE error Exp RP Stmt {
+    my_yyerror("missing left parenthesis");fault(161929);
 };
 
 DefList :
@@ -274,18 +391,19 @@ Def DefList {
 } |
  {
     $$ = NULL;
-};
+}
+;
 
 Def : 
 Specifier DecList SEMI {
     $$ = createNode("Def", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
 } |
-Specifier error SEMI {
-    syntaxError +=1 ;printf("error id:%d\n",32);
+Specifier error SEMI{
+    my_yyerror("invalid");
 } |
 Specifier DecList error {
-    syntaxError +=1 ;printf("error id:%d\n",33);
+    printf("error");
 };
 
 DecList : 
@@ -296,7 +414,8 @@ Dec {
 Dec COMMA DecList {
     $$ = createNode("DecList", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-};
+}
+;
 
 Dec :
 VarDec {
@@ -306,7 +425,8 @@ VarDec {
 VarDec ASSIGNOP Exp {
     $$ = createNode("Dec", " ", @$.first_line, 0);
     insertNode($$, 3, $1, $2, $3);
-};
+}
+;
 
 Exp :
 Exp ASSIGNOP Exp {
@@ -419,6 +539,10 @@ ID LP error RP {
 } |
 Exp LB error RB {
     syntaxError +=1 ;printf("error id:%d\n",46);
+} |
+error
+{
+    my_yyerror("Exp error");fault(162006);
 };
 
 Args :
@@ -429,10 +553,11 @@ Exp COMMA Args {
 | Exp {
     $$ = createNode("Args", " ", @$.first_line, 0);
     insertNode($$, 1, $1);
-};
+} 
+;
+
 %%
 #include "lex.yy.c"
 void yyerror(char* msg) {
-    syntaxError += 1;
-    printf("Error type B at Line %d: %s.\n", yylineno, msg);
+    printf("yyerror");
 }
