@@ -100,6 +100,7 @@ ExtDefList {
 } |
 error
 {
+    syntaxError += 1;
     my_yyerror("StructSpecifier error");fault(162001);
 };
 
@@ -114,6 +115,7 @@ ExtDef ExtDefList {
 } |
 error
 {
+    syntaxError += 1;
     my_yyerror("StructSpecifier error");fault(162001);
 };
 
@@ -164,6 +166,7 @@ StructSpecifier {
 }|
 error
 {
+    syntaxError += 1;
     my_yyerror("Specifier error");fault(162000);
 }
 ;
@@ -192,11 +195,8 @@ ID {
 } |
  {
     $$ = NULL;
-} |
-error
-{
-    my_yyerror("OptTag error");fault(162001);
-};
+}
+;
 
 Tag :
 ID {
@@ -215,9 +215,6 @@ ID {
 VarDec LB INT RB {
     $$ = createNode("VarDec", " ", @$.first_line, 0);
     insertNode($$, 4, $1, $2, $3, $4);
-} |
-ID error{
-    my_yyerror("something after identifier gets wrong");fault(162103);
 } |
 VarDec LB error RB {
     syntaxError += 1;
@@ -265,6 +262,7 @@ ParamDec error VarList {
 } |
 error
 {
+    syntaxError += 1;
     my_yyerror("VarList error");fault(162002);
 };
 
@@ -275,6 +273,7 @@ Specifier VarDec {
 }|
 error
 {
+    syntaxError += 1;
     my_yyerror("ParamDec error");fault(162003);
 };
 
@@ -285,16 +284,20 @@ LC DefList StmtList RC {
     insertNode($$, 4, $1, $2, $3, $4);
 } |
 LC DefList StmtList error {
+    syntaxError += 1;
     my_yyerror("missing \"}\"");fault(161942);
 } |
 LC error RC{
+    syntaxError += 1;
     my_yyerror("contents between \"{ }\" gets wrong");fault(161944);
 } |
 DefList StmtList RC {
+    syntaxError += 1;
     my_yyerror("missing \"{\"");fault(161945);
 } |
 error
 {
+    syntaxError += 1;
     my_yyerror("CompSt error");fault(1620031);
 }
 ;
@@ -335,31 +338,40 @@ WHILE LP Exp RP Stmt {
     insertNode($$, 5, $1, $2, $3, $4, $5);
 } |
 Exp error{
+    syntaxError += 1;
     my_yyerror("missing \";\"");fault(161850);
 } |
 RETURN Exp error{
+    syntaxError += 1;
     my_yyerror("missing \";\"");fault(161850);
 } |
 RETURN error{
+    syntaxError += 1;
     my_yyerror("missing returning value and \";\"");fault(161900);
 } |
 IF LP Exp error Stmt %prec LOWER_THAN_ELSE{
-    my_yyerror("missing right parenthesis");fault(161911);
+    syntaxError += 1;
+    my_yyerror("missing \')\'");fault(161911);
 } |
 IF LP error RP Stmt %prec LOWER_THAN_ELSE{
+    syntaxError += 1;
     my_yyerror("condition for \"if\" gets wrong");fault(161916);
 } |
 IF error Exp RP Stmt %prec LOWER_THAN_ELSE{
+    syntaxError += 1;
     my_yyerror("missing left parenthesis");fault(161917);
 } |
 WHILE LP Exp error Stmt {
+    syntaxError += 1;
     my_yyerror("missing right parenthesis");fault(161925);
 } |
 WHILE LP error RP Stmt {
+    syntaxError += 1;
     my_yyerror("condition for \"while\" gets wrong");fault(161929);
 } |
 WHILE error Exp RP Stmt {
-    my_yyerror("missing left parenthesis");fault(161929);
+    syntaxError += 1;
+    my_yyerror("missing \'(\'");fault(161929);
 } | //////////////////////////////////////////////////////
 error SEMI {
     syntaxError += 1;

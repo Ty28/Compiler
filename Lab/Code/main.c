@@ -12,12 +12,7 @@ int main(int argc, char** argv) {
     yyparse();
     if(lexicalError == 0 && syntaxError == 0)
         preOrder(ROOT, 0);
-<<<<<<< HEAD
-    else
-        ;
-=======
     else 
-        // printf("%d  %d", lexicalError, syntaxError);
->>>>>>> 427ac21126c89593778f72e945cc169fb58ca75f
+        printf("%d  %d", lexicalError, syntaxError);
     return 0;
 }
