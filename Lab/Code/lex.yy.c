@@ -840,7 +840,8 @@ YY_RULE_SETUP
         cur = input();
         if(cur == '\0') {
             lexicalError += 1;
-            printf("Error type A at Line %d: Missing */.\n",yylineno);
+            if(yylineno != preErrorLine)
+                printf("\nError type B at Line %d: syntax error: no match comment missing \'*/\'.",yylineno);
             break;
         }
     }
@@ -848,7 +849,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 77 "./lexical.l"
+#line 78 "./lexical.l"
 {
     debug_log("INT");
     yylval.type_node = createNode("INT", yytext, yylineno, 1);
@@ -857,7 +858,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 82 "./lexical.l"
+#line 83 "./lexical.l"
 {
     debug_log("FLOAT");
     yylval.type_node = createNode("FLOAT", yytext, yylineno, 2);
@@ -866,7 +867,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 87 "./lexical.l"
+#line 88 "./lexical.l"
 {
     debug_log("TYPE");
     yylval.type_node = createNode("TYPE", yytext, yylineno, 16);
@@ -875,7 +876,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 92 "./lexical.l"
+#line 93 "./lexical.l"
 {
     debug_log("STRUCT");
     yylval.type_node = createNode("STRUCT", yytext, yylineno, 23);
@@ -884,7 +885,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 97 "./lexical.l"
+#line 98 "./lexical.l"
 {
     debug_log("RETURN");
     yylval.type_node = createNode("RETURN", yytext, yylineno, 24);
@@ -893,7 +894,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 102 "./lexical.l"
+#line 103 "./lexical.l"
 {
     debug_log("IF");
     yylval.type_node = createNode("IF", yytext, yylineno, 25);
@@ -902,7 +903,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 107 "./lexical.l"
+#line 108 "./lexical.l"
 {
     debug_log("ELSE");
     yylval.type_node = createNode("ELSE", yytext, yylineno, 26);
@@ -911,7 +912,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 112 "./lexical.l"
+#line 113 "./lexical.l"
 {
     debug_log("WHILE");
     yylval.type_node = createNode("WHILE", yytext, yylineno, 27);
@@ -920,7 +921,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 117 "./lexical.l"
+#line 118 "./lexical.l"
 {
     debug_log("ID");
     yylval.type_node = createNode("ID", yytext, yylineno, 3);
@@ -929,7 +930,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 122 "./lexical.l"
+#line 123 "./lexical.l"
 {
     debug_log("SEMI");
     yylval.type_node = createNode("SEMI", yytext, yylineno, 4);
@@ -938,7 +939,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 127 "./lexical.l"
+#line 128 "./lexical.l"
 {
     debug_log("COMMA");
     yylval.type_node = createNode("COMMA", yytext, yylineno, 5);
@@ -947,7 +948,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 132 "./lexical.l"
+#line 133 "./lexical.l"
 {
     debug_log("ASSIGNOP");
     yylval.type_node = createNode("ASSIGNOP", yytext, yylineno, 6);
@@ -956,7 +957,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 137 "./lexical.l"
+#line 138 "./lexical.l"
 {
     debug_log("RELOP");
     yylval.type_node = createNode("RELOP", yytext, yylineno, 7);
@@ -965,7 +966,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 142 "./lexical.l"
+#line 143 "./lexical.l"
 {
     debug_log("PLUS");
     yylval.type_node = createNode("PLUS", yytext, yylineno, 8);
@@ -974,7 +975,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 147 "./lexical.l"
+#line 148 "./lexical.l"
 {
     debug_log("MINUS");
     yylval.type_node = createNode("MINUS", yytext, yylineno, 9);
@@ -983,7 +984,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 152 "./lexical.l"
+#line 153 "./lexical.l"
 {
     debug_log("STAR");
     yylval.type_node = createNode("STAR", yytext, yylineno, 10);
@@ -992,7 +993,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 157 "./lexical.l"
+#line 158 "./lexical.l"
 {
     debug_log("DIV");
     yylval.type_node = createNode("DIV", yytext, yylineno, 11);
@@ -1001,7 +1002,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 162 "./lexical.l"
+#line 163 "./lexical.l"
 {
     debug_log("AND");
     yylval.type_node = createNode("AND", yytext, yylineno, 12);
@@ -1010,7 +1011,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 167 "./lexical.l"
+#line 168 "./lexical.l"
 {
     debug_log("OR");
     yylval.type_node = createNode("OR", yytext, yylineno, 13);
@@ -1019,7 +1020,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 172 "./lexical.l"
+#line 173 "./lexical.l"
 {
     debug_log("DOT");
     yylval.type_node = createNode("DOT", yytext, yylineno, 14);
@@ -1028,7 +1029,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 177 "./lexical.l"
+#line 178 "./lexical.l"
 {
     debug_log("NOT");
     yylval.type_node = createNode("NOT", yytext, yylineno, 15);
@@ -1037,7 +1038,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 182 "./lexical.l"
+#line 183 "./lexical.l"
 {
     debug_log("LP");
     yylval.type_node = createNode("LP", yytext, yylineno, 17);
@@ -1046,7 +1047,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 187 "./lexical.l"
+#line 188 "./lexical.l"
 {
     debug_log("RP");
     yylval.type_node = createNode("RP", yytext, yylineno, 18);
@@ -1055,7 +1056,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 192 "./lexical.l"
+#line 193 "./lexical.l"
 {
     debug_log("LB");
     yylval.type_node = createNode("LB", yytext, yylineno, 19);
@@ -1064,7 +1065,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 197 "./lexical.l"
+#line 198 "./lexical.l"
 {
     debug_log("RB");
     yylval.type_node = createNode("RB", yytext, yylineno, 20);
@@ -1073,7 +1074,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 202 "./lexical.l"
+#line 203 "./lexical.l"
 {
     debug_log("LC");
     yylval.type_node = createNode("LC", yytext, yylineno, 21);
@@ -1082,7 +1083,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 207 "./lexical.l"
+#line 208 "./lexical.l"
 {
     debug_log("RC");
     yylval.type_node = createNode("RC", yytext, yylineno, 22);
@@ -1092,7 +1093,7 @@ YY_RULE_SETUP
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
-#line 212 "./lexical.l"
+#line 213 "./lexical.l"
 {
     yycolumn = 1;
 }
@@ -1100,25 +1101,28 @@ YY_RULE_SETUP
 case 31:
 /* rule 31 can match eol */
 YY_RULE_SETUP
-#line 215 "./lexical.l"
+#line 216 "./lexical.l"
 {
     
 }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 218 "./lexical.l"
+#line 219 "./lexical.l"
 {
     lexicalError += 1;
-    printf("Error type A at Line %d: mysterious character \'%s'.\n",yylineno,yytext);
+    if(yylineno != preErrorLine && preErrorLine != -1)
+        printf("\n");
+    preErrorLine = yylineno;
+    printf("Error type A at Line %d: mysterious character \'%s'. ",yylineno,yytext);
 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 222 "./lexical.l"
+#line 226 "./lexical.l"
 ECHO;
 	YY_BREAK
-#line 1122 "./lex.yy.c"
+#line 1126 "./lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2135,7 +2139,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 222 "./lexical.l"
+#line 226 "./lexical.l"
 
 // int main(int argc, char** argv) {
 //     if(argc > 1) {

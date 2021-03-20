@@ -1,9 +1,6 @@
 #ifndef _EXTERN_H
 #define _EXTERN_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
 #include "treeNode.h"
 
 extern int yylex(void);
@@ -16,5 +13,4 @@ extern node ROOT;
 extern int lexicalError;
 extern int syntaxError;
 extern int preErrorLine;
-
 #endif

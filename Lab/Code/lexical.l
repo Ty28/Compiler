@@ -69,7 +69,8 @@ OTHER .
         cur = input();
         if(cur == '\0') {
             lexicalError += 1;
-            printf("Error type A at Line %d: Missing */.\n",yylineno);
+            if(yylineno != preErrorLine)
+                printf("\nError type B at Line %d: syntax error: no match comment missing \'*/\'.",yylineno);
             break;
         }
     }
@@ -217,7 +218,10 @@ OTHER .
 }
 {OTHER} {
     lexicalError += 1;
-    printf("Error type A at Line %d: mysterious character \'%s'.\n",yylineno,yytext);
+    if(yylineno != preErrorLine && preErrorLine != -1)
+        printf("\n");
+    preErrorLine = yylineno;
+    printf("Error type A at Line %d: mysterious character \'%s'. ",yylineno,yytext);
 }
 %%
 // int main(int argc, char** argv) {

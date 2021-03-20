@@ -68,13 +68,13 @@
     #include "treeNode.h"
     // int yydebug = 1;
     int syntaxError = 0;
-    int preErrorLine = 0;
+    int preErrorLine = -1;
     void my_yyerror(char* msg) {
         if(yylineno != preErrorLine) {
-            printf("\nError type B at Line %d: syntax error: %s.\n",yylineno, msg);
+            printf("\nError type B at Line %d: syntax error: %s. ",yylineno, msg);
         }
         else {
-            printf(", %s.", msg);
+            printf("(%s)", msg);
         }
         preErrorLine = yylineno;
     }
@@ -2500,6 +2500,8 @@ yyreturn:
 
 #include "lex.yy.c"
 void yyerror(char* msg) {
-    printf("\nError type B at Line %d: %s: near \'%s\'",yylineno, msg, yylval.type_node->val);
+    if(preErrorLine != yylineno && preErrorLine != -1)
+        printf("\n");
+    printf("Error type B at Line %d: %s: near \'%s\'. ",yylineno, msg, yylval.type_node->val);
     preErrorLine = yylineno;
 }

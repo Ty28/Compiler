@@ -13,6 +13,6 @@ int main(int argc, char** argv) {
     if(lexicalError == 0 && syntaxError == 0)
         preOrder(ROOT, 0);
     else 
-        // printf("%d  %d", lexicalError, syntaxError);
+        printf("\n");
     return 0;
 }
