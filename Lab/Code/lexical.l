@@ -221,7 +221,7 @@ OTHER .
     if(yylineno != preErrorLine && preErrorLine != -1)
         printf("\n");
     preErrorLine = yylineno;
-    printf("Error type A at Line %d: mysterious character \'%s'. ",yylineno,yytext);
+    printf("Error type A at Line %d: mysterious character \'%s'. \n",yylineno,yytext);
 }
 %%
 // int main(int argc, char** argv) {
