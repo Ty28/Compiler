@@ -19,7 +19,7 @@
 %union {
     node type_node;
 }
-
+%locations
 /* declared Tokens */
 %token <type_node> INT
 %token <type_node> FLOAT
