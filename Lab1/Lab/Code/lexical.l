@@ -6,8 +6,7 @@ int lexicalError = 0;
 int yycolumn = 1;
 void debug_log(char *mytext) {
     #ifdef debug    
-        // printf("DEBUG LOG: token %s value %s at Line %d\n", mytext, yytext, yylineno);
-        printf("%s ",yytext);
+        printf("DEBUG LOG: token %s value %s at Line %d\n", mytext, yytext, yylineno);
     #endif
 }
 #define YY_USER_ACTION \

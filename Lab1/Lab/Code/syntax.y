@@ -472,5 +472,6 @@ void yyerror(char* msg) {
     if(preErrorLine != yylineno && preErrorLine != -1)
         printf("\n");
     printf("Error type B at Line %d: %s: near \'%s\'. ",yylineno, msg, yylval.type_node->val);
+    syntaxError += 1;
     preErrorLine = yylineno;
 }
