@@ -12,7 +12,7 @@ struct Type_
     {
         BASIC,
         ARRAY,
-        STRUCT,
+        STRUCTURE,
         FUNCTION
     } kind;
     union
@@ -36,16 +36,24 @@ struct Type_
 struct SymbolTuple
 {
     char name[32];
-    int valid; //valid = 1 represents that this tuple is valid
     Type type;
-    Symbol link;
+    Symbol hashLink;
+    Symbol structLink;
 };
 
-Symbol symbolTable;
+Symbol *symbolTable;
 
 unsigned int hashProject(char *name);
-Symbol createSymbolTable();
+Symbol* createSymbolTable();
 Symbol findSymbol(char *name);
-void insertSymbolTable(char *name);
+Type createBasicType(int _basic);
+Type createArrayType(Type _elem,int _size);
+Type createStructType(Symbol _structure);
+Type createType(int _kind,int _basic,Type _elem,int _size,Symbol _structure);
+Symbol createBlankTuple(char *name);
+Symbol createBasicTuple(char *name,int _basic);
+Symbol createArrayTuple(char *name,Type _elem,int _size);
+Symbol createStructTuple(char *name,Symbol structNext);
+void insertTuple(Symbol tuple);
 
 #endif
