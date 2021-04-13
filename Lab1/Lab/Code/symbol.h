@@ -29,7 +29,11 @@ struct Type_
             int size;
         } array;
         Symbol structure;
-        Symbol function;
+        struct
+        {
+            int funcBasic;
+            Symbol parameter;
+        } function;
     } u;
 };
 
@@ -44,16 +48,19 @@ struct SymbolTuple
 Symbol *symbolTable;
 
 unsigned int hashProject(char *name);
-Symbol* createSymbolTable();
-Symbol findSymbol(char *name);
+Symbol *createSymbolTable();
+
 Type createBasicType(int _basic);
-Type createArrayType(Type _elem,int _size);
+Type createArrayType(Type _elem, int _size);
 Type createStructType(Symbol _structure);
-Type createType(int _kind,int _basic,Type _elem,int _size,Symbol _structure);
+Type createFuncType(int _funcBasic, Symbol _parameter);
+Type createType(int _kind, int _basic, Type _elem, int _size, Symbol _structure);
 Symbol createBlankTuple(char *name);
-Symbol createBasicTuple(char *name,int _basic);
-Symbol createArrayTuple(char *name,Type _elem,int _size);
-Symbol createStructTuple(char *name,Symbol structNext);
+Symbol createBasicTuple(char *name, int _basic);
+Symbol createArrayTuple(char *name, Type _elem, int _size);
+Symbol createStructTuple(char *name, Symbol _structure);
+Symbol createFuncTuple(char *name, int _funcBasic, Symbol _parameter);
+Symbol findSymbol(char *name);
 void insertTuple(Symbol tuple);
 
 #endif
