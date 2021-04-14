@@ -3,6 +3,7 @@
 
 #include "treeNode.h"
 #include "symbol.h"
+#include "semantic.h"
 
 extern int yylex(void);
 extern int yyparse(void);
@@ -14,4 +15,9 @@ extern node ROOT;
 extern int lexicalError;
 extern int syntaxError;
 extern int preErrorLine;
+
+extern Symbol* symbolTable;
+extern Symbol* createSymbolTable();
+extern Symbol findSymbol(char *name);
+extern void insertSymbolTable(char *name);
 #endif

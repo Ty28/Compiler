@@ -10,9 +10,10 @@ int main(int argc, char** argv) {
     }
     yyrestart(f);
     yyparse();
-    if(lexicalError == 0 && syntaxError == 0)
-        semantic_check(ROOT);
-    //     preOrder(ROOT, 0);
+    if(lexicalError == 0 && syntaxError == 0){
+        preOrder(ROOT, 0);
+        semanticCheck(ROOT);
+    }
     // else 
     //     printf("\n");
     return 0;

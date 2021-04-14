@@ -67,7 +67,7 @@ Type createType(int _kind, int _basic, Type _elem, int _size, FieldList _structu
     case (2):
         return createStructType(_structure);
     case (3):
-        return createStructType(_function);
+        return createFuncType(_function);
     }
 }
 

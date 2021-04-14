@@ -13,6 +13,7 @@ node createNode(char name_[], char val_[], int lineno_, int type_) {
     // return root;
     return root_;
 }
+
 void insertNode(node root_, int args, ...) {
     // reference on https://blog.csdn.net/ithomer/article/details/6189072
     va_list s;
@@ -26,8 +27,24 @@ void insertNode(node root_, int args, ...) {
     }
     return;
 }
+
+// new API: get the kth child of root_
+node getKChild(node root_, int k) {
+    node p = root_;
+    p = p->child;
+    if(k == 0)
+        return p;
+    
+    while(k--)
+        p = p->sibling;
+    //printNode(p);
+    return p;
+}
+
 void printNode(node root_)
 {
+    if(!root_)
+        return;
     if (root_->type == 0)
         printf("%s (%d)\n", root_->name, root_->lineno);
     else
@@ -56,6 +73,7 @@ void printNode(node root_)
         }
     }
 }
+
 void preOrder(node root_, int depth) {
     if(!root_)
         return;
@@ -88,6 +106,7 @@ void preOrder_nonrecursion(node root_) {
         }
     }
 }
+
 void initStack(st S) {
     S = (st)malloc(sizeof(struct myStack));
     if(!S)

@@ -26,6 +26,7 @@ void insertNode(node root_, int args, ...);
 void printNode(node root_);
 void preOrder(node root_, int depth);
 void preOrder_nonrecursion(node root_);
+node getKChild(node root_, int k);
 
 node ROOT;
 extern int yylineno;
