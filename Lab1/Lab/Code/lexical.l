@@ -16,6 +16,7 @@ void debug_log(char *mytext) {
     yycolumn += yyleng;
 %}
 
+
 %option yylineno
 ws [ \t\r\n]+
 digit [0-9]

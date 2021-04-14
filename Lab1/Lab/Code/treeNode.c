@@ -1,6 +1,7 @@
 #include "treeNode.h"
 
-node createNode(char name_[], char val_[], int lineno_, int type_) {
+node createNode(char name_[], char val_[], int lineno_, int type_)
+{
     // malloc root
     node root_ = (node)malloc(sizeof(struct treeNode));
     // copy content
@@ -12,7 +13,8 @@ node createNode(char name_[], char val_[], int lineno_, int type_) {
     root_->sibling = NULL;
     // return root;
     return root_;
-}
+} 
+
 void insertNode(node root_, int args, ...) {
     // reference on https://blog.csdn.net/ithomer/article/details/6189072
     va_list s;
@@ -56,6 +58,7 @@ void printNode(node root_)
         }
     }
 }
+
 void preOrder(node root_, int depth) {
     if(!root_)
         return;
@@ -115,3 +118,4 @@ node pop(st S){
 int isEmpty(st S) {
     return S->top == 0;
 }
+

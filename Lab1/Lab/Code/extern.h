@@ -2,6 +2,7 @@
 #define _EXTERN_H
 
 #include "treeNode.h"
+#include "symbol.h"
 
 extern int yylex(void);
 extern int yyparse(void);
@@ -12,5 +13,13 @@ extern int yylineno;
 extern node ROOT;
 extern int lexicalError;
 extern int syntaxError;
+extern int num_of_ID;
 extern int preErrorLine;
+
+extern Symbol *symbolTable;
+extern Symbol createSymbolTable();
+extern Symbol findSymbol(char *name);
+extern void insertSymbolTable(char *name);
+
+
 #endif

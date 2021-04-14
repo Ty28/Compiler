@@ -109,6 +109,14 @@ int main()
 }
 
 /*
+<<<<<<< HEAD
+你为什么不带口罩
+*/
+int a
+//
+//
+//
+=======
  * block comment
  * @#$%^&*()
  */
@@ -118,6 +126,7 @@ int main()
 /* function definition */
 int func(int ival, float fval, float arr[10])
 {
+<<<<<<< HEAD
     int a = 1;
 }
 
@@ -125,4 +134,8 @@ int func(int ival, float fval, float arr[10])
 
 int extra()
 {
+=======
+int i;
+>>>>>>> 1e190f93d7e883e389209f410e85cf7df9fb996d
 }
+>>>>>>> 427ac21126c89593778f72e945cc169fb58ca75f
