@@ -9,8 +9,6 @@ int semanticCheck(node root) {
 
 void Program(node root){
     printf("HAHA, Let's check the Program\n");
-    node ExtDefList_ = getKChild(root, 0);
-    printNode(ExtDefList_);
     ExtDefList(getKChild(root, 0));
 }
 void ExtDefList(node root) {
@@ -21,7 +19,18 @@ void ExtDefList(node root) {
     ExtDefList(getKChild(root, 1));
 }
 void ExtDef(node root) {
-    if(!root)
-        return;
     printf("HAHA, Let's check the ExtDef\n");
+    // need to complete
+    Type type = Specifier(getKChild(root, 0));
+    
+    if(strcmp(getKChild(root, 1)->name,"ExtDecList")==0){
+        ExtDecList(getKChild(root, 1)->name, type);
+    }
+    else if(strcmp(getKChild(root, 1)->name,"SEMI")==0){
+        ;
+    }
+    else if(strcmp(getKChild(root, 1)->name,"FunDec")==0){
+        FunDec(getKChild(root, 1), type);
+        Compst(getKChild(root, 2), type);
+    }
 }
