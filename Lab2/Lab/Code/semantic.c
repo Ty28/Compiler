@@ -17,7 +17,7 @@ void semLog(char* msg)
 
 void errorOutput(int errorType, int line)
 {
-    printf("Error Type %d at line %d:", errorType, line);
+    printf("Error Type %d at line %d:  \n", errorType, line);
 }
 
 void Program(node root)
@@ -56,6 +56,7 @@ void ExtDef(node root)
 
 Type Tag(node root)
 {
+    semLog("start parsing Tag");
     Symbol findTuple = findSymbol(root->name);
     if (findTuple == NULL)
     {
@@ -68,11 +69,20 @@ Type Tag(node root)
 
 Type StructSpecifier(node root)
 {
-    node tagNode=getKChild(root,2);
+    semLog("start parsing StructSpecifier");
+    node tagNode=getKChild(root,1);
     if(strcmp(tagNode->name,"Tag")==0)
+    {
+        semLog("start parsing Tag");
         return Tag(tagNode->child);
+    }
     else if(strcmp(tagNode->name,"OptTag")==0)
     {
+        return NULL;
+    }
+    else
+    {
+        semLog("something wrong with syntax in StructSpecifier\n");
         return NULL;
     }
 }
@@ -81,6 +91,7 @@ Type Specifier(node root)
 {
     semLog("start parsing specifier");
     node typeNode=getKChild(root, 0);
+    semLog(typeNode->name);
     if (strcmp(typeNode->name, "TYPE") == 0) //if specifier induces TYPE
     {
         if (strcmp(typeNode->val, "int") == 0)
@@ -94,7 +105,7 @@ Type Specifier(node root)
             return createBasicType(2);
         }
     }
-    else if (strcmp(getKChild(root, 0)->name, "StructSpecifier"))
+    else if (strcmp(typeNode->name, "StructSpecifier")==0)
         return StructSpecifier(getKChild(root, 0));
     else
     {
