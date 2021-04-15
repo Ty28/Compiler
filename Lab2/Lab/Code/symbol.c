@@ -40,10 +40,13 @@ Type createArrayType(Type _elem, int _size)
     return tupleType;
 }
 
-Type createStructType(FieldList _structure)
+Type createStructType(FieldList _structure,int isVariable)
 {
     Type tupleType = (Type)malloc(sizeof(struct Type_));
-    tupleType->kind = STRUCTURE;
+    if(isVariable)
+        tupleType->kind=STRUCTVAR;
+    else
+        tupleType->kind = STRUCTURE;
     tupleType->u.structure = _structure;
     return tupleType;
 }
@@ -95,9 +98,9 @@ Symbol createArrayTuple(char *name, Type _elem, int _size)
     return newTuple;
 }
 
-Symbol createStructTuple(char *name, FieldList _structure)
+Symbol createStructTuple(char *name, FieldList _structure,int isVariable)
 {
-    Type tupleType = createStructType(_structure);
+    Type tupleType = createStructType(_structure, isVariable);
     Symbol newTuple = createBlankTuple(name);
     newTuple->type = tupleType;
     return newTuple;
