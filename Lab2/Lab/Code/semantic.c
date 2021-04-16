@@ -55,7 +55,7 @@ void ExtDef(node root)
     }
 }
 
-void ExtDecList(node root,Type extDecType)
+void ExtDecList(node root, Type extDecType)
 {
     semLog("start parsing ExtDecList");
     VarDec(root->child, extDecType);
@@ -64,24 +64,43 @@ void ExtDecList(node root,Type extDecType)
         ExtDecList(getKChild(root, 2), extDecType);
 }
 
-void VarDec(node root,Type decType)
+Symbol VarDec(node root, Type decType)
 {
     semLog("start parsing VarDec");
-    if(strcmp(root->child->name,"ID")==0)
+    if (strcmp(root->child->name, "ID") == 0)
     {
-        node IDNode=root->child;
-        if(findSymbol(IDNode->val)!=NULL)
+        node IDNode = root->child;
+        if (findSymbol(IDNode->val) != NULL)
         {
             semLog(root->child->val);
-            errorOutput(3,IDNode->lineno);
+            errorOutput(3,root->child->lineno);
+            return NULL;
         }
         else
         {
-            Symbol VarDecTuple=createTupleWithType(IDNode->val,decType);
+            Symbol VarDecTuple = createTupleWithType(IDNode->val, decType);
             semLog("insertTuple(VarDecTuple)");
             insertTuple(VarDecTuple);
             semLog("insert success!");
+            return VarDecTuple;
         }
+    }
+    else if (strcmp(root->child->name, "VarDec") == 0)
+    {
+        Symbol varDecTuple = VarDec(root->child, decType);
+        if(varDecTuple!=NULL)
+        {
+            Type lastArrayType=varDecTuple->type;
+            int arraySize=atoi(getKChild(root,2)->val);
+            printf("last size:%d\n",arraySize);
+            Type newArrayType=createArrayType(lastArrayType,arraySize);
+            varDecTuple->type=newArrayType;
+        }
+        return varDecTuple;
+    }
+    else
+    {
+        semLog("some wrong with VarDec syntax");
     }
 }
 
@@ -168,5 +187,4 @@ void DecList(node root, Type decType)
 
 void Dec(node root, Type decType)
 {
-
 }
