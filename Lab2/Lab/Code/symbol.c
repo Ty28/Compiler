@@ -82,6 +82,21 @@ Symbol createBlankTuple(char *name)
     return newTuple;
 }
 
+FieldList createBlankField(char *name)
+{
+    FieldList newField = (Symbol)malloc(sizeof(struct FieldList_));
+    strcpy(newField->name, name);
+    newField->tail = NULL;
+    return newField;
+}
+
+FieldList createFieldWithType(char *name, Type _type)
+{
+    FieldList newField = createBlankField(name);
+    newField->type = _type;
+    return newField;
+}
+
 Symbol createBasicTuple(char *name, int _basic)
 {
     Type tupleType = createBasicType(_basic);

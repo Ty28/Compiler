@@ -71,7 +71,11 @@ Symbol createBasicTuple(char *name, int _basic);
 Symbol createArrayTuple(char *name, Type _elem, int _size);
 Symbol createStructTuple(char *name, FieldList _structure,int isVariable);
 Symbol createFuncTuple(char *name, FuncList _parameter);
+//new Func
 Symbol createTupleWithType(char* name,Type _type);
+FieldList createBlankField(char* name);
+FieldList createFieldWithType(char* name,Type _type);
+//
 Symbol findSymbol(char *name);
 void insertTuple(Symbol tuple);
 
