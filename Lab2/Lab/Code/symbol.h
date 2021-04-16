@@ -64,12 +64,14 @@ Type createBasicType(int _basic);
 Type createArrayType(Type _elem, int _size);
 Type createStructType(FieldList _structure,int isVariable);
 Type createFuncType(FuncList _parameter);
-Type createType(int _kind, int _basic, Type _elem, int _size, FieldList _structure, FuncList _function);
+Type createType(int _kind, int _basic, Type _elem, int _size, FieldList _structure, 
+                FuncList _function,int isVariable);
 Symbol createBlankTuple(char *name);
 Symbol createBasicTuple(char *name, int _basic);
 Symbol createArrayTuple(char *name, Type _elem, int _size);
 Symbol createStructTuple(char *name, FieldList _structure,int isVariable);
 Symbol createFuncTuple(char *name, FuncList _parameter);
+Symbol createTupleWithType(char* name,Type _type);
 Symbol findSymbol(char *name);
 void insertTuple(Symbol tuple);
 

@@ -8,10 +8,10 @@ int semanticCheck(node root)
     Program(root);
 }
 
-void semLog(char* msg)
+void semLog(char *msg)
 {
 #ifdef semanticdebug
-    printf("%s\n",msg);
+    printf("%s\n", msg);
 #endif
 }
 
@@ -40,19 +40,47 @@ void ExtDef(node root)
     printf("HAHA, Let's check the ExtDef\n");
     // need to complete
     Type type = Specifier(getKChild(root, 0));
-    if(strcmp(getKChild(root, 1)->name,"ExtDecList")==0){
-        //ExtDecList(getKChild(root, 1)->name, type);
+    if (strcmp(getKChild(root, 1)->name, "ExtDecList") == 0)
+    {
+        ExtDecList(getKChild(root, 1)->name, type);
     }
-    else if(strcmp(getKChild(root, 1)->name,"SEMI")==0){
+    else if (strcmp(getKChild(root, 1)->name, "SEMI") == 0)
+    {
         ;
     }
-    else if(strcmp(getKChild(root, 1)->name,"FunDec")==0){
+    else if (strcmp(getKChild(root, 1)->name, "FunDec") == 0)
+    {
         //FunDec(getKChild(root, 1), type);
         //Compst(getKChild(root, 2), type);
     }
 }
 
-//////ADD after push
+void ExtDecList(node root,Type extDecType)
+{
+    VarDec(root->child, extDecType);
+    //represent that ExtDecList has more than one child node,say, Dec with COMMA
+    if (getKChild(root, 1) != NULL)
+        DecList(getKChild(root, 2), extDecType);
+}
+
+void VarDec(node root,Type decType)
+{
+    if(strcmp(root->child->name,"TYPE")==0)
+    {
+        node IDNode=root->child;
+        if(findSymbol(IDNode->name)!=NULL)
+        {
+            errorOutput(3,IDNode->lineno);
+        }
+        else
+        {
+            Symbol VarDecTuple=createTupleWithType(IDNode->name,decType);
+            semLog("insertTuple(VarDecTuple)");
+            insertTuple(VarDecTuple);
+            semLog("insert success!");
+        }
+    }
+}
 
 Type Tag(node root)
 {
@@ -70,13 +98,13 @@ Type Tag(node root)
 Type StructSpecifier(node root)
 {
     semLog("start parsing StructSpecifier");
-    node tagNode=getKChild(root,1);
-    if(strcmp(tagNode->name,"Tag")==0)
+    node tagNode = getKChild(root, 1);
+    if (strcmp(tagNode->name, "Tag") == 0)
     {
         semLog("start parsing Tag");
         return Tag(tagNode->child);
     }
-    else if(strcmp(tagNode->name,"OptTag")==0)
+    else if (strcmp(tagNode->name, "OptTag") == 0)
     {
         return NULL;
     }
@@ -90,7 +118,7 @@ Type StructSpecifier(node root)
 Type Specifier(node root)
 {
     semLog("start parsing specifier");
-    node typeNode=getKChild(root, 0);
+    node typeNode = getKChild(root, 0);
     semLog(typeNode->name);
     if (strcmp(typeNode->name, "TYPE") == 0) //if specifier induces TYPE
     {
@@ -105,11 +133,37 @@ Type Specifier(node root)
             return createBasicType(2);
         }
     }
-    else if (strcmp(typeNode->name, "StructSpecifier")==0)
+    else if (strcmp(typeNode->name, "StructSpecifier") == 0)
         return StructSpecifier(getKChild(root, 0));
     else
     {
         printf("well,something wrong with lexical parsing\n");
         return NULL;
     }
+}
+
+void DefList(node root)
+{
+    if (!root || !root->child)
+        return;
+    Def(getKChild(root, 0));
+    DefList(getKChild(root, 1));
+}
+
+void Def(node root)
+{
+    Specifier(getKChild(root, 0));
+}
+
+void DecList(node root, Type decType)
+{
+    Dec(root->child, decType);
+    //represent that Dec has more than one child node,say, Dec with COMMA
+    if (getKChild(root, 1) != NULL)
+        DecList(getKChild(root, 2), decType);
+}
+
+void Dec(node root, Type decType)
+{
+
 }

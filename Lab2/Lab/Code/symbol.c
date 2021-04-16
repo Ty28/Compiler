@@ -1,14 +1,13 @@
 #include "extern.h"
 
-
 unsigned int hashProject(char *name)
 {
     unsigned int val = 0, i;
     for (; *name; ++name)
     {
         val = (val << 2) + *name;
-        if (i == val & ~HASHSIZE)
-            val = (val ^ (i >> 12)) & 0x3fff;
+        if (i = val & ~HASHSIZE)
+            val = (val ^ (i >> 12)) & HASHSIZE;
     }
     return val;
 }
@@ -40,11 +39,11 @@ Type createArrayType(Type _elem, int _size)
     return tupleType;
 }
 
-Type createStructType(FieldList _structure,int isVariable)
+Type createStructType(FieldList _structure, int isVariable)
 {
     Type tupleType = (Type)malloc(sizeof(struct Type_));
-    if(isVariable)
-        tupleType->kind=STRUCTVAR;
+    if (isVariable)
+        tupleType->kind = STRUCTVAR;
     else
         tupleType->kind = STRUCTURE;
     tupleType->u.structure = _structure;
@@ -59,7 +58,8 @@ Type createFuncType(FuncList _parameter)
     return tupleType;
 }
 
-Type createType(int _kind, int _basic, Type _elem, int _size, FieldList _structure, FuncList _function)
+Type createType(int _kind, int _basic, Type _elem, int _size,
+                FieldList _structure, FuncList _function, int isVariable)
 {
     switch (_kind)
     {
@@ -68,7 +68,7 @@ Type createType(int _kind, int _basic, Type _elem, int _size, FieldList _structu
     case (1):
         return createArrayType(_elem, _size);
     case (2):
-        return createStructType(_structure);
+        return createStructType(_structure, isVariable);
     case (3):
         return createFuncType(_function);
     }
@@ -98,7 +98,7 @@ Symbol createArrayTuple(char *name, Type _elem, int _size)
     return newTuple;
 }
 
-Symbol createStructTuple(char *name, FieldList _structure,int isVariable)
+Symbol createStructTuple(char *name, FieldList _structure, int isVariable)
 {
     Type tupleType = createStructType(_structure, isVariable);
     Symbol newTuple = createBlankTuple(name);
@@ -111,6 +111,13 @@ Symbol createFuncTuple(char *name, FuncList _parameter)
     Type tupleType = createFuncType(_parameter);
     Symbol newTuple = createBlankTuple(name);
     newTuple->type = tupleType;
+    return newTuple;
+}
+
+Symbol createTupleWithType(char *name, Type _type)
+{
+    Symbol newTuple = createBlankTuple(name);
+    newTuple->type = _type;
     return newTuple;
 }
 
