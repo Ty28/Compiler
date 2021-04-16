@@ -73,7 +73,7 @@ Symbol VarDec(node root, Type decType)
         if (findSymbol(IDNode->val) != NULL)
         {
             semLog(root->child->val);
-            errorOutput(3,root->child->lineno);
+            errorOutput(3, root->child->lineno);
             return NULL;
         }
         else
@@ -88,13 +88,13 @@ Symbol VarDec(node root, Type decType)
     else if (strcmp(root->child->name, "VarDec") == 0)
     {
         Symbol varDecTuple = VarDec(root->child, decType);
-        if(varDecTuple!=NULL)
+        if (varDecTuple != NULL)
         {
-            Type lastArrayType=varDecTuple->type;
-            int arraySize=atoi(getKChild(root,2)->val);
-            printf("last size:%d\n",arraySize);
-            Type newArrayType=createArrayType(lastArrayType,arraySize);
-            varDecTuple->type=newArrayType;
+            Type lastArrayType = varDecTuple->type;
+            int arraySize = atoi(getKChild(root, 2)->val);
+            //printf("last size:%d\n",arraySize);
+            Type newArrayType = createArrayType(lastArrayType, arraySize);
+            varDecTuple->type = newArrayType;
         }
         return varDecTuple;
     }
@@ -104,17 +104,86 @@ Symbol VarDec(node root, Type decType)
     }
 }
 
+FieldList StructVarDec(node root, Type decType)
+{
+    semLog("start parsing VarDec");
+    if (strcmp(root->child->name, "ID") == 0)
+    {
+        node IDNode = root->child;
+        //judge whether the val of this struct member exist in our symbol table
+        //and TODO:I think we also need to judge whether it exists in the fieldLists
+        if (findSymbol(IDNode->val) != NULL)
+        {
+            semLog(root->child->val);
+            errorOutput(3, root->child->lineno);
+            return NULL;
+        }
+        else
+        {
+            FieldList varDecField = createFieldWithType(IDNode->val, decType);
+            semLog("create field,and we don't need to insert");
+            return varDecField;
+        }
+    }
+    else if (strcmp(root->child->name, "VarDec") == 0)
+    {
+        FieldList varDecField = StructVarDec(root->child, decType);
+        if (varDecField != NULL)
+        {
+            Type lastArrayType = varDecField->type;
+            int arraySize = atoi(getKChild(root, 2)->val);
+            //printf("last size:%d\n",arraySize);
+            Type newArrayType = createArrayType(lastArrayType, arraySize);
+            varDecField->type = newArrayType;
+        }
+        return varDecField;
+    }
+    else
+    {
+        semLog("some wrong with VarDec syntax");
+    }
+}
+
 Type Tag(node root)
 {
-    semLog("start parsing Tag");
-    Symbol findTuple = findSymbol(root->name);
+    node IDNode = root->child;
+    //printf("IDNode->name:%s\n", IDNode->name);
+    Symbol findTuple = findSymbol(IDNode->val);
     if (findTuple == NULL)
     {
-        errorOutput(1, root->lineno);
+        errorOutput(1, IDNode->lineno);
         return NULL;
     }
     else
         return findTuple->type;
+}
+
+Type OptTag(node root)
+{
+    //get DefList
+    node defListNode = root->sibling->sibling;
+    //link the members and return member head
+    FieldList structMemberHead = StructDefList(defListNode);
+    //now create struct type with fieldlist
+    Type newStructType = createStructType(structMemberHead, 0);
+    if (root->child != NULL) //the struct type has name
+    {
+        semLog("struct type has name");
+        Symbol findTuple = findSymbol(root->child->val);
+        if (findTuple != NULL) //struct type name conflict
+        {
+            errorOutput(16, root->lineno);
+            return NULL;
+        }
+        Symbol newStructTuple = createTupleWithType(root->child->val, newStructType);
+        insertTuple(newStructTuple);
+    }
+    else //the struct type doesn't have name
+    {
+        semLog("struct type doesn't have name");
+        //do not need to insert into hashTable , just return type is OKAY
+    }
+    return newStructType;
 }
 
 Type StructSpecifier(node root)
@@ -124,11 +193,12 @@ Type StructSpecifier(node root)
     if (strcmp(tagNode->name, "Tag") == 0)
     {
         semLog("start parsing Tag");
-        return Tag(tagNode->child);
+        return Tag(tagNode);
     }
     else if (strcmp(tagNode->name, "OptTag") == 0)
     {
-        return NULL;
+        semLog("start parsing OptTag");
+        return OptTag(tagNode);
     }
     else
     {
@@ -164,6 +234,12 @@ Type Specifier(node root)
     }
 }
 
+void Def(node root)
+{
+    Type decListType = Specifier(getKChild(root, 0));
+    DecList(getKChild(root, 1), decListType);
+}
+
 void DefList(node root)
 {
     if (!root || !root->child)
@@ -172,9 +248,27 @@ void DefList(node root)
     DefList(getKChild(root, 1));
 }
 
-void Def(node root)
+FieldList StructDefList(node root)
 {
-    Specifier(getKChild(root, 0));
+    semLog("starting parsing DefList of StructSpecifier");
+    //printf("StructDefList root:%s\n", root->name);
+    if (root == NULL || root->child == NULL)
+        return NULL;
+    FieldList fieldHead = StructDef(root->child);
+    if (fieldHead == NULL)
+        return NULL; //this means that semantic error happens in fieldHead;
+    if (getKChild(root, 1) != NULL)
+    {
+        fieldHead->tail = StructDefList(getKChild(root, 2));
+    }
+    return fieldHead;
+}
+
+FieldList StructDef(node root)
+{
+    semLog("starting parsing Def of StructSpecifier");
+    Type decListType = Specifier(getKChild(root, 0));
+    return StructDecList(getKChild(root, 1), decListType);
 }
 
 void DecList(node root, Type decType)
@@ -187,4 +281,24 @@ void DecList(node root, Type decType)
 
 void Dec(node root, Type decType)
 {
+    VarDec(root, decType);
+}
+
+FieldList StructDecList(node root, Type decType)
+{
+    semLog("starting parsing DecList of StructSpecifier");
+    FieldList decFieldHead = StructDec(root->child, decType);
+    if(decFieldHead==NULL)
+        return NULL;//it means that error happens in decFieldHead
+    //represent that Dec has more than one child node,say, Dec with COMMA
+    if (getKChild(root, 1) != NULL)
+        decFieldHead->tail = StructDecList(getKChild(root, 2), decType);
+    return decFieldHead;
+}
+
+FieldList StructDec(node root, Type decType)
+{
+    semLog("starting parsing Dec of StructSpecifier");
+    return StructVarDec(root->child, decType);
+    //TODO:we also need to finish EXPRESSION
 }
