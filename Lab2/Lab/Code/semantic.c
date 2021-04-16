@@ -2,7 +2,7 @@
 
 int semanticCheck(node root)
 {
-    printf("HAHA, Let's begin the semantic check\n");
+    // printf("HAHA, Let's begin the semantic check\n");
     // printNode(root);
     symbolTable = createSymbolTable();
     Program(root);
@@ -30,19 +30,19 @@ void ExtDefList(node root)
 {
     if (!root)
         return;
-    printf("HAHA, Let's check the ExtDefList\n");
+    //semLog("HAHA, Let's check the ExtDefList");
     ExtDef(getKChild(root, 0));
     ExtDefList(getKChild(root, 1));
 }
 
 void ExtDef(node root)
 {
-    printf("HAHA, Let's check the ExtDef\n");
+    //semLog("HAHA, Let's check the ExtDef");
     // need to complete
     Type type = Specifier(getKChild(root, 0));
     if (strcmp(getKChild(root, 1)->name, "ExtDecList") == 0)
     {
-        ExtDecList(getKChild(root, 1)->name, type);
+        ExtDecList(getKChild(root, 1), type);
     }
     else if (strcmp(getKChild(root, 1)->name, "SEMI") == 0)
     {
@@ -57,24 +57,27 @@ void ExtDef(node root)
 
 void ExtDecList(node root,Type extDecType)
 {
+    semLog("start parsing ExtDecList");
     VarDec(root->child, extDecType);
-    //represent that ExtDecList has more than one child node,say, Dec with COMMA
+    //represent that ExtDecList has more than one child node,say, VarDec with COMMA
     if (getKChild(root, 1) != NULL)
-        DecList(getKChild(root, 2), extDecType);
+        ExtDecList(getKChild(root, 2), extDecType);
 }
 
 void VarDec(node root,Type decType)
 {
-    if(strcmp(root->child->name,"TYPE")==0)
+    semLog("start parsing VarDec");
+    if(strcmp(root->child->name,"ID")==0)
     {
         node IDNode=root->child;
-        if(findSymbol(IDNode->name)!=NULL)
+        if(findSymbol(IDNode->val)!=NULL)
         {
+            semLog(root->child->val);
             errorOutput(3,IDNode->lineno);
         }
         else
         {
-            Symbol VarDecTuple=createTupleWithType(IDNode->name,decType);
+            Symbol VarDecTuple=createTupleWithType(IDNode->val,decType);
             semLog("insertTuple(VarDecTuple)");
             insertTuple(VarDecTuple);
             semLog("insert success!");
