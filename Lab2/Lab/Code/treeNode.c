@@ -77,6 +77,20 @@ void printNode(node root_)
     }
 }
 
+//new API: count the cnt of root
+int getChildNum(node root_) {
+    printNode(root_);
+    if(root_ == NULL)
+        return 0;
+    if(root_->child == NULL)
+        return 0;
+    int cnt = 1;
+    node p = root_->child;
+    while(p->sibling)
+        p = p->sibling, cnt += 1;
+    return cnt;
+}
+
 void preOrder(node root_, int depth)
 {
     if (!root_)
