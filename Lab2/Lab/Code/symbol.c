@@ -58,6 +58,12 @@ Type createFuncType(FuncList _parameter)
     return tupleType;
 }
 
+Type createErrorType(int _errorCode) {
+    Type tupleType = (Type)malloc(sizeof(struct Type_));
+    tupleType->kind = ERROR;
+    tupleType->u.errorCode = _errorCode;
+}
+
 Type createType(int _kind, int _basic, Type _elem, int _size,
                 FieldList _structure, FuncList _function, int isVariable)
 {

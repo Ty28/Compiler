@@ -16,7 +16,8 @@ struct Type_
         ARRAY,
         STRUCTURE,
         FUNCTION,
-        STRUCTVAR
+        STRUCTVAR,
+        ERROR
     } kind;
     union
     {
@@ -33,6 +34,7 @@ struct Type_
         } array;
         FieldList structure;
         FuncList function;
+        int errorCode;
     } u;
 };
 
@@ -82,4 +84,6 @@ void insertTuple(Symbol tuple);
 int isTypeEqual(Type t1, Type t2);
 int isStructEqual(FieldList f1, FieldList f2);
 int isFuncEqual(FuncList f1, FuncList f2);
+
+Type createErrorType(int _errorCode);
 #endif

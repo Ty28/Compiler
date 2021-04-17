@@ -10,6 +10,7 @@ node createNode(char name_[], char val_[], int lineno_, int type_) {
     root_->type = type_;
     root_->child = NULL;
     root_->sibling = NULL;
+    root_->flag = 0;
     // return root;
     return root_;
 }

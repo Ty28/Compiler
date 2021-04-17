@@ -376,21 +376,27 @@ Type Exp(node root) {
     node n2 = getKChild(root, 2);
     node n3 = getKChild(root, 3);
     if(cnt == 1) {
+        // Exp --> ID
         if(strcmp(n0->name, "ID") == 0) {
             printf("%s\n", n0->val);
             Symbol findTuple = findSymbol(n0->val);
             if (findTuple == NULL) {
                 errorOutput(1, n0->lineno, n0->val);
-                return NULL;
+                return createErrorType(1);
             }
             else {
+                // left-hand
+                if(findTuple->type->kind != FUNCTION)
+                    root->flag = 1;
                 return findTuple->type;
             }
         }
+        // Exp --> INT
         else if(strcmp(n0->name, "INT") == 0) {
             semLog("return type int");
             return createBasicType(1);
         }
+        // Exp --> FLOAT
         else if(strcmp(n0->name, "FLOAT") == 0) {
             semLog("return type int");
             return createBasicType(2);
@@ -398,41 +404,54 @@ Type Exp(node root) {
     }
     else if(cnt == 2) {
         Type t = Exp(n1);
+        // Exp --> MINUS Exp
         if(strcmp(n0->name, "MINUS") == 0) {
             if(t->kind != BASIC) {
                 errorOutput(7, n1->lineno, "");
-                return NULL;
+                return createErrorType(7);
             }
             return t;
         }
+        // Exp --> NOT Exp
         else if(strcmp(n0->name, "NOT") == 0) {
             if(t->kind == BASIC && t->u.basic == 1)
                 return t;
             else {
                 errorOutput(7, n1->lineno, "");
-                return NULL;
+                return createErrorType(7);
             }   
         }
     }
     else if(cnt == 3) {
+        // Exp --> LP Exp RP
         if(strcmp(n0->name, "LP") == 0) { 
             return Exp(n1);
         }
+        // Exp --> ID LP RP
         else if(strcmp(n0->name, "ID") == 0) { 
             return ExpFunc(root);
         }
+        // Exp --> Exp ASSIGNOP Exp
         else if(strcmp(n1->name, "ASSIGNOP") == 0) {
             Type t0 = Exp(n0);
             Type t2 = Exp(n2);
             if(isTypeEqual(t0, t2)) {
-                // TODO 1: handle the left hand, maybe modify Type
-                return t0;
+                // TODO 1: handle the left hand, maybe modify
+                if(n0->flag) {
+                    root->flag = 1;
+                    return t0;
+                }
+                else {
+                    errorOutput(6, root->lineno, "");
+                    return createErrorType(6);
+                }
             }
             else {
                 errorOutput(5, n0->lineno, "");
-                return NULL;
+                return createErrorType(5);
             }
         }
+        // Exp --> Exp AND Exp | Exp --> Exp OR Exp
         else if(strcmp(n1->name, "AND") == 0 || strcmp(n1->name, "OR") == 0) {
             Type t0 = Exp(n0);
             Type t2 = Exp(n2);
@@ -441,13 +460,14 @@ Type Exp(node root) {
             }
             else {
                 errorOutput(7, n0->lineno, "");
-                return NULL;
+                return createErrorType(7);
             }
         }
+        // Exp --> Exp DOT Exp
         else if(strcmp(n1->name, "DOT") == 0) {
-            // struct
             return ExpStruct(root);
         }
+        // Exp --> Exp RELOP Exp
         else if(strcmp(n1->name, "RELOP") == 0){
             Type t0 = Exp(n0);
             Type t2 = Exp(n2);
@@ -456,9 +476,10 @@ Type Exp(node root) {
             }
             else {
                 errorOutput(7, n0->lineno, "");
-                return NULL;
+                return createErrorType(7);
             }
         }
+        // Exp --> Exp ADD | SUB | STAR | DIV Exp
         else {
             Type t0 = Exp(n0);
             Type t2 = Exp(n2);
@@ -467,7 +488,7 @@ Type Exp(node root) {
             }
             else {
                 errorOutput(7, n0->lineno, "");
-                return NULL;
+                return createErrorType(7);
             }
         }
     }
@@ -479,16 +500,60 @@ Type Exp(node root) {
             return ExpArray(root);
     }
     semLog("There's something wrong about Exp!");
-    return NULL;
+    return createErrorType(0);
 }
 // TODO 2: finish the following function
 
 Type ExpFunc(node root) {
     return NULL;
+
 }
+// Exp --> Exp DOT Exp
 Type ExpStruct(node root) {
-    return NULL;
+    node n0 = getKChild(root, 0);
+    node n2 = getKChild(root, 2);
+    Type t0 = Exp(n0);
+    Type t2 = Exp(n2);
+    if(t0->kind == STRUCTVAR) {
+        FieldList p = t0->u.structure;
+        while(p) {
+            if(strcmp(p->name, n2->val) == 0)
+                break;
+            p = p->tail;
+        }
+        if(p) {
+            root->flag = 1;
+            return p->type;
+        }
+        else {
+            errorOutput(14, root->lineno, n2->val);
+            return createErrorType(14);
+        }
+    }
+    else if(t0->kind == STRUCTURE) {
+        errorOutput(1, n0->lineno, n0->val);
+        return createErrorType(1);
+    }
+    else {
+        errorOutput(13, n0->lineno, "");
+        return createErrorType(13);
+    }
 }
+
+// Exp LB Exp RB
 Type ExpArray(node root) {
-    return NULL;
+    node n0 = getKChild(root, 0);
+    node n2 = getKChild(root, 2);
+    Type t0 = Exp(n0);
+    Type t2 = Exp(n2);
+    if(t0->kind != ARRAY) {
+        errorOutput(10, n0->lineno, n0->val);
+        return createErrorType(10);
+    }
+    if(t2->kind != BASIC || t2->u.basic != 1) {
+        errorOutput(12, n0->lineno, n0->val);
+        return createErrorType(12);
+    }
+    root->flag = 1;
+    return t0->u.array.elem;
 }
