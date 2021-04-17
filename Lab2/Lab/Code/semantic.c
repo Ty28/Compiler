@@ -120,6 +120,8 @@ FieldList StructVarDec(node root, Type decType)
         }
         else
         {
+            if(decType->kind==STRUCTURE)
+                decType->kind = STRUCTVAR; //we need to change the struct type into struct variable
             FieldList varDecField = createFieldWithType(IDNode->val, decType);
             semLog("create field,and we don't need to insert");
             return varDecField;
@@ -169,6 +171,7 @@ Type OptTag(node root)
     if (root->child != NULL) //the struct type has name
     {
         semLog("struct type has name");
+        //printf("his name is %s\n", root->child->val);
         Symbol findTuple = findSymbol(root->child->val);
         if (findTuple != NULL) //struct type name conflict
         {
@@ -188,28 +191,30 @@ Type OptTag(node root)
 
 Type StructSpecifier(node root)
 {
-    semLog("start parsing StructSpecifier");
+    semLog("start parsing StructSpecifier\n");
     node tagNode = getKChild(root, 1);
+    // node current = getKChild(root, 0);
+    // while (current != NULL)
+    // {
+    //     printf("%s ",current->name);
+    //     current=current->sibling;
+    // }
+    // printf("\n");
     if (strcmp(tagNode->name, "Tag") == 0)
     {
-        semLog("start parsing Tag");
+        semLog("start parsing Tag\n");
         return Tag(tagNode);
-    }
-    else if (strcmp(tagNode->name, "OptTag") == 0)
-    {
-        semLog("start parsing OptTag");
-        return OptTag(tagNode);
     }
     else
     {
-        semLog("something wrong with syntax in StructSpecifier\n");
-        return NULL;
+        semLog("start parsing OptTag\n");
+        return OptTag(tagNode);
     }
 }
 
 Type Specifier(node root)
 {
-    semLog("start parsing specifier");
+    semLog("start parsing specifier\n");
     node typeNode = getKChild(root, 0);
     semLog(typeNode->name);
     if (strcmp(typeNode->name, "TYPE") == 0) //if specifier induces TYPE
@@ -259,7 +264,8 @@ FieldList StructDefList(node root)
         return NULL; //this means that semantic error happens in fieldHead;
     if (getKChild(root, 1) != NULL)
     {
-        fieldHead->tail = StructDefList(getKChild(root, 2));
+        FieldList fieldNext = StructDefList(getKChild(root, 1));
+        fieldHead->tail = fieldNext;
     }
     return fieldHead;
 }
@@ -288,8 +294,8 @@ FieldList StructDecList(node root, Type decType)
 {
     semLog("starting parsing DecList of StructSpecifier");
     FieldList decFieldHead = StructDec(root->child, decType);
-    if(decFieldHead==NULL)
-        return NULL;//it means that error happens in decFieldHead
+    if (decFieldHead == NULL)
+        return NULL; //it means that error happens in decFieldHead
     //represent that Dec has more than one child node,say, Dec with COMMA
     if (getKChild(root, 1) != NULL)
         decFieldHead->tail = StructDecList(getKChild(root, 2), decType);
