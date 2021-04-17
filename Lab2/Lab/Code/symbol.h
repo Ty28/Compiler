@@ -15,7 +15,8 @@ struct Type_
         BASIC,
         ARRAY,
         STRUCTURE,
-        FUNCTION
+        FUNCTION,
+        STRUCTVAR
     } kind;
     union
     {
@@ -61,15 +62,24 @@ Symbol *createSymbolTable();
 
 Type createBasicType(int _basic);
 Type createArrayType(Type _elem, int _size);
-Type createStructType(FieldList _structure);
+Type createStructType(FieldList _structure,int isVariable);
 Type createFuncType(FuncList _parameter);
-Type createType(int _kind, int _basic, Type _elem, int _size, FieldList _structure, FuncList _function);
+Type createType(int _kind, int _basic, Type _elem, int _size, FieldList _structure, 
+                FuncList _function,int isVariable);
 Symbol createBlankTuple(char *name);
 Symbol createBasicTuple(char *name, int _basic);
 Symbol createArrayTuple(char *name, Type _elem, int _size);
-Symbol createStructTuple(char *name, FieldList _structure);
+Symbol createStructTuple(char *name, FieldList _structure,int isVariable);
 Symbol createFuncTuple(char *name, FuncList _parameter);
+//new Func
+Symbol createTupleWithType(char* name,Type _type);
+FieldList createBlankField(char* name);
+FieldList createFieldWithType(char* name,Type _type);
+//
 Symbol findSymbol(char *name);
 void insertTuple(Symbol tuple);
-
+// add func: check Type a & Type b
+int isTypeEqual(Type t1, Type t2);
+int isStructEqual(FieldList f1, FieldList f2);
+int isFuncEqual(FuncList f1, FuncList f2);
 #endif

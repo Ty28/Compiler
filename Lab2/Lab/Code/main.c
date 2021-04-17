@@ -14,7 +14,6 @@ int main(int argc, char** argv) {
         preOrder(ROOT, 0);
         semanticCheck(ROOT);
     }
-    // else 
-    //     printf("\n");
+    // errorOutput(1, 1, "asda");
     return 0;
 }

@@ -22,6 +22,7 @@ void insertNode(node root_, int args, ...) {
     root_->child = c;
     for(int i = 1; i < args; i++) {
         c->sibling = va_arg(s, node);
+        // printNode(c->sibling);
         if(c->sibling)
             c = c->sibling;
     }
@@ -34,17 +35,34 @@ node getKChild(node root_, int k) {
     p = p->child;
     if(k == 0)
         return p;
-    
-    while(k--)
+    while(p && k--)
         p = p->sibling;
     //printNode(p);
     return p;
 }
 
+//new API: count the cnt of root
+int getChildNum(node root_) {
+    printNode(root_);
+    if(root_ == NULL)
+        return 0;
+    if(root_->child == NULL)
+        return 0;
+    int cnt = 1;
+    node p = root_->child;
+    while(p->sibling)
+        p = p->sibling, cnt += 1;
+    return cnt;
+}
+
 void printNode(node root_)
 {
     if(!root_)
+    {
+        // printf("NULL\n");
         return;
+    }
+        
     if (root_->type == 0)
         printf("%s (%d)\n", root_->name, root_->lineno);
     else

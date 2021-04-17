@@ -1,14 +1,13 @@
 #include "extern.h"
 
-
 unsigned int hashProject(char *name)
 {
     unsigned int val = 0, i;
     for (; *name; ++name)
     {
         val = (val << 2) + *name;
-        if (i == val & ~HASHSIZE)
-            val = (val ^ (i >> 12)) & 0x3fff;
+        if (i = val & ~HASHSIZE)
+            val = (val ^ (i >> 12)) & HASHSIZE;
     }
     return val;
 }
@@ -40,10 +39,13 @@ Type createArrayType(Type _elem, int _size)
     return tupleType;
 }
 
-Type createStructType(FieldList _structure)
+Type createStructType(FieldList _structure, int isVariable)
 {
     Type tupleType = (Type)malloc(sizeof(struct Type_));
-    tupleType->kind = STRUCTURE;
+    if (isVariable)
+        tupleType->kind = STRUCTVAR;
+    else
+        tupleType->kind = STRUCTURE;
     tupleType->u.structure = _structure;
     return tupleType;
 }
@@ -56,7 +58,8 @@ Type createFuncType(FuncList _parameter)
     return tupleType;
 }
 
-Type createType(int _kind, int _basic, Type _elem, int _size, FieldList _structure, FuncList _function)
+Type createType(int _kind, int _basic, Type _elem, int _size,
+                FieldList _structure, FuncList _function, int isVariable)
 {
     switch (_kind)
     {
@@ -65,7 +68,7 @@ Type createType(int _kind, int _basic, Type _elem, int _size, FieldList _structu
     case (1):
         return createArrayType(_elem, _size);
     case (2):
-        return createStructType(_structure);
+        return createStructType(_structure, isVariable);
     case (3):
         return createFuncType(_function);
     }
@@ -77,6 +80,21 @@ Symbol createBlankTuple(char *name)
     strcpy(newTuple->name, name);
     newTuple->hashLink = NULL;
     return newTuple;
+}
+
+FieldList createBlankField(char *name)
+{
+    FieldList newField = (FieldList)malloc(sizeof(struct FieldList_));
+    strcpy(newField->name, name);
+    newField->tail = NULL;
+    return newField;
+}
+
+FieldList createFieldWithType(char *name, Type _type)
+{
+    FieldList newField = createBlankField(name);
+    newField->type = _type;
+    return newField;
 }
 
 Symbol createBasicTuple(char *name, int _basic)
@@ -95,9 +113,9 @@ Symbol createArrayTuple(char *name, Type _elem, int _size)
     return newTuple;
 }
 
-Symbol createStructTuple(char *name, FieldList _structure)
+Symbol createStructTuple(char *name, FieldList _structure, int isVariable)
 {
-    Type tupleType = createStructType(_structure);
+    Type tupleType = createStructType(_structure, isVariable);
     Symbol newTuple = createBlankTuple(name);
     newTuple->type = tupleType;
     return newTuple;
@@ -108,6 +126,13 @@ Symbol createFuncTuple(char *name, FuncList _parameter)
     Type tupleType = createFuncType(_parameter);
     Symbol newTuple = createBlankTuple(name);
     newTuple->type = tupleType;
+    return newTuple;
+}
+
+Symbol createTupleWithType(char *name, Type _type)
+{
+    Symbol newTuple = createBlankTuple(name);
+    newTuple->type = _type;
     return newTuple;
 }
 
@@ -144,4 +169,44 @@ void insertTuple(Symbol tuple)
     while (current->hashLink != NULL)
         current = current->hashLink;
     current->hashLink = tuple;
+}
+
+int isTypeEqual(Type t1, Type t2) {
+    if(t1->kind != t2->kind)
+        return 0;
+    if(t1->kind == BASIC)
+        if(t1->u.basic == t2->u.basic)
+            return 1;
+    else if(t1->kind == ARRAY)
+        if(isTypeEqual(t1->u.array.elem, t2->u.array.elem) == 1)
+            return 1;
+    else if(t1->kind == STRUCTURE || t1->kind == STRUCTVAR) 
+        if(isStructEqual(t1->u.structure, t2->u.structure) == 1)
+            return 1;
+    else if(t1->kind == FUNCTION) 
+        if(isFuncEqual(t1->u.function, t2->u.function) == 1)
+            return 1;
+    return 0;
+}
+
+int isStructEqual(FieldList f1, FieldList f2) {
+    if(f1 == NULL && f2 == NULL)
+        return 1;
+    else if(f1 == NULL || f2 == NULL)
+        return 0;
+    if(isTypeEqual(f1->type, f2->type) == 1 && isStructEqual(f1->tail, f2->tail) == 1)
+        return 1;
+    else
+        return 0;
+}
+
+int isFuncEqual(FuncList f1, FuncList f2) {
+    if(f1 == NULL && f2 == NULL)
+        return 1;
+    else if(f1 == NULL || f2 == NULL)
+        return 0;
+    if(strcmp(f1->name, f2->name) == 0 && isTypeEqual(f1->type, f2->type) == 1)
+        return isFuncEqual(f1->tail, f2->tail);
+    else 
+        return 0;
 }
