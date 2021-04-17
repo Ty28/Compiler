@@ -84,7 +84,7 @@ Symbol createBlankTuple(char *name)
 
 FieldList createBlankField(char *name)
 {
-    FieldList newField = (Symbol)malloc(sizeof(struct FieldList_));
+    FieldList newField = (FieldList)malloc(sizeof(struct FieldList_));
     strcpy(newField->name, name);
     newField->tail = NULL;
     return newField;

@@ -75,7 +75,7 @@ Symbol createFuncTuple(char *name, FuncList _parameter);
 Symbol createTupleWithType(char* name,Type _type);
 FieldList createBlankField(char* name);
 FieldList createFieldWithType(char* name,Type _type);
-//
+///////////////////////////////////////
 Symbol findSymbol(char *name);
 void insertTuple(Symbol tuple);
 
