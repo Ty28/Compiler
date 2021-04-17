@@ -97,6 +97,21 @@ FieldList createFieldWithType(char *name, Type _type)
     return newField;
 }
 
+FuncList createBlankParam(char *name)
+{
+    FuncList newParam = (FuncList)malloc(sizeof(struct FuncList_));
+    strcpy(newParam->name, name);
+    newParam->tail = NULL;
+    return newParam;
+}
+
+FuncList createParamWithType(char *name,Type _type)
+{
+    FuncList newParam=createBlankParam(name);
+    newParam->type=_type;
+    return newParam;
+}
+
 Symbol createBasicTuple(char *name, int _basic)
 {
     Type tupleType = createBasicType(_basic);

@@ -40,6 +40,8 @@ void ExtDef(node root)
     //semLog("HAHA, Let's check the ExtDef");
     // need to complete
     Type type = Specifier(getKChild(root, 0));
+    if (type == NULL)
+        return; //type=NULL means error happened;TODO:also we can choose not to return
     if (strcmp(getKChild(root, 1)->name, "ExtDecList") == 0)
     {
         ExtDecList(getKChild(root, 1), type);
@@ -50,7 +52,7 @@ void ExtDef(node root)
     }
     else if (strcmp(getKChild(root, 1)->name, "FunDec") == 0)
     {
-        //FunDec(getKChild(root, 1), type);
+        FunDec(getKChild(root, 1), type);
         //Compst(getKChild(root, 2), type);
     }
 }
@@ -66,6 +68,8 @@ void ExtDecList(node root, Type extDecType)
 
 Symbol VarDec(node root, Type decType)
 {
+    if (decType == NULL)
+        return NULL;
     semLog("start parsing VarDec");
     if (strcmp(root->child->name, "ID") == 0)
     {
@@ -78,6 +82,8 @@ Symbol VarDec(node root, Type decType)
         }
         else
         {
+            if (decType->kind == STRUCTURE)
+                decType->kind = STRUCTVAR; //we need to change the struct type into struct variable
             Symbol VarDecTuple = createTupleWithType(IDNode->val, decType);
             semLog("insertTuple(VarDecTuple)");
             insertTuple(VarDecTuple);
@@ -104,9 +110,58 @@ Symbol VarDec(node root, Type decType)
     }
 }
 
+FuncList FuncVarDec(node root, Type decType)
+{
+    if (decType == NULL)
+        return NULL;
+    semLog("start parsing FuncVarDec");
+    if (strcmp(root->child->name, "ID") == 0)
+    {
+        node IDNode = root->child;
+        //judge whether the val of this formal parameter exist in our symbol table
+        if (findSymbol(IDNode->val) != NULL)
+        {
+            semLog(root->child->val);
+            errorOutput(3, root->child->lineno);
+            return NULL;
+        }
+        else
+        {
+            if (decType->kind == STRUCTURE)
+                decType->kind = STRUCTVAR; //we need to change the struct type into struct variable
+            FuncList varDecParam = createParamWithType(IDNode->val, decType);
+            Symbol ParamTuple = createTupleWithType(IDNode->val, decType);
+            //we also need to insert the parameter into our symbol table
+            semLog("insertTuple(ParamTuple)");
+            insertTuple(ParamTuple);
+            semLog("insert success!");
+            return varDecParam;
+        }
+    }
+    else if (strcmp(root->child->name, "VarDec") == 0)
+    {
+        FuncList varDecParam = FuncVarDec(root->child, decType);
+        if (varDecParam != NULL)
+        {
+            Type lastArrayType = varDecParam->type;
+            int arraySize = atoi(getKChild(root, 2)->val);
+            //printf("last size:%d\n",arraySize);
+            Type newArrayType = createArrayType(lastArrayType, arraySize);
+            varDecParam->type = newArrayType;
+        }
+        return varDecParam;
+    }
+    else
+    {
+        printf("some wrong with VarDec syntax");
+    }
+}
+
 FieldList StructVarDec(node root, Type decType)
 {
-    semLog("start parsing VarDec");
+    if (decType == NULL)
+        return NULL;
+    semLog("start parsing StructVarDec");
     if (strcmp(root->child->name, "ID") == 0)
     {
         node IDNode = root->child;
@@ -120,7 +175,7 @@ FieldList StructVarDec(node root, Type decType)
         }
         else
         {
-            if(decType->kind==STRUCTURE)
+            if (decType->kind == STRUCTURE)
                 decType->kind = STRUCTVAR; //we need to change the struct type into struct variable
             FieldList varDecField = createFieldWithType(IDNode->val, decType);
             semLog("create field,and we don't need to insert");
@@ -153,7 +208,7 @@ Type Tag(node root)
     Symbol findTuple = findSymbol(IDNode->val);
     if (findTuple == NULL)
     {
-        errorOutput(1, IDNode->lineno);
+        errorOutput(17, IDNode->lineno);
         return NULL;
     }
     else
@@ -189,29 +244,6 @@ Type OptTag(node root)
     return newStructType;
 }
 
-Type StructSpecifier(node root)
-{
-    semLog("start parsing StructSpecifier\n");
-    node tagNode = getKChild(root, 1);
-    // node current = getKChild(root, 0);
-    // while (current != NULL)
-    // {
-    //     printf("%s ",current->name);
-    //     current=current->sibling;
-    // }
-    // printf("\n");
-    if (strcmp(tagNode->name, "Tag") == 0)
-    {
-        semLog("start parsing Tag\n");
-        return Tag(tagNode);
-    }
-    else
-    {
-        semLog("start parsing OptTag\n");
-        return OptTag(tagNode);
-    }
-}
-
 Type Specifier(node root)
 {
     semLog("start parsing specifier\n");
@@ -239,9 +271,34 @@ Type Specifier(node root)
     }
 }
 
+Type StructSpecifier(node root)
+{
+    semLog("start parsing StructSpecifier\n");
+    node tagNode = getKChild(root, 1);
+    // node current = getKChild(root, 0);
+    // while (current != NULL)
+    // {
+    //     printf("%s ",current->name);
+    //     current=current->sibling;
+    // }
+    // printf("\n");
+    if (strcmp(tagNode->name, "Tag") == 0)
+    {
+        semLog("start parsing Tag\n");
+        return Tag(tagNode);
+    }
+    else
+    {
+        semLog("start parsing OptTag\n");
+        return OptTag(tagNode);
+    }
+}
+
 void Def(node root)
 {
     Type decListType = Specifier(getKChild(root, 0));
+    if (decListType == NULL)
+        return;
     DecList(getKChild(root, 1), decListType);
 }
 
@@ -300,6 +357,7 @@ FieldList StructDecList(node root, Type decType)
     if (getKChild(root, 1) != NULL)
         decFieldHead->tail = StructDecList(getKChild(root, 2), decType);
     return decFieldHead;
+    ////TODO decList should be linked,stil some error to fix
 }
 
 FieldList StructDec(node root, Type decType)
@@ -307,4 +365,49 @@ FieldList StructDec(node root, Type decType)
     semLog("starting parsing Dec of StructSpecifier");
     return StructVarDec(root->child, decType);
     //TODO:we also need to finish EXPRESSION
+}
+
+void FunDec(node root, Type funcDecType)
+{
+    semLog("start parsing FunDec of StructSpecifier");
+    Symbol findTuple = findSymbol(root->child->val);
+    if (findTuple != NULL)
+    {
+        errorOutput(4, root->child->lineno); //func name redefined;
+        return;
+    }
+    FuncList paramList = NULL;
+    if (getKChild(root, 3) != NULL) //it means the function has parameters
+    {
+        node varListNode = getKChild(root, 2); //get VarList
+        paramList = VarList(varListNode);
+        if (paramList == NULL)
+            return;
+        //I mean if semantic error happens in the params,we just don't create this func
+        //TODO:but we can also create it for later semantic judge?
+    }
+    Type newFuncType = createFuncType(paramList);
+    Symbol newFuncTuple = createTupleWithType(root->child->val, newFuncType);
+    insertTuple(newFuncTuple);
+}
+
+FuncList VarList(node root)
+{
+    FuncList paramListHead = ParamDec(root->child);
+    if (paramListHead == NULL)
+        return NULL; //it means that somthing wrong happens with the parameter
+    if (getKChild(root, 1) != NULL)
+    {
+        node varListNode = getKChild(root, 2);
+        paramListHead->tail = VarList(varListNode);
+    }
+    return paramListHead;
+}
+
+FuncList ParamDec(node root)
+{
+    Type paramType = Specifier(getKChild(root, 0));
+    if (paramType == NULL)
+        return NULL;
+    return FuncVarDec(getKChild(root, 1), paramType);
 }
