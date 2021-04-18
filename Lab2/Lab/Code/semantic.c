@@ -45,7 +45,7 @@ void errorOutput(int errorType, int line, char* msg)
         break;  
     case 9:
         // TODO: complete func name and params
-        printf("Error type 9 at Line %d: Function \"func(int)\" is not applicable for arguments \"(int, int)\".\n", line);
+        printf("Error type 9 at Line %d: Function \"%s\" is not applicable for arguments \"(int, int)\".\n", line, msg);
         break;
     case 10:
         printf("Error type 10 at Line %d: \"%s\" is not an array.\n", line, msg);
@@ -436,7 +436,7 @@ Type Exp(node root) {
             Type t0 = Exp(n0);
             Type t2 = Exp(n2);
             if(isTypeEqual(t0, t2)) {
-                // TODO 1: handle the left hand, maybe modify
+                // TODO 1: handle the left hand, maybe modify (FINISHED)
                 if(n0->flag) {
                     root->flag = 1;
                     return t0;
@@ -502,11 +502,38 @@ Type Exp(node root) {
     semLog("There's something wrong about Exp!");
     return createErrorType(0);
 }
-// TODO 2: finish the following function
+// TODO 2: finish the following function(FINISHED)
 
+// ID LP RP | ID LP Args RP
 Type ExpFunc(node root) {
-    return NULL;
-
+    node n0 = getKChild(root, 0);
+    node n2 = getKChild(root, 2);
+    char func[32];
+    strcpy(func, n0->val);
+    Symbol findTuple = findSymbol(n0->val);
+    if (findTuple == NULL) {
+        errorOutput(2, n0->lineno, n0->val);
+        return createErrorType(2);
+    }
+    else {
+        // NOT A FUNCTION
+        if(findTuple->type->kind != FUNCTION) {
+            errorOutput(11, n0->lineno, n0->val);
+            return createErrorType(11);
+        }
+        // FUNCTION with no Args
+        if(getChildNum(root) == 3)
+            return findTuple->type->u.function->type;
+        else {
+            if(Args(n2, findTuple->type->u.function->tail)) {
+                return findTuple->type->u.function->type;
+            }
+            else {
+                errorOutput(9, n0->lineno, n0->val);
+                return createErrorType(9);
+            }
+        }
+    }
 }
 // Exp --> Exp DOT Exp
 Type ExpStruct(node root) {
@@ -556,4 +583,16 @@ Type ExpArray(node root) {
     }
     root->flag = 1;
     return t0->u.array.elem;
+}
+
+int Args(node root, FuncList params) {
+    while(getChildNum(root) > 1) {
+        if(params == NULL || !isTypeEqual(Exp(root->child), params->type))
+            return 0;
+        root = getKChild(root, 2);
+        params = params->tail;
+    }
+    if(params == NULL || !isTypeEqual(Exp(root->child), params->type) || params->tail)
+        return 0;
+    return 1;
 }

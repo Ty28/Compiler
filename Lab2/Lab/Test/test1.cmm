@@ -1,5 +1,15 @@
-int main()
-{
-	int i = 1;
-	int j = 2;
+struct a {
+	int x;
+	int y;
+};
+struct b {
+	int z;
+	int a;
+};
+int main() {
+	int x = 0;
+	int y = 0;
+	int j = 0;
+	j = 1;
+	a = b;
 }

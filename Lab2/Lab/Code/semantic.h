@@ -30,4 +30,5 @@ Type Exp(node root);
 Type ExpFunc(node root);
 Type ExpStruct(node root);
 Type ExpArray(node root);
+int Args(node root, FuncList params);
 #endif
