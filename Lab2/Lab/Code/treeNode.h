@@ -17,6 +17,7 @@ struct treeNode {
     char val[32];
     int lineno;
     int type;
+    int flag;
     node child;
     node sibling;
 };
