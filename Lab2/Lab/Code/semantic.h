@@ -13,7 +13,7 @@ void DefList(node root);
 void Def(node root);
 void DecList(node root, Type decType);
 void Dec(node root, Type decType);
-void FunDec(node root, Type decType);
+void FunDec(node root, Type funcSpecifierType);
 void CompSt(node root, Type funcType);
 void StmtList(node root, Type funcType);
 void Stmt(node root, Type funcType);
@@ -37,5 +37,6 @@ Type Exp(node root);
 Type ExpFunc(node root);
 Type ExpStruct(node root);
 Type ExpArray(node root);
+int Args(node root, FuncList params);
 
 #endif

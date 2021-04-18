@@ -99,7 +99,7 @@ void ExtDef(node root)
     semLog("HAHA, Let's check the ExtDef");
     // need to complete
     Type type = Specifier(getKChild(root, 0));
-    if (type == NULL)
+    if (type->kind == ERROR)
         return; //type=NULL means error happened;TODO:also we can choose not to return
     if (strcmp(getKChild(root, 1)->name, "ExtDecList") == 0)
     {
@@ -127,8 +127,6 @@ void ExtDecList(node root, Type extDecType)
 
 Symbol VarDec(node root, Type decType)
 {
-    if (decType == NULL)
-        return NULL;
     semLog("start parsing VarDec");
     semLog(root->child->name);
     if (strcmp(root->child->name, "ID") == 0)
@@ -175,8 +173,6 @@ Symbol VarDec(node root, Type decType)
 
 FuncList FuncVarDec(node root, Type decType)
 {
-    if (decType == NULL)
-        return NULL;
     semLog("start parsing FuncVarDec");
     if (strcmp(root->child->name, "ID") == 0)
     {
@@ -220,8 +216,6 @@ FuncList FuncVarDec(node root, Type decType)
 
 FieldList StructVarDec(node root, Type decType)
 {
-    if (decType == NULL)
-        return NULL;
     semLog("start parsing StructVarDec");
     if (strcmp(root->child->name, "ID") == 0)
     {
@@ -262,6 +256,7 @@ FieldList StructVarDec(node root, Type decType)
     }
 }
 
+//TO MENTION:return value changed into errorType(not NULL)
 Type Tag(node root)
 {
     node IDNode = root->child;
@@ -270,12 +265,13 @@ Type Tag(node root)
     if (findTuple == NULL || findTuple->type->kind != STRUCTURE)
     {
         errorOutput(17, IDNode->lineno, IDNode->val);
-        return NULL;
+        return createErrorType(17);
     }
     else
         return findTuple->type;
 }
 
+//TO MENTION:return value changed into errorType(not NULL)
 Type OptTag(node root)
 {
     //get DefList
@@ -292,7 +288,7 @@ Type OptTag(node root)
         if (findTuple != NULL) //struct type name conflict
         {
             errorOutput(16, root->lineno, root->child->val);
-            return NULL;
+            return createErrorType(16);
         }
         Symbol newStructTuple = createTupleWithType(root->child->val, newStructType);
         insertTuple(newStructTuple);
@@ -305,6 +301,7 @@ Type OptTag(node root)
     return newStructType;
 }
 
+//TO MENTION return errorType changed(-1)
 Type Specifier(node root)
 {
     semLog("start parsing specifier\n");
@@ -328,10 +325,11 @@ Type Specifier(node root)
     else
     {
         printf("well,something wrong with lexical parsing\n");
-        return NULL;
+        return createErrorType(-1);
     }
 }
 
+//TO MENTION(recursive errorType)
 Type StructSpecifier(node root)
 {
     semLog("start parsing StructSpecifier\n");
@@ -368,7 +366,7 @@ void Def(node root)
 {
     semLog("start parsing Def");
     Type decListType = Specifier(getKChild(root, 0));
-    if (decListType == NULL)
+    if (decListType->kind == ERROR) //it means specifier error happens
         return;
     DecList(getKChild(root, 1), decListType);
 }
@@ -385,15 +383,21 @@ FieldList StructDefList(node root)
     if (getKChild(root, 1) != NULL)
     {
         FieldList fieldNext = StructDefList(getKChild(root, 1));
-        fieldHead->tail = fieldNext;
+        FieldList fieldTail = fieldHead;
+        while (fieldTail->tail != NULL)
+            fieldTail = fieldTail->tail;
+        fieldTail->tail = fieldNext;
     }
     return fieldHead;
 }
 
+//NEED TO PROCESS
 FieldList StructDef(node root)
 {
     semLog("starting parsing Def of StructSpecifier");
     Type decListType = Specifier(getKChild(root, 0));
+    if (decListType->kind == ERROR)
+        return NULL;
     return StructDecList(getKChild(root, 1), decListType);
 }
 
@@ -410,10 +414,13 @@ void Dec(node root, Type decType)
 {
     semLog("start parsing Dec");
     VarDec(root->child, decType);
-    //TODO:
     semLog("VarDec parsing over");
     if (getKChild(root, 1) != NULL)
-        Exp(getKChild(root, 2));
+    {
+        if (Exp(getKChild(root, 2))->kind == ERROR)
+            return; //it means error happens in the Exp besides the ASSIGNOP
+    }
+    //TODO:
 }
 
 FieldList StructDecList(node root, Type decType)
@@ -436,10 +443,10 @@ FieldList StructDec(node root, Type decType)
     //TODO:we also need to finish EXPRESSION
 }
 
-void FunDec(node root, Type funcDecType)
+void FunDec(node root, Type funcSpecifierType)
 {
-    semLog("start parsing FunDec of StructSpecifier");
-    Symbol findTuple = findSymbol(root->child->val);
+    semLog("start parsing FunDec");
+    Symbol findTuple = findSymbol(root->child->val); //first child node is 'ID'
     if (findTuple != NULL)
     {
         errorOutput(4, root->child->lineno, root->child->val); //func name redefined;
@@ -455,7 +462,8 @@ void FunDec(node root, Type funcDecType)
         //I mean if semantic error happens in the params,we just don't create this func
         //TODO:but we can also create it for later semantic judge?
     }
-    Type newFuncType = createFuncType(paramList);
+    Type funcInstanceType = StructVarCopy(funcSpecifierType);
+    Type newFuncType = createFuncType(funcInstanceType, paramList);
     Symbol newFuncTuple = createTupleWithType(root->child->val, newFuncType);
     insertTuple(newFuncTuple);
 }
@@ -473,10 +481,11 @@ FuncList VarList(node root)
     return paramListHead;
 }
 
+//NEED TO PROCESS
 FuncList ParamDec(node root)
 {
     Type paramType = Specifier(getKChild(root, 0));
-    if (paramType == NULL)
+    if (paramType->kind == ERROR) //it means parameter error happends,but should we create an error FuncList
         return NULL;
     return FuncVarDec(getKChild(root, 1), paramType);
 }
@@ -514,7 +523,8 @@ void Stmt(node root, Type funcType)
     node firstUnitOfStmt = getKChild(root, 0);
     if (strcmp(firstUnitOfStmt->name, "Exp") == 0)
     {
-        Exp(firstUnitOfStmt);
+        if (Exp(firstUnitOfStmt)->kind == ERROR)
+            return;
     }
     else if (strcmp(firstUnitOfStmt->name, "CompSt") == 0)
     {
@@ -522,21 +532,25 @@ void Stmt(node root, Type funcType)
     }
     else if (strcmp(firstUnitOfStmt->name, "RETURN") == 0)
     {
-        semLog("judge whether the return value matches");
+        semLog("judge whether the return value matches\n");
         Type returnValueType = Exp(firstUnitOfStmt->sibling);
+        if (returnValueType->kind == ERROR)
+            return;
+        //printf("returnValue:%d,funcType:%d\n",returnValueType->kind,funcType->kind);
         if (isTypeEqual(funcType, returnValueType) == 0)
         {
             //printf("---funcType:%d,returnValueType:%d---",funcType->kind,returnValueType->kind);
-            errorOutput(8, 10, "");
+            errorOutput(8, firstUnitOfStmt->lineno, "");
         }
         else
         {
-            semLog("return value matches!");
+            semLog("return value matches!\n");
         }
     }
     else if (strcmp(firstUnitOfStmt->name, "IF") == 0)
     {
-        Exp(getKChild(root, 2));
+        if (Exp(getKChild(root, 2))->kind == ERROR)
+            return;
         Stmt(getKChild(root, 4), funcType);
         if (getChildNum(root) == 7) //to process circumstances of ELSE
         {
@@ -545,7 +559,8 @@ void Stmt(node root, Type funcType)
     }
     else if (strcmp(firstUnitOfStmt->name, "WHILE") == 0)
     {
-        Exp(getKChild(root, 2));
+        if (Exp(getKChild(root, 2))->kind == ERROR)
+            return;
         Stmt(getKChild(root, 4), funcType);
     }
     else
@@ -554,8 +569,11 @@ void Stmt(node root, Type funcType)
     }
 }
 
+// add Exp, 2021-4-17-18:47
+
 Type Exp(node root)
 {
+    semLog("start parsing Exp");
     int cnt = getChildNum(root);
     node n0 = getKChild(root, 0);
     node n1 = getKChild(root, 1);
@@ -563,6 +581,7 @@ Type Exp(node root)
     node n3 = getKChild(root, 3);
     if (cnt == 1)
     {
+        // Exp --> ID
         if (strcmp(n0->name, "ID") == 0)
         {
             //printf("%s\n", n0->val);
@@ -570,18 +589,23 @@ Type Exp(node root)
             if (findTuple == NULL)
             {
                 errorOutput(1, n0->lineno, n0->val);
-                return NULL;
+                return createErrorType(1);
             }
             else
             {
+                // left-hand
+                if (findTuple->type->kind != FUNCTION)
+                    root->flag = 1;
                 return findTuple->type;
             }
         }
+        // Exp --> INT
         else if (strcmp(n0->name, "INT") == 0)
         {
             semLog("return type int");
             return createBasicType(1);
         }
+        // Exp --> FLOAT
         else if (strcmp(n0->name, "FLOAT") == 0)
         {
             semLog("return type int");
@@ -591,15 +615,17 @@ Type Exp(node root)
     else if (cnt == 2)
     {
         Type t = Exp(n1);
+        // Exp --> MINUS Exp
         if (strcmp(n0->name, "MINUS") == 0)
         {
             if (t->kind != BASIC)
             {
                 errorOutput(7, n1->lineno, "");
-                return NULL;
+                return createErrorType(7);
             }
             return t;
         }
+        // Exp --> NOT Exp
         else if (strcmp(n0->name, "NOT") == 0)
         {
             if (t->kind == BASIC && t->u.basic == 1)
@@ -607,36 +633,48 @@ Type Exp(node root)
             else
             {
                 errorOutput(7, n1->lineno, "");
-                return NULL;
+                return createErrorType(7);
             }
         }
     }
     else if (cnt == 3)
     {
+        // Exp --> LP Exp RP
         if (strcmp(n0->name, "LP") == 0)
         {
             return Exp(n1);
         }
+        // Exp --> ID LP RP
         else if (strcmp(n0->name, "ID") == 0)
         {
             return ExpFunc(root);
         }
+        // Exp --> Exp ASSIGNOP Exp
         else if (strcmp(n1->name, "ASSIGNOP") == 0)
         {
             Type t0 = Exp(n0);
             Type t2 = Exp(n2);
             if (isTypeEqual(t0, t2))
             {
-                // TODO 1: handle the left hand, maybe modify Type
-                return t0;
+                // TODO 1: handle the left hand, maybe modify (FINISHED)
+                if (n0->flag)
+                {
+                    root->flag = 1;
+                    return t0;
+                }
+                else
+                {
+                    errorOutput(6, root->lineno, "");
+                    return createErrorType(6);
+                }
             }
             else
             {
                 errorOutput(5, n0->lineno, "");
-                return NULL;
+                return createErrorType(5);
             }
-            return t0;
         }
+        // Exp --> Exp AND Exp | Exp --> Exp OR Exp
         else if (strcmp(n1->name, "AND") == 0 || strcmp(n1->name, "OR") == 0)
         {
             Type t0 = Exp(n0);
@@ -648,14 +686,15 @@ Type Exp(node root)
             else
             {
                 errorOutput(7, n0->lineno, "");
-                return NULL;
+                return createErrorType(7);
             }
         }
+        // Exp --> Exp DOT Exp
         else if (strcmp(n1->name, "DOT") == 0)
         {
-            // struct
             return ExpStruct(root);
         }
+        // Exp --> Exp RELOP Exp
         else if (strcmp(n1->name, "RELOP") == 0)
         {
             Type t0 = Exp(n0);
@@ -667,9 +706,10 @@ Type Exp(node root)
             else
             {
                 errorOutput(7, n0->lineno, "");
-                return NULL;
+                return createErrorType(7);
             }
         }
+        // Exp --> Exp ADD | SUB | STAR | DIV Exp
         else
         {
             Type t0 = Exp(n0);
@@ -681,7 +721,7 @@ Type Exp(node root)
             else
             {
                 errorOutput(7, n0->lineno, "");
-                return NULL;
+                return createErrorType(7);
             }
         }
     }
@@ -695,18 +735,118 @@ Type Exp(node root)
             return ExpArray(root);
     }
     semLog("There's something wrong about Exp!");
-    return NULL;
+    return createErrorType(0);
 }
+// TODO 2: finish the following function(FINISHED)
 
+// ID LP RP | ID LP Args RP
 Type ExpFunc(node root)
 {
-    return NULL;
+    node n0 = getKChild(root, 0);
+    node n2 = getKChild(root, 2);
+    char func[32];
+    strcpy(func, n0->val);
+    Symbol findTuple = findSymbol(n0->val);
+    if (findTuple == NULL)
+    {
+        errorOutput(2, n0->lineno, n0->val);
+        return createErrorType(2);
+    }
+    else
+    {
+        // NOT A FUNCTION
+        if (findTuple->type->kind != FUNCTION)
+        {
+            errorOutput(11, n0->lineno, n0->val);
+            return createErrorType(11);
+        }
+        // FUNCTION with no Args
+        if (getChildNum(root) == 3)
+            return findTuple->type->u.function->type;
+        else
+        {
+            if (Args(n2, findTuple->type->u.function->tail))
+            {
+                return findTuple->type->u.function->type;
+            }
+            else
+            {
+                errorOutput(9, n0->lineno, n0->val);
+                return createErrorType(9);
+            }
+        }
+    }
 }
+// Exp --> Exp DOT Exp
 Type ExpStruct(node root)
 {
-    return NULL;
+    node n0 = getKChild(root, 0);
+    node n2 = getKChild(root, 2);
+    Type t0 = Exp(n0);
+    Type t2 = Exp(n2);
+    if (t0->kind == STRUCTVAR)
+    {
+        FieldList p = t0->u.structure;
+        while (p)
+        {
+            if (strcmp(p->name, n2->val) == 0)
+                break;
+            p = p->tail;
+        }
+        if (p)
+        {
+            root->flag = 1;
+            return p->type;
+        }
+        else
+        {
+            errorOutput(14, root->lineno, n2->val);
+            return createErrorType(14);
+        }
+    }
+    else if (t0->kind == STRUCTURE)
+    {
+        errorOutput(1, n0->lineno, n0->val);
+        return createErrorType(1);
+    }
+    else
+    {
+        errorOutput(13, n0->lineno, "");
+        return createErrorType(13);
+    }
 }
+
+// Exp LB Exp RB
 Type ExpArray(node root)
 {
-    return NULL;
+    node n0 = getKChild(root, 0);
+    node n2 = getKChild(root, 2);
+    Type t0 = Exp(n0);
+    Type t2 = Exp(n2);
+    if (t0->kind != ARRAY)
+    {
+        errorOutput(10, n0->lineno, n0->val);
+        return createErrorType(10);
+    }
+    if (t2->kind != BASIC || t2->u.basic != 1)
+    {
+        errorOutput(12, n0->lineno, n0->val);
+        return createErrorType(12);
+    }
+    root->flag = 1;
+    return t0->u.array.elem;
+}
+
+int Args(node root, FuncList params)
+{
+    while (getChildNum(root) > 1)
+    {
+        if (params == NULL || !isTypeEqual(Exp(root->child), params->type))
+            return 0;
+        root = getKChild(root, 2);
+        params = params->tail;
+    }
+    if (params == NULL || !isTypeEqual(Exp(root->child), params->type) || params->tail)
+        return 0;
+    return 1;
 }

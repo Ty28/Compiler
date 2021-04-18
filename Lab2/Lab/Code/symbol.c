@@ -56,12 +56,24 @@ Type createStructType(FieldList _structure, int isVariable)
     return tupleType;
 }
 
-Type createFuncType(FuncList _parameter)
+//revised time 2021/4/18 16:15
+Type createFuncType(Type returnValueType, FuncList _parameter)
 {
     Type tupleType = (Type)malloc(sizeof(struct Type_));
     tupleType->kind = FUNCTION;
-    tupleType->u.function = _parameter;
+    FuncList returnValueNode = createBlankParam("\0");
+    //returnValueNode is the first fieldList of our function,it contains the return type of our function
+    returnValueNode->type = returnValueType;
+    returnValueNode->tail = _parameter;
+    tupleType->u.function = returnValueNode;
     return tupleType;
+}
+
+Type createErrorType(int _errorCode)
+{
+    Type tupleType = (Type)malloc(sizeof(struct Type_));
+    tupleType->kind = ERROR;
+    tupleType->u.errorCode = _errorCode;
 }
 
 Type createType(int _kind, int _basic, Type _elem, int _size,
@@ -76,7 +88,7 @@ Type createType(int _kind, int _basic, Type _elem, int _size,
     case (2):
         return createStructType(_structure, isVariable);
     case (3):
-        return createFuncType(_function);
+        return createErrorType(-1);
     }
 }
 
@@ -111,10 +123,10 @@ FuncList createBlankParam(char *name)
     return newParam;
 }
 
-FuncList createParamWithType(char *name,Type _type)
+FuncList createParamWithType(char *name, Type _type)
 {
-    FuncList newParam=createBlankParam(name);
-    newParam->type=_type;
+    FuncList newParam = createBlankParam(name);
+    newParam->type = _type;
     return newParam;
 }
 
@@ -142,13 +154,13 @@ Symbol createStructTuple(char *name, FieldList _structure, int isVariable)
     return newTuple;
 }
 
-Symbol createFuncTuple(char *name, FuncList _parameter)
-{
-    Type tupleType = createFuncType(_parameter);
-    Symbol newTuple = createBlankTuple(name);
-    newTuple->type = tupleType;
-    return newTuple;
-}
+// Symbol createFuncTuple(char *name, FuncList _parameter)
+// {
+//     Type tupleType = createFuncType(_parameter);
+//     Symbol newTuple = createBlankTuple(name);
+//     newTuple->type = tupleType;
+//     return newTuple;
+// }
 
 Symbol createTupleWithType(char *name, Type _type)
 {
@@ -192,63 +204,60 @@ void insertTuple(Symbol tuple)
     current->hashLink = tuple;
 }
 
-int isTypeEqual(Type t1, Type t2) {
-    //printf("start judging equal:t1.kind:%d,t2.kind:%d\n",t1->kind,t2->kind);
-    if(t1->kind != t2->kind)
-    {
-        semLog("unequal");
+
+///////////////////////////////////////REVISED 2021/4/18 16:52:
+///////////////////////////////////////add size judge if (t1->kind == ARRAY)
+int isTypeEqual(Type t1, Type t2)
+{
+    if (t1->kind != t2->kind)
         return 0;
-    }
-    if(t1->kind == BASIC)
+    if (t1->kind == BASIC)
     {
-        semLog("basic");
-        if(t1->u.basic == t2->u.basic)
+        //semLog("compare BASIC");
+        if (t1->u.basic == t2->u.basic)
             return 1;
     }
-    else if(t1->kind == ARRAY)
+    else if (t1->kind == ARRAY)
     {
-        semLog("array");
-        if(isTypeEqual(t1->u.array.elem, t2->u.array.elem) == 1)
+        //semLog("compare ARRAY");
+        if ((isTypeEqual(t1->u.array.elem, t2->u.array.elem) == 1) && (t1->u.array.size == t2->u.array.size))
             return 1;
     }
-    else if(t1->kind == STRUCTURE || t1->kind == STRUCTVAR) 
+    else if (t1->kind == STRUCTURE || t1->kind == STRUCTVAR)
     {
-        semLog("to compare struct");
-        if(isStructEqual(t1->u.structure, t2->u.structure) == 1)
+        //semLog("compare STRUCT");
+        if (isStructEqual(t1->u.structure, t2->u.structure) == 1)
             return 1;
     }
-    else if(t1->kind == FUNCTION)
+    else if (t1->kind == FUNCTION)
     {
-        semLog("to compare function"); 
-        if(isFuncEqual(t1->u.function, t2->u.function) == 1)
+        //semLog("compare FUNCTION");
+        if (isFuncEqual(t1->u.function, t2->u.function) == 1)
             return 1;
     }
-    else
-        semLog("nothing matches");
     return 0;
 }
 
-int isStructEqual(FieldList f1, FieldList f2) {
-    if(f1 == NULL && f2 == NULL)
+int isStructEqual(FieldList f1, FieldList f2)
+{
+    if (f1 == NULL && f2 == NULL)
         return 1;
-    else if(f1 == NULL || f2 == NULL)
+    else if (f1 == NULL || f2 == NULL)
         return 0;
-    if(isTypeEqual(f1->type, f2->type) == 1 && isStructEqual(f1->tail, f2->tail) == 1)
-    {
-        //printf("\nf1->type:%d f2->type:%d\n",f1->type->kind,f2->type->kind);
+    if (isTypeEqual(f1->type, f2->type) == 1 && isStructEqual(f1->tail, f2->tail) == 1)
         return 1;
-    }
     else
         return 0;
 }
 
-int isFuncEqual(FuncList f1, FuncList f2) {
-    if(f1 == NULL && f2 == NULL)
+int isFuncEqual(FuncList f1, FuncList f2)
+{
+    if (f1 == NULL && f2 == NULL)
         return 1;
-    else if(f1 == NULL || f2 == NULL)
+    else if (f1 == NULL || f2 == NULL)
         return 0;
-    if(strcmp(f1->name, f2->name) == 0 && isTypeEqual(f1->type, f2->type) == 1)
+    if (strcmp(f1->name, f2->name) == 0 && isTypeEqual(f1->type, f2->type) == 1)
         return isFuncEqual(f1->tail, f2->tail);
-    else 
+    else
         return 0;
 }
