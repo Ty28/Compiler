@@ -3,6 +3,8 @@
 
 #include "treeNode.h"
 #define HASHSIZE 0x3fff
+//#define semanticdebug
+void semLog(char *msg);
 typedef struct SymbolTuple *Symbol;
 typedef struct Type_ *Type;
 typedef struct FieldList_ *FieldList;
@@ -80,7 +82,12 @@ FieldList createFieldWithType(char *name, Type _type);
 FuncList createBlankParam(char *name);
 FuncList createParamWithType(char *name,Type _type);
     ///////////////////////////////////////
-    Symbol findSymbol(char *name);
+Symbol findSymbol(char *name);
 void insertTuple(Symbol tuple);
+
+// add func: check Type a & Type b
+int isTypeEqual(Type t1, Type t2);
+int isStructEqual(FieldList f1, FieldList f2);
+int isFuncEqual(FuncList f1, FuncList f2);
 
 #endif

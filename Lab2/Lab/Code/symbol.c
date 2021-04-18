@@ -1,4 +1,10 @@
 #include "extern.h"
+void semLog(char *msg)
+{
+#ifdef semanticdebug
+    printf("%s\n", msg);
+#endif
+}
 
 unsigned int hashProject(char *name)
 {
@@ -184,4 +190,65 @@ void insertTuple(Symbol tuple)
     while (current->hashLink != NULL)
         current = current->hashLink;
     current->hashLink = tuple;
+}
+
+int isTypeEqual(Type t1, Type t2) {
+    //printf("start judging equal:t1.kind:%d,t2.kind:%d\n",t1->kind,t2->kind);
+    if(t1->kind != t2->kind)
+    {
+        semLog("unequal");
+        return 0;
+    }
+    if(t1->kind == BASIC)
+    {
+        semLog("basic");
+        if(t1->u.basic == t2->u.basic)
+            return 1;
+    }
+    else if(t1->kind == ARRAY)
+    {
+        semLog("array");
+        if(isTypeEqual(t1->u.array.elem, t2->u.array.elem) == 1)
+            return 1;
+    }
+    else if(t1->kind == STRUCTURE || t1->kind == STRUCTVAR) 
+    {
+        semLog("to compare struct");
+        if(isStructEqual(t1->u.structure, t2->u.structure) == 1)
+            return 1;
+    }
+    else if(t1->kind == FUNCTION)
+    {
+        semLog("to compare function"); 
+        if(isFuncEqual(t1->u.function, t2->u.function) == 1)
+            return 1;
+    }
+    else
+        semLog("nothing matches");
+    return 0;
+}
+
+int isStructEqual(FieldList f1, FieldList f2) {
+    if(f1 == NULL && f2 == NULL)
+        return 1;
+    else if(f1 == NULL || f2 == NULL)
+        return 0;
+    if(isTypeEqual(f1->type, f2->type) == 1 && isStructEqual(f1->tail, f2->tail) == 1)
+    {
+        //printf("\nf1->type:%d f2->type:%d\n",f1->type->kind,f2->type->kind);
+        return 1;
+    }
+    else
+        return 0;
+}
+
+int isFuncEqual(FuncList f1, FuncList f2) {
+    if(f1 == NULL && f2 == NULL)
+        return 1;
+    else if(f1 == NULL || f2 == NULL)
+        return 0;
+    if(strcmp(f1->name, f2->name) == 0 && isTypeEqual(f1->type, f2->type) == 1)
+        return isFuncEqual(f1->tail, f2->tail);
+    else 
+        return 0;
 }

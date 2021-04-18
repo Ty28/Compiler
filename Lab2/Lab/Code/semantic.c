@@ -8,16 +8,75 @@ int semanticCheck(node root)
     Program(root);
 }
 
-void semLog(char *msg)
+void errorOutput(int errorType, int line, char *msg)
 {
-#ifdef semanticdebug
-    printf("%s\n", msg);
-#endif
+    switch (errorType)
+    {
+    case 1:
+        printf("Error type 1 at Line %d: Undefined variable \"%s\".\n", line, msg);
+        break;
+    case 2:
+        printf("Error type 2 at Line %d: Undefined function \"%s\".\n", line, msg);
+        break;
+    case 3:
+        printf("Error type 3 at Line %d: Redefined variable \"%s\".\n", line, msg);
+        break;
+    case 4:
+        printf("Error type 4 at Line %d: Redefined function \"%s\".\n", line, msg);
+        break;
+    case 5:
+        printf("Error type 5 at Line %d: Type mismatched for assignment.\n", line);
+        break;
+    case 6:
+        printf("Error type 6 at Line %d: The left-hand side of an assignment must be a variable.\n", line);
+        break;
+    case 7:
+        printf("Error type 7 at Line %d: Type mismatched for operands.\n", line);
+        break;
+    case 8:
+        printf("Error type 8 at Line %d: Type mismatched for return.\n", line);
+        break;
+    case 9:
+        // TODO: complete func name and params
+        printf("Error type 9 at Line %d: Function \"func(int)\" is not applicable for arguments \"(int, int)\".\n", line);
+        break;
+    case 10:
+        printf("Error type 10 at Line %d: \"%s\" is not an array.\n", line, msg);
+        break;
+    case 11:
+        printf("Error type 11 at Line %d: \"%s\" is not a function.\n", line, msg);
+        break;
+    case 12:
+        printf("Error type 12 at Line %d: \"%s\" is not an integer.\n", line, msg);
+        break;
+    case 13:
+        printf("Error type 13 at Line %d: Illegal use of \".\".\n", line);
+        break;
+    case 14:
+        printf("Error type 14 at Line %d: Non-existent field \"%s\".\n", line, msg);
+        break;
+    case 15:
+        printf("Error type 15 at Line %d: Non-existent field \"%s\".\n", line, msg);
+        break;
+    case 16:
+        printf("Error type 16 at Line %d: Duplicated name \"%s\".\n", line, msg);
+        break;
+    case 17:
+        printf("Error type 17 at Line %d: Undefined structure \"%s\".\n", line, msg);
+        break;
+    default:
+        // check whether errorType is valid, do not use like this: errorOutput(123, 1);
+        printf("Error type UNKNOWN at Line %d\n", line);
+        break;
+    }
 }
 
-void errorOutput(int errorType, int line)
+Type StructVarCopy(Type structureDecType)
 {
-    printf("Error Type %d at line %d:  \n", errorType, line);
+    if (structureDecType->kind != STRUCTURE)
+        return structureDecType;
+    else
+        return createStructType(structureDecType->u.structure, 1);
 }
 
 void Program(node root)
@@ -37,7 +96,7 @@ void ExtDefList(node root)
 
 void ExtDef(node root)
 {
-    //semLog("HAHA, Let's check the ExtDef");
+    semLog("HAHA, Let's check the ExtDef");
     // need to complete
     Type type = Specifier(getKChild(root, 0));
     if (type == NULL)
@@ -53,7 +112,7 @@ void ExtDef(node root)
     else if (strcmp(getKChild(root, 1)->name, "FunDec") == 0)
     {
         FunDec(getKChild(root, 1), type);
-        //Compst(getKChild(root, 2), type);
+        CompSt(getKChild(root, 2), StructVarCopy(type));
     }
 }
 
@@ -71,23 +130,27 @@ Symbol VarDec(node root, Type decType)
     if (decType == NULL)
         return NULL;
     semLog("start parsing VarDec");
+    semLog(root->child->name);
     if (strcmp(root->child->name, "ID") == 0)
     {
         node IDNode = root->child;
+        semLog(IDNode->val);
         if (findSymbol(IDNode->val) != NULL)
         {
             semLog(root->child->val);
-            errorOutput(3, root->child->lineno);
+            errorOutput(3, root->child->lineno, IDNode->val);
             return NULL;
         }
         else
         {
-            if (decType->kind == STRUCTURE)
-                decType->kind = STRUCTVAR; //we need to change the struct type into struct variable
-            Symbol VarDecTuple = createTupleWithType(IDNode->val, decType);
-            semLog("insertTuple(VarDecTuple)");
+            semLog("this newVarDec doesn't exist,so we need to insert it into hash table");
+            //if decType is struct define type,we need to process it (well, the function name is a little confusing)
+            Type newTupleType = StructVarCopy(decType);
+            //semLog("copy over");
+            Symbol VarDecTuple = createTupleWithType(IDNode->val, newTupleType);
+            //semLog("create over");
             insertTuple(VarDecTuple);
-            semLog("insert success!");
+            //semLog("insert over");
             return VarDecTuple;
         }
     }
@@ -122,19 +185,17 @@ FuncList FuncVarDec(node root, Type decType)
         if (findSymbol(IDNode->val) != NULL)
         {
             semLog(root->child->val);
-            errorOutput(3, root->child->lineno);
+            errorOutput(3, root->child->lineno, IDNode->val);
             return NULL;
         }
         else
         {
-            if (decType->kind == STRUCTURE)
-                decType->kind = STRUCTVAR; //we need to change the struct type into struct variable
-            FuncList varDecParam = createParamWithType(IDNode->val, decType);
-            Symbol ParamTuple = createTupleWithType(IDNode->val, decType);
+            //if decType is structure define type,we need to process it
+            Type newFuncType = StructVarCopy(decType);
+            FuncList varDecParam = createParamWithType(IDNode->val, newFuncType);
+            Symbol ParamTuple = createTupleWithType(IDNode->val, newFuncType);
             //we also need to insert the parameter into our symbol table
-            semLog("insertTuple(ParamTuple)");
             insertTuple(ParamTuple);
-            semLog("insert success!");
             return varDecParam;
         }
     }
@@ -170,15 +231,15 @@ FieldList StructVarDec(node root, Type decType)
         if (findSymbol(IDNode->val) != NULL)
         {
             semLog(root->child->val);
-            errorOutput(3, root->child->lineno);
+            errorOutput(3, root->child->lineno, IDNode->val);
             return NULL;
         }
         else
         {
-            if (decType->kind == STRUCTURE)
-                decType->kind = STRUCTVAR; //we need to change the struct type into struct variable
-            FieldList varDecField = createFieldWithType(IDNode->val, decType);
-            semLog("create field,and we don't need to insert");
+            Type newFieldType = StructVarCopy(decType);
+            //if decType is structure define,we need to process it
+            FieldList varDecField = createFieldWithType(IDNode->val, newFieldType);
+            semLog("create field, and we don't need to insert");
             return varDecField;
         }
     }
@@ -206,9 +267,9 @@ Type Tag(node root)
     node IDNode = root->child;
     //printf("IDNode->name:%s\n", IDNode->name);
     Symbol findTuple = findSymbol(IDNode->val);
-    if (findTuple == NULL)
+    if (findTuple == NULL || findTuple->type->kind != STRUCTURE)
     {
-        errorOutput(17, IDNode->lineno);
+        errorOutput(17, IDNode->lineno, IDNode->val);
         return NULL;
     }
     else
@@ -230,7 +291,7 @@ Type OptTag(node root)
         Symbol findTuple = findSymbol(root->child->val);
         if (findTuple != NULL) //struct type name conflict
         {
-            errorOutput(16, root->lineno);
+            errorOutput(16, root->lineno, root->child->val);
             return NULL;
         }
         Symbol newStructTuple = createTupleWithType(root->child->val, newStructType);
@@ -294,20 +355,22 @@ Type StructSpecifier(node root)
     }
 }
 
-void Def(node root)
-{
-    Type decListType = Specifier(getKChild(root, 0));
-    if (decListType == NULL)
-        return;
-    DecList(getKChild(root, 1), decListType);
-}
-
 void DefList(node root)
 {
+    semLog("start parsing DefList");
     if (!root || !root->child)
         return;
     Def(getKChild(root, 0));
     DefList(getKChild(root, 1));
+}
+
+void Def(node root)
+{
+    semLog("start parsing Def");
+    Type decListType = Specifier(getKChild(root, 0));
+    if (decListType == NULL)
+        return;
+    DecList(getKChild(root, 1), decListType);
 }
 
 FieldList StructDefList(node root)
@@ -336,6 +399,7 @@ FieldList StructDef(node root)
 
 void DecList(node root, Type decType)
 {
+    semLog("start parsing DecList");
     Dec(root->child, decType);
     //represent that Dec has more than one child node,say, Dec with COMMA
     if (getKChild(root, 1) != NULL)
@@ -344,7 +408,12 @@ void DecList(node root, Type decType)
 
 void Dec(node root, Type decType)
 {
-    VarDec(root, decType);
+    semLog("start parsing Dec");
+    VarDec(root->child, decType);
+    //TODO:
+    semLog("VarDec parsing over");
+    if (getKChild(root, 1) != NULL)
+        Exp(getKChild(root, 2));
 }
 
 FieldList StructDecList(node root, Type decType)
@@ -373,7 +442,7 @@ void FunDec(node root, Type funcDecType)
     Symbol findTuple = findSymbol(root->child->val);
     if (findTuple != NULL)
     {
-        errorOutput(4, root->child->lineno); //func name redefined;
+        errorOutput(4, root->child->lineno, root->child->val); //func name redefined;
         return;
     }
     FuncList paramList = NULL;
@@ -410,4 +479,234 @@ FuncList ParamDec(node root)
     if (paramType == NULL)
         return NULL;
     return FuncVarDec(getKChild(root, 1), paramType);
+}
+
+void CompSt(node root, Type funcType)
+{
+    semLog("start parsing CompSt");
+    node defListNode = getKChild(root, 1);
+    if (strcmp(defListNode->name, "DefList") == 0)
+    {
+        DefList(defListNode);
+        defListNode = defListNode->sibling;
+    }
+    semLog("defList parsing over");
+    node stmtListNode = defListNode;
+    //printf("stmtListNode->name:%s",stmtListNode->name);
+    if (strcmp(stmtListNode->name, "StmtList") == 0)
+    {
+        StmtList(stmtListNode, funcType);
+    }
+}
+
+void StmtList(node root, Type funcType)
+{
+    if (root == NULL || root->child == NULL)
+        return;
+    semLog("start parsing StmtList");
+    Stmt(getKChild(root, 0), funcType);
+    StmtList(getKChild(root, 1), funcType);
+}
+
+void Stmt(node root, Type funcType)
+{
+    semLog("start parsing stmt");
+    node firstUnitOfStmt = getKChild(root, 0);
+    if (strcmp(firstUnitOfStmt->name, "Exp") == 0)
+    {
+        Exp(firstUnitOfStmt);
+    }
+    else if (strcmp(firstUnitOfStmt->name, "CompSt") == 0)
+    {
+        CompSt(firstUnitOfStmt, funcType);
+    }
+    else if (strcmp(firstUnitOfStmt->name, "RETURN") == 0)
+    {
+        semLog("judge whether the return value matches");
+        Type returnValueType = Exp(firstUnitOfStmt->sibling);
+        if (isTypeEqual(funcType, returnValueType) == 0)
+        {
+            //printf("---funcType:%d,returnValueType:%d---",funcType->kind,returnValueType->kind);
+            errorOutput(8, 10, "");
+        }
+        else
+        {
+            semLog("return value matches!");
+        }
+    }
+    else if (strcmp(firstUnitOfStmt->name, "IF") == 0)
+    {
+        Exp(getKChild(root, 2));
+        Stmt(getKChild(root, 4), funcType);
+        if (getChildNum(root) == 7) //to process circumstances of ELSE
+        {
+            Stmt(getKChild(root, 6), funcType);
+        }
+    }
+    else if (strcmp(firstUnitOfStmt->name, "WHILE") == 0)
+    {
+        Exp(getKChild(root, 2));
+        Stmt(getKChild(root, 4), funcType);
+    }
+    else
+    {
+        printf("some wrong happened in sytax");
+    }
+}
+
+Type Exp(node root)
+{
+    int cnt = getChildNum(root);
+    node n0 = getKChild(root, 0);
+    node n1 = getKChild(root, 1);
+    node n2 = getKChild(root, 2);
+    node n3 = getKChild(root, 3);
+    if (cnt == 1)
+    {
+        if (strcmp(n0->name, "ID") == 0)
+        {
+            //printf("%s\n", n0->val);
+            Symbol findTuple = findSymbol(n0->val);
+            if (findTuple == NULL)
+            {
+                errorOutput(1, n0->lineno, n0->val);
+                return NULL;
+            }
+            else
+            {
+                return findTuple->type;
+            }
+        }
+        else if (strcmp(n0->name, "INT") == 0)
+        {
+            semLog("return type int");
+            return createBasicType(1);
+        }
+        else if (strcmp(n0->name, "FLOAT") == 0)
+        {
+            semLog("return type int");
+            return createBasicType(2);
+        }
+    }
+    else if (cnt == 2)
+    {
+        Type t = Exp(n1);
+        if (strcmp(n0->name, "MINUS") == 0)
+        {
+            if (t->kind != BASIC)
+            {
+                errorOutput(7, n1->lineno, "");
+                return NULL;
+            }
+            return t;
+        }
+        else if (strcmp(n0->name, "NOT") == 0)
+        {
+            if (t->kind == BASIC && t->u.basic == 1)
+                return t;
+            else
+            {
+                errorOutput(7, n1->lineno, "");
+                return NULL;
+            }
+        }
+    }
+    else if (cnt == 3)
+    {
+        if (strcmp(n0->name, "LP") == 0)
+        {
+            return Exp(n1);
+        }
+        else if (strcmp(n0->name, "ID") == 0)
+        {
+            return ExpFunc(root);
+        }
+        else if (strcmp(n1->name, "ASSIGNOP") == 0)
+        {
+            Type t0 = Exp(n0);
+            Type t2 = Exp(n2);
+            if (isTypeEqual(t0, t2))
+            {
+                // TODO 1: handle the left hand, maybe modify Type
+                return t0;
+            }
+            else
+            {
+                errorOutput(5, n0->lineno, "");
+                return NULL;
+            }
+            return t0;
+        }
+        else if (strcmp(n1->name, "AND") == 0 || strcmp(n1->name, "OR") == 0)
+        {
+            Type t0 = Exp(n0);
+            Type t2 = Exp(n2);
+            if (t0->kind == BASIC && t0->u.basic == 1 && isTypeEqual(t0, t2))
+            {
+                return t0;
+            }
+            else
+            {
+                errorOutput(7, n0->lineno, "");
+                return NULL;
+            }
+        }
+        else if (strcmp(n1->name, "DOT") == 0)
+        {
+            // struct
+            return ExpStruct(root);
+        }
+        else if (strcmp(n1->name, "RELOP") == 0)
+        {
+            Type t0 = Exp(n0);
+            Type t2 = Exp(n2);
+            if (t0->kind == BASIC && isTypeEqual(t0, t2))
+            {
+                return createBasicType(1);
+            }
+            else
+            {
+                errorOutput(7, n0->lineno, "");
+                return NULL;
+            }
+        }
+        else
+        {
+            Type t0 = Exp(n0);
+            Type t2 = Exp(n2);
+            if (t0->kind == BASIC && isTypeEqual(t0, t2))
+            {
+                return t0;
+            }
+            else
+            {
+                errorOutput(7, n0->lineno, "");
+                return NULL;
+            }
+        }
+    }
+    else if (cnt == 4)
+    {
+        if (strcmp(n0->name, "ID") == 0)
+        {
+            return ExpFunc(root);
+        }
+        else
+            return ExpArray(root);
+    }
+    semLog("There's something wrong about Exp!");
+    return NULL;
+}
+
+Type ExpFunc(node root)
+{
+    return NULL;
+}
+Type ExpStruct(node root)
+{
+    return NULL;
+}
+Type ExpArray(node root)
+{
+    return NULL;
 }
