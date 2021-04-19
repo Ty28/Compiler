@@ -17,6 +17,7 @@ void FunDec(node root, Type funcSpecifierType);
 void CompSt(node root, Type funcType);
 void StmtList(node root, Type funcType);
 void Stmt(node root, Type funcType);
+int existInFieldList(char* name,FieldList fieldHead);
 Type StructVarCopy(Type structureDecType);
 FuncList VarList(node root);
 FuncList ParamDec(node root);

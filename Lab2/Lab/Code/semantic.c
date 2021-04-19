@@ -226,14 +226,11 @@ FieldList StructVarDec(node root, Type decType)
             errorOutput(3, root->child->lineno, IDNode->val);
             return NULL;
         }
-        else
-        {
-            Type newFieldType = StructVarCopy(decType);
-            //if decType is structure define,we need to process it
-            FieldList varDecField = createFieldWithType(IDNode->val, newFieldType);
-            semLog("create field, and we don't need to insert");
-            return varDecField;
-        }
+        Type newFieldType = StructVarCopy(decType);
+        //if decType is structure define,we need to process it
+        FieldList varDecField = createFieldWithType(IDNode->val, newFieldType);
+        semLog("create field, and we don't need to insert");
+        return varDecField;
     }
     else if (strcmp(root->child->name, "VarDec") == 0)
     {
@@ -373,6 +370,18 @@ void Def(node root)
     DecList(getKChild(root, 1), decListType);
 }
 
+int existInFieldList(char *name, FieldList fieldHead)
+{
+    FieldList current = fieldHead;
+    while (current != NULL)
+    {
+        if (strcmp(name, current->name) == 0)
+            return 1;
+        current = current->tail;
+    }
+    return 0;
+}
+
 FieldList StructDefList(node root)
 {
     semLog("starting parsing DefList of StructSpecifier");
@@ -396,7 +405,7 @@ FieldList StructDefList(node root)
 //NEED TO PROCESS/
 FieldList StructDef(node root)
 {
-    semLog("starting parsing Def of StructSpecifier");
+    semLog("start parsing Def of StructSpecifier");
     Type decListType = Specifier(getKChild(root, 0));
     if (decListType->kind == ERROR)
         return NULL;
@@ -415,14 +424,17 @@ void DecList(node root, Type decType)
 void Dec(node root, Type decType)
 {
     semLog("start parsing Dec");
-    VarDec(root->child, decType);
+    Symbol newDec = VarDec(root->child, decType);
     semLog("VarDec parsing over");
     if (getKChild(root, 1) != NULL)
     {
-        if (Exp(getKChild(root, 2))->kind == ERROR)
+        Type expType = Exp(getKChild(root, 2));
+        if (expType->kind == ERROR)
             return; //it means error happens in the Exp besides the ASSIGNOP
+        if (isTypeEqual(newDec->type, expType) == 0)
+            errorOutput(5, getKChild(root, 1)->lineno, "");
+        //segmentation fault?
     }
-    //TODO:
 }
 
 FieldList StructDecList(node root, Type decType)
@@ -433,16 +445,30 @@ FieldList StructDecList(node root, Type decType)
         return NULL; //it means that error happens in decFieldHead
     //represent that Dec has more than one child node,say, Dec with COMMA
     if (getKChild(root, 1) != NULL)
-        decFieldHead->tail = StructDecList(getKChild(root, 2), decType);
+    {
+        FieldList laterField = StructDecList(getKChild(root, 2), decType);
+        if (existInFieldList(decFieldHead->name, laterField))
+        {
+            //it means duplicated name in struct field(duplicated name in one DecList)
+            errorOutput(15, getKChild(root, 1)->lineno, "");
+            return NULL;
+        }
+        decFieldHead->tail = laterField;
+    }
     return decFieldHead;
-    ////TODO decList should be linked,stil some error to fix
 }
 
 FieldList StructDec(node root, Type decType)
 {
     semLog("starting parsing Dec of StructSpecifier");
-    return StructVarDec(root->child, decType);
-    //TODO:we also need to finish EXPRESSION
+    if (getKChild(root, 1) != NULL)
+    {
+        //it means invalid assignment in struct field
+        errorOutput(15, getKChild(root, 1)->lineno, "");
+        return NULL;
+    }
+    FieldList newDecField = StructVarDec(root->child, decType);
+    return newDecField;
 }
 
 void FunDec(node root, Type funcSpecifierType)
