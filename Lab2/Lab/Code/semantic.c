@@ -81,7 +81,7 @@ Type StructVarCopy(Type structureDecType)
 
 void Program(node root)
 {
-    printf("HAHA, Let's check the Program\n");
+    semLog("HAHA, Let's check the Program\n");
     ExtDefList(getKChild(root, 0));
 }
 
@@ -144,11 +144,8 @@ Symbol VarDec(node root, Type decType)
             semLog("this newVarDec doesn't exist,so we need to insert it into hash table");
             //if decType is struct define type,we need to process it (well, the function name is a little confusing)
             Type newTupleType = StructVarCopy(decType);
-            //semLog("copy over");
             Symbol VarDecTuple = createTupleWithType(IDNode->val, newTupleType);
-            //semLog("create over");
             insertTuple(VarDecTuple);
-            //semLog("insert over");
             return VarDecTuple;
         }
     }
@@ -189,9 +186,9 @@ FuncList FuncVarDec(node root, Type decType)
             //if decType is structure define type,we need to process it
             Type newFuncType = StructVarCopy(decType);
             FuncList varDecParam = createParamWithType(IDNode->val, newFuncType);
-            Symbol ParamTuple = createTupleWithType(IDNode->val, newFuncType);
-            //we also need to insert the parameter into our symbol table
-            insertTuple(ParamTuple);
+            //we also need to insert the parameter into our symbol table,BUT NOT NOW
+            //insertTuple(ParamTuple);
+            //TO REMEMBER
             return varDecParam;
         }
     }
@@ -202,7 +199,7 @@ FuncList FuncVarDec(node root, Type decType)
         {
             Type lastArrayType = varDecParam->type;
             int arraySize = atoi(getKChild(root, 2)->val);
-            //printf("last size:%d\n",arraySize);
+            //printf("last size:%d\n", arraySize);
             Type newArrayType = createArrayType(lastArrayType, arraySize);
             varDecParam->type = newArrayType;
         }
@@ -210,7 +207,8 @@ FuncList FuncVarDec(node root, Type decType)
     }
     else
     {
-        printf("some wrong with VarDec syntax");
+        semLog("some wrong with VarDec syntax");
+        return NULL;
     }
 }
 
@@ -271,11 +269,16 @@ Type Tag(node root)
         return findTuple->type;
 }
 
-//TO MENTION:return value changed into errorType(not NULL)
+//REVISED 2021/4/19 12:28 fixed bugs of OPtTag
 Type OptTag(node root)
 {
-    //get DefList
-    node defListNode = root->sibling->sibling;
+    semLog("start parsing OptTag(or \'LC\' if it is epsilon)");
+    //printf("root:%s",root->name);
+    node defListNode = root;
+    if (strcmp(root->name, "OptTag") == 0)
+        defListNode = root->sibling->sibling;
+    else if (strcmp(root->name, "LC") == 0)
+        defListNode = root->sibling;
     //link the members and return member head
     FieldList structMemberHead = StructDefList(defListNode);
     //now create struct type with fieldlist
@@ -283,7 +286,6 @@ Type OptTag(node root)
     if (root->child != NULL) //the struct type has name
     {
         semLog("struct type has name");
-        //printf("his name is %s\n", root->child->val);
         Symbol findTuple = findSymbol(root->child->val);
         if (findTuple != NULL) //struct type name conflict
         {
@@ -391,7 +393,7 @@ FieldList StructDefList(node root)
     return fieldHead;
 }
 
-//NEED TO PROCESS
+//NEED TO PROCESS/
 FieldList StructDef(node root)
 {
     semLog("starting parsing Def of StructSpecifier");
@@ -481,13 +483,20 @@ FuncList VarList(node root)
     return paramListHead;
 }
 
-//NEED TO PROCESS
+//NEED TO PROCESS/REVISED 2021/4/19 11:30 paramType corrected
 FuncList ParamDec(node root)
 {
     Type paramType = Specifier(getKChild(root, 0));
     if (paramType->kind == ERROR) //it means parameter error happends,but should we create an error FuncList
         return NULL;
-    return FuncVarDec(getKChild(root, 1), paramType);
+    FuncList newParam = FuncVarDec(getKChild(root, 1), paramType);
+    if (newParam != NULL)
+    {
+        Type paramType = newParam->type;
+        Symbol newParamTuple = createTupleWithType(newParam->name, paramType);
+        insertTuple(newParamTuple);
+    }
+    return newParam;
 }
 
 void CompSt(node root, Type funcType)
@@ -565,7 +574,7 @@ void Stmt(node root, Type funcType)
     }
     else
     {
-        printf("some wrong happened in sytax");
+        semLog("some wrong happened in sytax");
     }
 }
 

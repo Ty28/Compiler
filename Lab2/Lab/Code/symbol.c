@@ -209,23 +209,26 @@ void insertTuple(Symbol tuple)
 ///////////////////////////////////////add size judge if (t1->kind == ARRAY)
 int isTypeEqual(Type t1, Type t2)
 {
+    //printf("%d,%d",t1->kind,t2->kind);
     if (t1->kind != t2->kind)
         return 0;
     if (t1->kind == BASIC)
     {
-        //semLog("compare BASIC");
+        //printf("compare BASIC");
+        // printf("%d,%d",t1->u.basic,t2->u.basic);
         if (t1->u.basic == t2->u.basic)
             return 1;
     }
     else if (t1->kind == ARRAY)
     {
-        //semLog("compare ARRAY");
-        if ((isTypeEqual(t1->u.array.elem, t2->u.array.elem) == 1) && (t1->u.array.size == t2->u.array.size))
+        //printf("compare ARRAY");
+        //printf("size1:%d,size2:%d\n",t1->u.array.size,t2->u.array.size);
+        if ((isTypeEqual(t1->u.array.elem, t2->u.array.elem) == 1)) //&& (t1->u.array.size == t2->u.array.size))
             return 1;
     }
     else if (t1->kind == STRUCTURE || t1->kind == STRUCTVAR)
     {
-        //semLog("compare STRUCT");
+        //printf("compare STRUCT");
         if (isStructEqual(t1->u.structure, t2->u.structure) == 1)
             return 1;
     }
