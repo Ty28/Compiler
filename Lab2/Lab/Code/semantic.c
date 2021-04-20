@@ -215,7 +215,7 @@ FieldList StructVarDec(node root, Type decType)
     {
         node IDNode = root->child;
         //judge whether the val of this struct member exist in our symbol table
-        if (findSymbol(IDNode->val) != NULL)
+        if (0 && findSymbol(IDNode->val) != NULL)
         {
             semLog(root->child->val);
             errorOutput(3, root->child->lineno, IDNode->val);
