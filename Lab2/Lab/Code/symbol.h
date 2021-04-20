@@ -2,14 +2,15 @@
 #define _SYMBOL_H
 
 #include "treeNode.h"
-#define HASHSIZE 0x3fff
+#define SYMBOLTABLESIZE 0x3fff
+#define STRUCTTABLESIZE 0xfff
 //#define semanticdebug
 void semLog(char *msg);
 typedef struct SymbolTuple *Symbol;
 typedef struct Type_ *Type;
 typedef struct FieldList_ *FieldList;
 typedef struct FuncList_ *FuncList;
-
+typedef struct StructSymbolTuple *StructSymbol;
 struct Type_
 {
     enum
@@ -61,9 +62,16 @@ struct FuncList_
     FuncList tail;
 };
 
-Symbol *symbolTable;
+struct StructSymbolTuple
+{
+    char name[32];
+    StructSymbol link;
+};
 
-unsigned int hashProject(char *name);
+Symbol *symbolTable;
+StructSymbol *structSymbolTable;
+
+unsigned int hashProject(char *name, unsigned int hashsize);
 Symbol *createSymbolTable();
 
 Type createBasicType(int _basic);
@@ -90,6 +98,13 @@ FuncList createParamWithType(char *name, Type _type);
 ///////////////////////////////////////
 Symbol findSymbol(char *name);
 void insertTuple(Symbol tuple);
+
+//add func:create symbol table for struct members 2021/4/20
+StructSymbol *createStructTable();
+void freeStructMember(StructSymbol _current); //recursive free one hashline
+void freeStructTable(); //free the whole struct symbol table
+StructSymbol createMember(char* name);
+int findMember(char *name);
 
 // add func: check Type a & Type b
 int isTypeEqual(Type t1, Type t2);
