@@ -17,6 +17,7 @@ extern int syntaxError;
 extern int preErrorLine;
 
 extern Symbol* symbolTable;
+extern StructSymbol* structSymbolTable;
 extern Symbol* createSymbolTable();
 extern Symbol findSymbol(char *name);
 extern void insertSymbolTable(char *name);

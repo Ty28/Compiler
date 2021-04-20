@@ -5,6 +5,7 @@ int semanticCheck(node root)
     // printf("HAHA, Let's begin the semantic check\n");
     // printNode(root);
     symbolTable = createSymbolTable();
+    structSymbolTable = createStructTable();
     Program(root);
 }
 
@@ -181,16 +182,11 @@ FuncList FuncVarDec(node root, Type decType)
             errorOutput(3, root->child->lineno, IDNode->val);
             return NULL;
         }
-        else
-        {
-            //if decType is structure define type,we need to process it
-            Type newFuncType = StructVarCopy(decType);
-            FuncList varDecParam = createParamWithType(IDNode->val, newFuncType);
-            //we also need to insert the parameter into our symbol table,BUT NOT NOW
-            //insertTuple(ParamTuple);
-            //TO REMEMBER
-            return varDecParam;
-        }
+        //if decType is structure define type,we need to process it
+        Type newFuncType = StructVarCopy(decType);
+        FuncList varDecParam = createParamWithType(IDNode->val, newFuncType);
+        //we also need to insert the parameter into our symbol table,BUT NOT NOW
+        return varDecParam;
     }
     else if (strcmp(root->child->name, "VarDec") == 0)
     {
@@ -219,12 +215,17 @@ FieldList StructVarDec(node root, Type decType)
     {
         node IDNode = root->child;
         //judge whether the val of this struct member exist in our symbol table
-        //and TODO:I think we also need to judge whether it exists in the fieldLists
-        if (0 && findSymbol(IDNode->val) != NULL)
+        if (findSymbol(IDNode->val) != NULL)
         {
             semLog(root->child->val);
             errorOutput(3, root->child->lineno, IDNode->val);
-            return NULL;
+            //return NULL;
+        }
+        //and use findMember to judge whether it exists in structSymbolTable
+        if (findMember(IDNode->val))
+        {
+            semLog(root->child->val);
+            errorOutput(15, root->child->lineno, IDNode->val);
         }
         Type newFieldType = StructVarCopy(decType);
         //if decType is structure define,we need to process it
@@ -266,7 +267,7 @@ Type Tag(node root)
         return findTuple->type;
 }
 
-//REVISED 2021/4/19 12:28 fixed bugs of OPtTag
+//REVISED 2021/4/20 20:35 add operations of structSymbolTable
 Type OptTag(node root)
 {
     semLog("start parsing OptTag(or \'LC\' if it is epsilon)");
@@ -277,8 +278,11 @@ Type OptTag(node root)
     else if (strcmp(root->name, "LC") == 0)
         defListNode = root->sibling;
     //link the members and return member head
+    structSymbolTable = createStructTable();
     FieldList structMemberHead = StructDefList(defListNode);
-    //now create struct type with fieldlist
+    freeStructTable();
+    //note:we need to initialize structSymbolTable and free it during each turn
+    //and then create struct type with fieldlist,as is shown below
     Type newStructType = createStructType(structMemberHead, 0);
     if (root->child != NULL) //the struct type has name
     {
@@ -430,9 +434,11 @@ void Dec(node root, Type decType)
     {
         Type expType = Exp(getKChild(root, 2));
         if (expType->kind == ERROR || newDec == NULL)
-            return; //it means error happens in the Exp besides the ASSIGNOP
+            return; //it means error happens in the Exp besides the ASSIGNOP or in the varDec
+        semLog("before equal");
         if (isTypeEqual(newDec->type, expType) == 0)
             errorOutput(5, getKChild(root, 1)->lineno, "");
+        // semLog("after equal");
         //segmentation fault?
     }
 }
@@ -447,12 +453,12 @@ FieldList StructDecList(node root, Type decType)
     if (getKChild(root, 1) != NULL)
     {
         FieldList laterField = StructDecList(getKChild(root, 2), decType);
-        if (existInFieldList(decFieldHead->name, laterField))
-        {
-            //it means duplicated name in struct field(duplicated name in one DecList)
-            errorOutput(15, getKChild(root, 1)->lineno, "");
-            return NULL;
-        }
+        // if (existInFieldList(decFieldHead->name, laterField))
+        // {
+        //     //it means duplicated name in struct field(duplicated name in one DecList)
+        //     errorOutput(15, getKChild(root, 1)->lineno, "");
+        //     return NULL;
+        // }
         decFieldHead->tail = laterField;
     }
     return decFieldHead;
@@ -465,7 +471,6 @@ FieldList StructDec(node root, Type decType)
     {
         //it means invalid assignment in struct field
         errorOutput(15, getKChild(root, 1)->lineno, "");
-        return NULL;
     }
     FieldList newDecField = StructVarDec(root->child, decType);
     return newDecField;
@@ -572,10 +577,9 @@ void Stmt(node root, Type funcType)
         if (returnValueType->kind == ERROR)
             return;
         //printf("returnValue:%d,funcType:%d\n",returnValueType->kind,funcType->kind);
-        
         if (isTypeEqual(funcType, returnValueType) == 0)
         {
-            // printf("---funcType:%d,returnValueType:%d---",funcType->kind,returnValueType->kind);
+            //printf("---funcType:%d,returnValueType:%d---",funcType->kind,returnValueType->kind);
             errorOutput(8, firstUnitOfStmt->lineno, "");
         }
         else
@@ -585,8 +589,7 @@ void Stmt(node root, Type funcType)
     }
     else if (strcmp(firstUnitOfStmt->name, "IF") == 0)
     {
-        if (Exp(getKChild(root, 2))->kind == ERROR)
-            return;
+        Exp(getKChild(root, 2));
         Stmt(getKChild(root, 4), funcType);
         if (getChildNum(root) == 7) //to process circumstances of ELSE
         {
@@ -595,8 +598,7 @@ void Stmt(node root, Type funcType)
     }
     else if (strcmp(firstUnitOfStmt->name, "WHILE") == 0)
     {
-        if (Exp(getKChild(root, 2))->kind == ERROR)
-            return;
+        Exp(getKChild(root, 2));
         Stmt(getKChild(root, 4), funcType);
     }
     else

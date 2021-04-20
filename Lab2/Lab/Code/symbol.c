@@ -6,22 +6,23 @@ void semLog(char *msg)
 #endif
 }
 
-unsigned int hashProject(char *name)
+unsigned int hashProject(char *name, unsigned int hashsize)
 {
     unsigned int val = 0, i;
     for (; *name; ++name)
     {
         val = (val << 2) + *name;
-        if (i = val & ~HASHSIZE)
-            val = (val ^ (i >> 12)) & HASHSIZE;
+        if (i = val & ~hashsize)
+            val = (val ^ (i >> 12)) & hashsize;
     }
     return val;
 }
 
 Symbol *createSymbolTable() //the elements of our Hashtable are pointers
 {
-    Symbol *tableHead = (Symbol *)malloc(HASHSIZE * sizeof(Symbol *));
-    for (int i = 0; i < HASHSIZE; i++) //initialize
+    //Is there ERROR?
+    Symbol *tableHead = (Symbol *)malloc(SYMBOLTABLESIZE * sizeof(Symbol));
+    for (int i = 0; i < SYMBOLTABLESIZE; i++) //initialize
     {
         tableHead[i] = NULL;
     }
@@ -171,7 +172,7 @@ Symbol createTupleWithType(char *name, Type _type)
 
 Symbol findSymbol(char *name)
 {
-    unsigned int hashID = hashProject(name);
+    unsigned int hashID = hashProject(name, SYMBOLTABLESIZE);
     if (symbolTable[hashID] != NULL)
     {
         Symbol current = symbolTable[hashID];
@@ -192,7 +193,7 @@ void insertTuple(Symbol tuple)
     Symbol find = findSymbol(tuple->name);
     if (find != NULL)
         return;
-    unsigned int hashID = hashProject(tuple->name);
+    unsigned int hashID = hashProject(tuple->name, SYMBOLTABLESIZE);
     if (symbolTable[hashID] == NULL)
     {
         symbolTable[hashID] = tuple; //make the NULL pointer pointed to the tuple
@@ -204,18 +205,86 @@ void insertTuple(Symbol tuple)
     current->hashLink = tuple;
 }
 
+StructSymbol *createStructTable()
+{
+    StructSymbol *table = (StructSymbol *)malloc(STRUCTTABLESIZE * sizeof(StructSymbol));
+    for (int i = 0; i < STRUCTTABLESIZE; i++)
+        table[i] = NULL;
+    return table;
+}
+
+void freeStructMember(StructSymbol _current)
+{
+    if (_current == NULL)
+        return;
+    else if (_current->link == NULL)
+        free(_current);
+    else
+    {
+        freeStructMember(_current->link);
+        _current->link = NULL;
+    }
+}
+
+void freeStructTable()
+{
+    for (int i = 0; i < STRUCTTABLESIZE; i++)
+    {
+        if (structSymbolTable[i] != NULL)
+        {
+            freeStructMember(structSymbolTable[i]);
+            structSymbolTable[i] = NULL;
+            //printf("free succeed!\n");
+        }
+    }
+}
+
+StructSymbol createMember(char *name)
+{
+    StructSymbol newMember = (StructSymbol)malloc(sizeof(struct StructSymbolTuple));
+    strcpy(newMember->name, name);
+    newMember->link = NULL;
+    return newMember;
+}
+
+int findMember(char *name)
+{
+    unsigned int hashID = hashProject(name, STRUCTTABLESIZE);
+    StructSymbol current = structSymbolTable[hashID];
+    if (current == NULL)
+    {
+        structSymbolTable[hashID] = createMember(name);
+        return 0;
+    }
+    else
+    {
+        while (current->link != NULL)
+        {
+            if (strcmp(current->name, name) == 0) //loop until we find that name
+                return 1;
+            current = current->link;
+        }
+        if (strcmp(current->name, name) == 0) //if the last tuple matches
+            return 1;
+        else
+        {
+            current = createMember(name);
+            return 0; //if that name does not exist in our table, insert it and return False
+        }
+    }
+}
 
 ///////////////////////////////////////REVISED 2021/4/18 16:52:
 ///////////////////////////////////////add size judge if (t1->kind == ARRAY)
 int isTypeEqual(Type t1, Type t2)
 {
-    //printf("%d,%d",t1->kind,t2->kind);
+    //printf("%d,%d\n",t1->kind,t2->kind);
     if (t1->kind != t2->kind)
         return 0;
     if (t1->kind == BASIC)
     {
         //printf("compare BASIC");
-        // printf("%d,%d",t1->u.basic,t2->u.basic);
+        //printf("%d,%d",t1->u.basic,t2->u.basic);
         if (t1->u.basic == t2->u.basic)
             return 1;
     }
@@ -234,7 +303,7 @@ int isTypeEqual(Type t1, Type t2)
     }
     else if (t1->kind == FUNCTION)
     {
-        //semLog("compare FUNCTION");
+        semLog("compare FUNCTION");
         if (isFuncEqual(t1->u.function, t2->u.function) == 1)
             return 1;
     }
