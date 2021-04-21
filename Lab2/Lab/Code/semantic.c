@@ -761,7 +761,7 @@ Type Exp(node root)
             else
             {
                 errorOutput(7, n0->lineno, "");
-                return createErrorType(7);
+                return t0;
             }
         }
     }
