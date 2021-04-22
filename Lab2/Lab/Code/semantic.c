@@ -57,7 +57,7 @@ void errorOutput(int errorType, int line, char *msg)
         printf("Error type 14 at Line %d: Non-existent field \"%s\".\n", line, msg);
         break;
     case 15:
-        printf("Error type 15 at Line %d: Non-existent field \"%s\".\n", line, msg);
+        printf("Error type 15 at Line %d: Redefined or intialized field \"%s\".\n", line, msg);
         break;
     case 16:
         printf("Error type 16 at Line %d: Duplicated name \"%s\".\n", line, msg);
@@ -589,7 +589,9 @@ void Stmt(node root, Type funcType)
     }
     else if (strcmp(firstUnitOfStmt->name, "IF") == 0)
     {
-        Exp(getKChild(root, 2));
+        Type t = Exp(getKChild(root, 2));
+        if(t->kind == FUNCTION)
+            errorOutput(1, getKChild(root, 2)->lineno, getKChild(root, 2)->val);
         Stmt(getKChild(root, 4), funcType);
         if (getChildNum(root) == 7) //to process circumstances of ELSE
         {
@@ -598,7 +600,9 @@ void Stmt(node root, Type funcType)
     }
     else if (strcmp(firstUnitOfStmt->name, "WHILE") == 0)
     {
-        Exp(getKChild(root, 2));
+        Type t = Exp(getKChild(root, 2));
+        if(t->kind == FUNCTION)
+            errorOutput(1, getKChild(root, 2)->lineno, getKChild(root, 2)->val);
         Stmt(getKChild(root, 4), funcType);
     }
     else
