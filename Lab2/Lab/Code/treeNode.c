@@ -44,7 +44,7 @@ node getKChild(node root_, int k) {
 
 //new API: count the cnt of root
 int getChildNum(node root_) {
-    //printNode(root_);
+    // printNode(root_);
     if(root_ == NULL)
         return 0;
     if(root_->child == NULL)

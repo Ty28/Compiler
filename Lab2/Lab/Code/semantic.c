@@ -215,7 +215,7 @@ FieldList StructVarDec(node root, Type decType)
     {
         node IDNode = root->child;
         //judge whether the val of this struct member exist in our symbol table
-        if (findSymbol(IDNode->val) != NULL)
+        if (0 && findSymbol(IDNode->val) != NULL)
         {
             semLog(root->child->val);
             errorOutput(3, root->child->lineno, IDNode->val);
@@ -634,6 +634,8 @@ Type Exp(node root)
                 // left-hand
                 if (findTuple->type->kind != FUNCTION)
                     root->flag = 1;
+                if (findTuple->type->kind == STRUCTURE)
+                    errorOutput(1, n0->lineno, n0->val);
                 return findTuple->type;
             }
         }
@@ -759,7 +761,7 @@ Type Exp(node root)
             else
             {
                 errorOutput(7, n0->lineno, "");
-                return createErrorType(7);
+                return t0;
             }
         }
     }
@@ -810,7 +812,7 @@ Type ExpFunc(node root)
             else
             {
                 errorOutput(9, n0->lineno, n0->val);
-                return createErrorType(9);
+                return findTuple->type->u.function->type;
             }
         }
     }
@@ -869,7 +871,9 @@ Type ExpArray(node root)
     if (t2->kind != BASIC || t2->u.basic != 1)
     {
         errorOutput(12, n0->lineno, n0->val);
-        return createErrorType(12);
+        // printf("%d \n",  t0->u.array.elem->u.basic);
+        root->flag = 1;
+        return t0->u.array.elem;
     }
     root->flag = 1;
     return t0->u.array.elem;
