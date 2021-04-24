@@ -301,12 +301,12 @@ int isTypeEqual(Type t1, Type t2)
         if (isStructEqual(t1->u.structure, t2->u.structure) == 1)
             return 1;
     }
-    else if (t1->kind == FUNCTION)
-    {
-        semLog("compare FUNCTION");
-        if (isFuncEqual(t1->u.function, t2->u.function) == 1)
-            return 1;
-    }
+    // else if (t1->kind == FUNCTION)
+    // {
+    //     semLog("compare FUNCTION");
+    //     if (isFuncEqual(t1->u.function, t2->u.function) == 1)
+    //         return 1;
+    // }
     return 0;
 }
 
