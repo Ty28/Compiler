@@ -1,0 +1,105 @@
+Error type 15 at Line 58: Redefined or intialized field "".
+Error type 15 at Line 59: Redefined or intialized field "S11951_m0_a1_a2_a1_f".
+Error type 15 at Line 60: Redefined or intialized field "".
+Error type 15 at Line 61: Redefined or intialized field "".
+Error type 15 at Line 62: Redefined or intialized field "".
+Error type 15 at Line 63: Redefined or intialized field "S11951_m4_a1_a2_a1_f".
+Error type 15 at Line 64: Redefined or intialized field "".
+Error type 15 at Line 65: Redefined or intialized field "S11951_m6_i".
+Error type 15 at Line 66: Redefined or intialized field "".
+Error type 15 at Line 67: Redefined or intialized field "".
+Error type 1 at Line 91: Undefined variable "l5924".
+Error type 7 at Line 91: Type mismatched for operands.
+Error type 10 at Line 92: "S11950_L0" is not an array.
+Error type 7 at Line 92: Type mismatched for operands.
+Error type 11 at Line 93: "i_func_7498_a1_a1_f_0" is not a function.
+Error type 5 at Line 93: Type mismatched for assignment.
+Error type 5 at Line 93: Type mismatched for assignment.
+Error type 1 at Line 94: Undefined variable "l5931".
+Error type 7 at Line 94: Type mismatched for operands.
+Error type 5 at Line 94: Type mismatched for assignment.
+Error type 10 at Line 95: "S11950_L0" is not an array.
+Error type 7 at Line 95: Type mismatched for operands.
+Error type 5 at Line 95: Type mismatched for assignment.
+Error type 10 at Line 96: "S11950_L0" is not an array.
+Error type 7 at Line 96: Type mismatched for operands.
+Error type 5 at Line 96: Type mismatched for assignment.
+Error type 13 at Line 97: Illegal use of ".".
+Error type 7 at Line 97: Type mismatched for operands.
+Error type 11 at Line 99: "a2_f_L1672" is not a function.
+Error type 7 at Line 99: Type mismatched for operands.
+Error type 5 at Line 99: Type mismatched for assignment.
+Error type 2 at Line 100: Undefined function "i_func_7520".
+Error type 7 at Line 100: Type mismatched for operands.
+Error type 13 at Line 102: Illegal use of ".".
+Error type 7 at Line 102: Type mismatched for operands.
+Error type 5 at Line 102: Type mismatched for assignment.
+Error type 5 at Line 103: Type mismatched for assignment.
+Error type 6 at Line 106: The left-hand side of an assignment must be a variable.
+Error type 10 at Line 112: "S11950_L0" is not an array.
+Error type 7 at Line 112: Type mismatched for operands.
+Error type 5 at Line 112: Type mismatched for assignment.
+Error type 5 at Line 113: Type mismatched for assignment.
+Error type 4 at Line 115: Redefined function "i_func_7498".
+Error type 3 at Line 117: Redefined variable "redef_L4448".
+Error type 5 at Line 136: Type mismatched for assignment.
+Error type 16 at Line 141: Duplicated name "dup175".
+Error type 16 at Line 145: Duplicated name "dup176".
+Error type 16 at Line 149: Duplicated name "dup177".
+Error type 16 at Line 153: Duplicated name "dup178".
+Error type 16 at Line 157: Duplicated name "dup179".
+Error type 17 at Line 162: Undefined structure "S12041".
+Error type 5 at Line 179: Type mismatched for assignment.
+Error type 5 at Line 179: Type mismatched for assignment.
+Error type 9 at Line 181: Function "i_func_7579" is not applicable for arguments.
+Error type 9 at Line 182: Function "i_func_7579" is not applicable for arguments.
+Error type 6 at Line 189: The left-hand side of an assignment must be a variable.
+Error type 3 at Line 195: Redefined variable "redef_L4459".
+Error type 7 at Line 216: Type mismatched for operands.
+Error type 8 at Line 217: Type mismatched for return.
+Error type 17 at Line 221: Undefined structure "S12048".
+Error type 3 at Line 223: Redefined variable "redef_L4461".
+Error type 17 at Line 224: Undefined structure "S12050".
+Error type 6 at Line 248: The left-hand side of an assignment must be a variable.
+Error type 5 at Line 248: Type mismatched for assignment.
+Error type 7 at Line 250: Type mismatched for operands.
+Error type 7 at Line 251: Type mismatched for operands.
+Error type 9 at Line 252: Function "i_func_7581" is not applicable for arguments.
+Error type 9 at Line 253: Function "i_func_7579" is not applicable for arguments.
+Error type 7 at Line 257: Type mismatched for operands.
+Error type 5 at Line 260: Type mismatched for assignment.
+Error type 7 at Line 284: Type mismatched for operands.
+Error type 6 at Line 291: The left-hand side of an assignment must be a variable.
+Error type 5 at Line 291: Type mismatched for assignment.
+Error type 6 at Line 292: The left-hand side of an assignment must be a variable.
+Error type 5 at Line 292: Type mismatched for assignment.
+Error type 9 at Line 303: Function "i_func_7580" is not applicable for arguments.
+Error type 6 at Line 314: The left-hand side of an assignment must be a variable.
+Error type 7 at Line 323: Type mismatched for operands.
+Error type 5 at Line 324: Type mismatched for assignment.
+Error type 5 at Line 326: Type mismatched for assignment.
+Error type 6 at Line 330: The left-hand side of an assignment must be a variable.
+Error type 6 at Line 333: The left-hand side of an assignment must be a variable.
+Error type 8 at Line 334: Type mismatched for return.
+Error type 17 at Line 338: Undefined structure "S12065".
+Error type 17 at Line 339: Undefined structure "S12067".
+Error type 8 at Line 375: Type mismatched for return.
+Error type 17 at Line 379: Undefined structure "S12068".
+Error type 3 at Line 381: Redefined variable "redef_L4482".
+Error type 8 at Line 449: Type mismatched for return.
+Error type 8 at Line 450: Type mismatched for return.
+Error type 17 at Line 459: Undefined structure "S12075".
+Error type 8 at Line 530: Type mismatched for return.
+Error type 3 at Line 535: Redefined variable "redef_L4488".
+Error type 3 at Line 537: Redefined variable "redef_L4490".
+Error type 9 at Line 602: Function "i_func_7582" is not applicable for arguments.
+Error type 8 at Line 623: Type mismatched for return.
+Error type 3 at Line 628: Redefined variable "redef_L4494".
+Error type 8 at Line 677: Type mismatched for return.
+Error type 17 at Line 681: Undefined structure "S12085".
+Error type 17 at Line 682: Undefined structure "S12086".
+Error type 8 at Line 750: Type mismatched for return.
+Error type 3 at Line 755: Redefined variable "redef_L4500".
+Error type 3 at Line 757: Redefined variable "redef_L4501".
+Error type 7 at Line 796: Type mismatched for operands.
+Error type 7 at Line 806: Type mismatched for operands.

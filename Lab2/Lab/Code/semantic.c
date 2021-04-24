@@ -483,7 +483,7 @@ void FunDec(node root, Type funcSpecifierType)
     if (findTuple != NULL)
     {
         errorOutput(4, root->child->lineno, root->child->val); //func name redefined;
-        return;
+        // return;
     }
     FuncList paramList = NULL;
     if (getKChild(root, 3) != NULL) //it means the function has parameters
@@ -824,8 +824,12 @@ Type ExpFunc(node root)
             return findTuple->type;
         }
         // FUNCTION with no Args
-        if (getChildNum(root) == 3)
+        if (getChildNum(root) == 3) {
+            if(findTuple->type->u.function->tail != NULL) {
+                errorOutput(9, n0->lineno, n0->val);
+            }
             return findTuple->type->u.function->type;
+        }    
         else
         {
             if (Args(n2, findTuple->type->u.function->tail))

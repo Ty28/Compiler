@@ -3,6 +3,7 @@
 
 #define YYDEBUG 1
 #define MAXSIZE 100000010
+#define CHARMAXSIZE 50
 #define OVERFLOW 0
 
 #include <stdio.h>
@@ -14,7 +15,7 @@ typedef struct treeNode *node;
 
 struct treeNode {
     char name[32];
-    char val[32];
+    char val[CHARMAXSIZE];
     int lineno;
     int type;
     int flag;
