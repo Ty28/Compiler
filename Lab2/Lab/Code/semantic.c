@@ -39,7 +39,7 @@ void errorOutput(int errorType, int line, char *msg)
         break;
     case 9:
         // TODO: complete func name and params
-        printf("Error type 9 at Line %d: Function \"func(int)\" is not applicable for arguments \"(int, int)\".\n", line);
+        printf("Error type 9 at Line %d: Function \"%s\" is not applicable for arguments.\n", line, msg);
         break;
     case 10:
         printf("Error type 10 at Line %d: \"%s\" is not an array.\n", line, msg);
@@ -590,8 +590,9 @@ void Stmt(node root, Type funcType)
     else if (strcmp(firstUnitOfStmt->name, "IF") == 0)
     {
         Type t = Exp(getKChild(root, 2));
-        if(t->kind == FUNCTION)
-            errorOutput(1, getKChild(root, 2)->lineno, getKChild(root, 2)->val);
+        // if(t->kind == FUNCTION || t->kind == STRUCTURE) {
+        //     errorOutput(1, getKChild(root, 2)->lineno, getKChild(root, 2)->val);
+        // }
         Stmt(getKChild(root, 4), funcType);
         if (getChildNum(root) == 7) //to process circumstances of ELSE
         {
@@ -601,8 +602,6 @@ void Stmt(node root, Type funcType)
     else if (strcmp(firstUnitOfStmt->name, "WHILE") == 0)
     {
         Type t = Exp(getKChild(root, 2));
-        if(t->kind == FUNCTION)
-            errorOutput(1, getKChild(root, 2)->lineno, getKChild(root, 2)->val);
         Stmt(getKChild(root, 4), funcType);
     }
     else
@@ -638,8 +637,8 @@ Type Exp(node root)
                 // left-hand
                 if (findTuple->type->kind != FUNCTION)
                     root->flag = 1;
-                if (findTuple->type->kind == STRUCTURE)
-                    errorOutput(1, n0->lineno, n0->val);
+                // if (findTuple->type->kind == STRUCTURE)
+                //     errorOutput(1, n0->lineno, n0->val);
                 return findTuple->type;
             }
         }
@@ -665,6 +664,8 @@ Type Exp(node root)
             if (t->kind != BASIC)
             {
                 errorOutput(7, n1->lineno, "");
+                if (t->kind == FUNCTION || t->kind == STRUCTURE)
+                    errorOutput(1, n1->lineno, n1->child->val);
                 return createErrorType(7);
             }
             return t;
@@ -677,6 +678,8 @@ Type Exp(node root)
             else
             {
                 errorOutput(7, n1->lineno, "");
+                if (t->kind == FUNCTION || t->kind == STRUCTURE)
+                    errorOutput(1, n1->lineno, n1->child->val);
                 return createErrorType(7);
             }
         }
@@ -714,6 +717,10 @@ Type Exp(node root)
             }
             else
             {
+                if (t0->kind == FUNCTION || t0->kind == STRUCTURE)
+                    errorOutput(1, n0->lineno, n0->child->val);
+                if (t2->kind == FUNCTION || t2->kind == STRUCTURE)
+                    errorOutput(1, n2->lineno, n2->child->val);
                 errorOutput(5, n0->lineno, "");
                 return createErrorType(5);
             }
@@ -729,6 +736,10 @@ Type Exp(node root)
             }
             else
             {
+                if (t0->kind == FUNCTION || t0->kind == STRUCTURE)
+                    errorOutput(1, n0->lineno, n0->child->val);
+                if (t2->kind == FUNCTION || t2->kind == STRUCTURE)
+                    errorOutput(1, n2->lineno, n2->child->val);
                 errorOutput(7, n0->lineno, "");
                 return createErrorType(7);
             }
@@ -749,6 +760,10 @@ Type Exp(node root)
             }
             else
             {
+                if (t0->kind == FUNCTION || t0->kind == STRUCTURE)
+                    errorOutput(1, n0->lineno, n0->child->val);
+                if (t2->kind == FUNCTION || t2->kind == STRUCTURE)
+                    errorOutput(1, n2->lineno, n2->child->val);
                 errorOutput(7, n0->lineno, "");
                 return createErrorType(7);
             }
@@ -764,6 +779,10 @@ Type Exp(node root)
             }
             else
             {
+                if (t0->kind == FUNCTION || t0->kind == STRUCTURE)
+                    errorOutput(1, n0->lineno, n0->child->val);
+                if (t2->kind == FUNCTION || t2->kind == STRUCTURE)
+                    errorOutput(1, n2->lineno, n2->child->val);
                 errorOutput(7, n0->lineno, "");
                 return t0;
             }
@@ -850,7 +869,7 @@ Type ExpStruct(node root)
     }
     else if (t0->kind == STRUCTURE)
     {
-        errorOutput(1, n0->lineno, n0->val);
+        errorOutput(1, n0->lineno, n0->child->val);
         return createErrorType(1);
     }
     else
@@ -869,7 +888,7 @@ Type ExpArray(node root)
     Type t2 = Exp(n2);
     if (t0->kind != ARRAY)
     {
-        errorOutput(10, n0->lineno, n0->val);
+        errorOutput(10, n0->lineno, n0->child->val);
         return createErrorType(10);
     }
     if (t2->kind != BASIC || t2->u.basic != 1)

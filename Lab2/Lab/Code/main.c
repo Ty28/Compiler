@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
     yyrestart(f);
     yyparse();
     if(lexicalError == 0 && syntaxError == 0){
-        // preOrder(ROOT, 0);
+        //preOrder(ROOT, 0);
         semanticCheck(ROOT);
     }
     // printf("-----------------------global_table_below----------------------\n");
