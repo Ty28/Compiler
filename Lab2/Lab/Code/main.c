@@ -14,19 +14,5 @@ int main(int argc, char** argv) {
         //preOrder(ROOT, 0);
         semanticCheck(ROOT);
     }
-    // printf("-----------------------global_table_below----------------------\n");
-	// for(int i=0;i<HASHSIZE;i++){
-	// 	if(symbolTable[i]!=NULL){
-	// 		printf("i:%d ",i);
-	// 		Symbol temp = symbolTable[i];
-	// 		while(temp != NULL){
-    //                 printf("%s,  %d ", temp->name, temp->type->kind);
-	// 				temp=temp->hashLink;
-	// 		}
-	// 		printf("\n");
-	// 	};
-	// };
-	// printf("-----------------------global_table_above----------------------\n");
-    // errorOutput(1, 1, "asda");
     return 0;
 }
