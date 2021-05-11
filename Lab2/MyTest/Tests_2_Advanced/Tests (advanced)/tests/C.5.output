@@ -1,15 +1,13 @@
-Error Type 15 at Line 26: try to init struct member when define it
-Error Type 15 at Line 28: redefined struct member
-Error Type 8 at Line 46: mismatched return
-Error Type 4 at Line 48: redefined function
-Error Type 11 at Line 81: called object isn't function
-Error Type 2 at Line 82: undefined function
-Error Type 3 at Line 89: redefined variable
-Error Type 13 at Line 91: request member from something not an struct
-Error Type 14 at Line 93: request nonexistent member
-Error Type 16 at Line 96: struct id duplicated with normal id :(
-Error Type 6 at Line 118: assign to rvalue
-Error Type 9 at Line 120: invocation arguments mismatched
-Error Type 17 at Line 125: use undefined struct
-Error Type 5 at Line 169: mismatched assignment
-Error Type 7 at Line 191: mismatched operands
+Error Type 15 at Line 69: try to init struct member when define it
+Error Type 15 at Line 70: redefined struct member
+Error Type 10 at Line 80: subscripted value is not an array
+Error Type 13 at Line 85: request member from something not an struct
+Error Type 11 at Line 87: called object isn't function
+Error Type 4 at Line 97: redefined function
+Error Type 6 at Line 102: assign to rvalue
+Error Type 14 at Line 106: request nonexistent member
+Error Type 16 at Line 126: struct id duplicated with normal id :(
+Error Type 17 at Line 404: use undefined struct
+Error Type 9 at Line 438: invocation arguments mismatched
+Error Type 8 at Line 646: mismatched return
+Error Type 3 at Line 651: redefined variable

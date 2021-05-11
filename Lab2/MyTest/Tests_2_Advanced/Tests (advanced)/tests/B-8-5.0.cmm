@@ -1,305 +1,234 @@
-struct S136 {
-  int S136_m0_i;
-  float S136_m1_a1_f[1];
-  float S136_m2_a1_f[1];
-  int S136_m3_i;
-  int S136_m4_i;
-  int S136_m5_i;
-  float S136_m6_a2_f[2];
-  float S136_m7_a1_a2_f[1][2];
+struct aRRGWreaVx {
+  float jlsBR[2];
+  int DQc69dyLSFsv;
+  float kb7uPd[1][2];
 };
 
-struct S137 {
-  float S137_m0_a1_f[1];
-  float S137_m1_a1_f[1];
-  int S137_m2_i;
-  float S137_m3_a1_a1_f[1][1];
+struct Ad9R3 {
+  int hvuVbkm;
+  int YQfi7Kn;
+  float _LmnH[1][1][2];
+  int Si2Aa69hgTr;
 };
 
-struct S138 {
-  int S138_m0_i;
+struct Bl5hbrmfEWF {
+  float _rCvZQhyu[1][1][2];
+  float xo1fNm7uxZR9[1][1][2];
+  int tbaI0eKa53LbY;
+  float qyVWUNMA9Qb9[1][1][1][2];
+  int MYbOHDNyBPDdI_;
+  int EXiioudrCbCv;
+  float GiOubN90jjn[1][1][1][1][2];
+  int rpHToDgDus;
+  float D53Y_ZVH2MUxow[1][1][1][2];
 };
 
+struct otmwkXPDX {
+  int tF6RyiBqoTKs;
+  float bIrwowYV6Ze[1];
+  int d4j495WuuOBdnh[1];
+  float wHEE4FU[1][1][2];
+  int CLHgsg;
+  float BFOadFuqHl7[1][1];
+  int EgAzGIzX;
+  float hlq_TJvGRbrqvJ[2][1];
+};
+
+struct kluNQZPi {
+  float UkYsNfd[2][1];
+};
+
+struct IwpDaE36km5 {
+  int pN7XNBot;
+};
+
+struct mNXQ6d {
+  int WPIX687FcpsXAK;
+};
+
+struct D5o2vTacHULsz {
+  int _VLFFzKF7;
+  int FHcHj[1];
+};
+
+struct c8ScG4ehDjLQNC {
+  int CBbWJWVpb3N[2][1];
+  int eUtQm;
+  int iAsnA;
+  struct otmwkXPDX IIsTxh[1];
+  int CLy8psmEbF;
+  float aA6MG[1][1][1];
+  int uxI2rZ[1][2][1];
+  int su58EdLCp[1][2][1];
+};
+
+struct HynbjOsUVUjryh {
+  int D0qQ4GB5;
+  float UGpNyNeuOzd[2][1];
+  float a_PUT1PnV[1][2];
+  int JirbGh;
+  struct Ad9R3 ULtExXwoxm[1];
+  float ocOIvZvz[1][1][1][2];
+};
+
+struct aRRGWreaVx WL_EOUi[1];
+int _SUMr99HcwF;
+float sacwr[1][2][1];
 
 
 
-int i_func_877(float i_func_877_a1_a2_f_0[1][2], struct S138 i_func_877_S138_0) {
-  float a1_f_L150[1];
-  float a1_f_L149[1];
-  float a2_f_L89[2];
-  struct S136 S136_L0;
-  a1_f_L150[0] = -192590112.000000;
-  a1_f_L149[0] = a1_f_L150[1031296911] + -471383522402352473571328.000000;
-  a2_f_L89[1] = -0.000000;
-  a2_f_L89[0] = -0.000000;
-  S136_L0.S136_m7_a1_a2_f[0][1] = a1_f_L150[599429314];
-  S136_L0.S136_m7_a1_a2_f[0][0] = -166.919312;
-  S136_L0.S136_m6_a2_f[1] = a1_f_L149[1981192688];
-  S136_L0.S136_m6_a2_f[0] = a1_f_L149[1925816714];
-  S136_L0.S136_m5_i = i_func_877_S138_0.S138_m0_i;
-  S136_L0.S136_m4_i = i_func_877_S138_0.S138_m0_i;
-  S136_L0.S136_m3_i = i_func_877_S138_0.S138_m0_i;
-  S136_L0.S136_m2_a1_f[0] = a1_f_L150[-433567387];
-  S136_L0.S136_m1_a1_f[0] = a2_f_L89[-1820020389];
-  S136_L0.S136_m0_i = i_func_877_S138_0.S138_m0_i;
-  a1_f_L149[i_func_877_S138_0.S138_m0_i] = (a1_f_L150[-558995517] + 0.000001);
-  i_func_877_S138_0.S138_m0_i = i_func_877(S136_L0.S136_m7_a1_a2_f, i_func_877_S138_0);
-  S136_L0.S136_m3_i = i_func_877(S136_L0.S136_m7_a1_a2_f, i_func_877_S138_0);
-  S136_L0.S136_m7_a1_a2_f[S136_L0.S136_m0_i][i_func_877_S138_0.S138_m0_i] = (5078571486411252370119321846204596224.000000 - a1_f_L150[607415920]);
-  S136_L0.S136_m1_a1_f[S136_L0.S136_m4_i] = (a1_f_L149[-1499922970] / a1_f_L150[534119769]);
-  S136_L0.S136_m1_a1_f[S136_L0.S136_m3_i] = (a1_f_L149[-1803868641] * a2_f_L89[855095262]);
-  return S136_L0.S136_m5_i = (i_func_877_S138_0.S138_m0_i <= 1885637099);
+int GKb0MpYmp(struct IwpDaE36km5 RScfivksr67Uy_) {
+  float PRL3Qv7xe1Xu9[2];
+  float dvvGlj5g[1];
+  float bEhTOKAfk8[2];
+  PRL3Qv7xe1Xu9[1] = 0.000000;
+  PRL3Qv7xe1Xu9[0] = 874006823937321730089339060224.000000;
+  dvvGlj5g[0] = 31239517641900032.000000;
+  bEhTOKAfk8[1] = PRL3Qv7xe1Xu9[-752816629] / 2718073859420716129400534335488.000000;
+  bEhTOKAfk8[0] = dvvGlj5g[1442396112] - dvvGlj5g[569355659];
+  RScfivksr67Uy_.pN7XNBot = GKb0MpYmp(RScfivksr67Uy_);
+  GKb0MpYmp(RScfivksr67Uy_);
+  bEhTOKAfk8[RScfivksr67Uy_.pN7XNBot] = (bEhTOKAfk8[-1355532864] * bEhTOKAfk8[1985959496]);
+  WL_EOUi[RScfivksr67Uy_.pN7XNBot].jlsBR[RScfivksr67Uy_.pN7XNBot] = 0.000000;
+  RScfivksr67Uy_.pN7XNBot = -1524831209;
+  WL_EOUi[RScfivksr67Uy_.pN7XNBot].jlsBR[RScfivksr67Uy_.pN7XNBot] = 0.000000;
+  return RScfivksr67Uy_.pN7XNBot = GKb0MpYmp(RScfivksr67Uy_);
 }
 
-int i_func_878() {
-  float a1_f_L152[1];
-  float a2_f_L90[2];
-  float a1_f_L151[1];
-  struct S136 S136_L1;
-  struct S138 a2_S138_L0[2];
-  struct S136 a1_a1_S136_L0[1][1];
-  a1_f_L152[0] = -1509020.875000;
-  a2_f_L90[1] = -0.000000;
-  a2_f_L90[0] = -36227108.000000;
-  a1_f_L151[0] = a1_f_L152[-678636220] + a2_f_L90[-295299164];
-  S136_L1.S136_m7_a1_a2_f[0][1] = -0.001485;
-  S136_L1.S136_m7_a1_a2_f[0][0] = -0.007673;
-  S136_L1.S136_m6_a2_f[1] = 0.000000;
-  S136_L1.S136_m6_a2_f[0] = -0.000000;
-  S136_L1.S136_m5_i = 458136123;
-  S136_L1.S136_m4_i = -1643855815;
-  S136_L1.S136_m3_i = 1796840325;
-  S136_L1.S136_m2_a1_f[0] = 0.000000;
-  S136_L1.S136_m1_a1_f[0] = 247.217346;
-  S136_L1.S136_m0_i = 221864572;
-  a2_S138_L0[1].S138_m0_i = S136_L1.S136_m0_i;
-  a2_S138_L0[0].S138_m0_i = S136_L1.S136_m0_i;
-  a1_a1_S136_L0[0][0].S136_m7_a1_a2_f[0][1] = a1_f_L151[1473766873] = (a1_f_L152[362692232] + a1_f_L151[-1481805493]);
-  a1_a1_S136_L0[0][0].S136_m7_a1_a2_f[0][0] = S136_L1.S136_m1_a1_f[S136_L1.S136_m3_i] = -0.000000;
-  a1_a1_S136_L0[0][0].S136_m6_a2_f[1] = a1_f_L152[S136_L1.S136_m0_i] = (a1_f_L152[1420138053] * a1_f_L152[1244076437]);
-  a1_a1_S136_L0[0][0].S136_m6_a2_f[0] = S136_L1.S136_m2_a1_f[S136_L1.S136_m4_i] = -0.000000;
-  a1_a1_S136_L0[0][0].S136_m5_i = S136_L1.S136_m0_i = i_func_877(S136_L1.S136_m7_a1_a2_f, a2_S138_L0[1965244364]);
-  a1_a1_S136_L0[0][0].S136_m4_i = S136_L1.S136_m0_i = i_func_878();
-  a1_a1_S136_L0[0][0].S136_m3_i = S136_L1.S136_m5_i = (79569280 && -2079566896);
-  a1_a1_S136_L0[0][0].S136_m2_a1_f[0] = S136_L1.S136_m1_a1_f[S136_L1.S136_m4_i] = (a1_f_L151[-1329326474] * a1_f_L151[16145812]);
-  a1_a1_S136_L0[0][0].S136_m1_a1_f[0] = S136_L1.S136_m1_a1_f[S136_L1.S136_m4_i] = 118523474211280520969529401016320.000000;
-  a1_a1_S136_L0[0][0].S136_m0_i = S136_L1.S136_m0_i = i_func_877(S136_L1.S136_m7_a1_a2_f, a2_S138_L0[1872731365]);
-  a1_f_L151[S136_L1.S136_m4_i] = -2060325205573632.000000;
-  a1_f_L152[S136_L1.S136_m0_i] = (a1_f_L151[-1467189037] - a1_f_L152[-1224901739]);
-  S136_L1.S136_m7_a1_a2_f[259553597][S136_L1.S136_m3_i] = (427783618560.000000 * a1_f_L151[680593100]);
-  a1_f_L152[S136_L1.S136_m4_i] = (a1_f_L151[1048691712] * a2_f_L90[-418131844]);
-  S136_L1.S136_m1_a1_f[S136_L1.S136_m0_i] = (a1_f_L151[-1905976955] + a1_f_L151[688775963]);
-  S136_L1.S136_m5_i = i_func_877(S136_L1.S136_m7_a1_a2_f, a2_S138_L0[-138193305]);
-  i_func_878();
-  a2_f_L90[S136_L1.S136_m5_i] = (a2_f_L90[44932301] / a2_f_L90[-1163912965]);
-  S136_L1.S136_m5_i = (S136_L1.S136_m4_i = S136_L1.S136_m0_i);
-  S136_L1.S136_m4_i = i_func_877(S136_L1.S136_m7_a1_a2_f, a2_S138_L0[972550186]);
-  return S136_L1.S136_m3_i = -1825283039;
+int H3ivhxFwh() {
+  struct Ad9R3 ZNamPtLz1[1];
+  struct Ad9R3 ZNamPtLz1[1];
+  struct aRRGWreaVx HEC5k[1][1];
+  struct aRRGWreaVx HEC5k[1][1];
+  float sqvmK4IZjTp[2];
+  float Dfd8HGh[2];
+  struct IwpDaE36km5 oVkBFVCJ7z3gS;
+  float zCVynV81d[1];
+  sqvmK4IZjTp[1] = 56346946307946805814655713280.000000;
+  sqvmK4IZjTp[0] = 3443735317316862222532608.000000;
+  Dfd8HGh[1] = -0.000000;
+  Dfd8HGh[0] = sqvmK4IZjTp[-315298234] / sqvmK4IZjTp[301443669];
+  oVkBFVCJ7z3gS.pN7XNBot = 779355975;
+  zCVynV81d[0] = 1294322217517056.000000;
+  Dfd8HGh[oVkBFVCJ7z3gS.pN7XNBot] = (-0.000000 - zCVynV81d[1168347511]);
+  oVkBFVCJ7z3gS.pN7XNBot = (oVkBFVCJ7z3gS.pN7XNBot / oVkBFVCJ7z3gS.pN7XNBot);
+  Dfd8HGh[oVkBFVCJ7z3gS.pN7XNBot] = (sqvmK4IZjTp[1718711359] / -0.000000);
+  return oVkBFVCJ7z3gS.pN7XNBot = (oVkBFVCJ7z3gS.pN7XNBot != oVkBFVCJ7z3gS.pN7XNBot);
 }
 
-int i_func_879(int i_func_879_i_0, struct S136 i_func_879_S136_0, struct S136 i_func_879_a1_S136_0[1], float i_func_879_a1_f_0[1]) {
-  int redef_L196;
-  int redef_L196;
-  struct S138 a2_S138_L1[2];
-  float a2_f_L91[2];
-  struct S136 a1_a1_S136_L1[1][1];
-  a2_S138_L1[1].S138_m0_i = i_func_879_S136_0.S136_m0_i;
-  a2_S138_L1[0].S138_m0_i = i_func_879_S136_0.S136_m0_i;
-  a2_f_L91[1] = -0.000000;
-  a2_f_L91[0] = 29220926643092087947756184797184.000000;
-  a1_a1_S136_L1[0][0].S136_m7_a1_a2_f[0][1] = -55301251072.000000;
-  a1_a1_S136_L1[0][0].S136_m7_a1_a2_f[0][0] = i_func_879_a1_f_0[576955206] + a2_f_L91[-1413574515];
-  a1_a1_S136_L1[0][0].S136_m6_a2_f[1] = -214.753906 - a2_f_L91[-311043971];
-  a1_a1_S136_L1[0][0].S136_m6_a2_f[0] = i_func_879_a1_f_0[537755300] + i_func_879_a1_f_0[1055117038];
-  a1_a1_S136_L1[0][0].S136_m5_i = i_func_878();
-  a1_a1_S136_L1[0][0].S136_m4_i = i_func_879_S136_0.S136_m4_i == 1007778917;
-  a1_a1_S136_L1[0][0].S136_m3_i = 1980823110;
-  a1_a1_S136_L1[0][0].S136_m2_a1_f[0] = i_func_879_a1_f_0[1520155172] / i_func_879_a1_f_0[2079937515];
-  a1_a1_S136_L1[0][0].S136_m1_a1_f[0] = -360837554204835840.000000;
-  a1_a1_S136_L1[0][0].S136_m0_i = i_func_877(i_func_879_a1_S136_0[-1321659732].S136_m7_a1_a2_f, a2_S138_L1[-469640167]);
-  i_func_879(i_func_877(i_func_879_a1_S136_0[1903279990].S136_m7_a1_a2_f, a2_S138_L1[-1834026407]), (i_func_879_a1_S136_0[i_func_879_S136_0.S136_m4_i] = i_func_879_a1_S136_0[i_func_879_S136_0.S136_m0_i]), a1_a1_S136_L1[i_func_879_S136_0.S136_m5_i], i_func_879_S136_0.S136_m1_a1_f);
-  while (a2_S138_L1[i_func_879_S136_0.S136_m5_i].S138_m0_i = (445576321 == i_func_879_S136_0.S136_m5_i)) {
-    struct S138 redef_L201[1][2];
-    struct S138 redef_L201[1][2];
-    i_func_879_S136_0.S136_m4_i = (i_func_879_S136_0.S136_m0_i + i_func_879_S136_0.S136_m0_i);
-    a1_a1_S136_L1[i_func_879_S136_0.S136_m0_i][i_func_879_S136_0.S136_m0_i].S136_m3_i = -2041232547;
-    i_func_879_a1_f_0[i_func_879_S136_0.S136_m3_i] = -0.000000;
-    i_func_879_S136_0.S136_m1_a1_f[i_func_879_S136_0.S136_m0_i] = (i_func_879_a1_f_0[1119368631] / i_func_879_a1_f_0[-1120715031]);
-    a1_a1_S136_L1[i_func_879_S136_0.S136_m5_i][i_func_879_S136_0.S136_m0_i].S136_m4_i = -480262946;
-  }
-  i_func_879_S136_0.S136_m6_a2_f[i_func_879_S136_0.S136_m0_i] = (i_func_879_a1_f_0[-423867154] / a2_f_L91[1248006502]);
-  i_func_879_S136_0.S136_m0_i = (i_func_879_S136_0.S136_m0_i < i_func_879_S136_0.S136_m3_i);
-  a1_a1_S136_L1[i_func_879_S136_0.S136_m4_i][i_func_879_S136_0.S136_m3_i].S136_m5_i = (i_func_879_S136_0.S136_m5_i < 1118060407);
-  i_func_878();
-  {
-    struct S138 redef_L204[1];
-    struct S138 redef_L204[1];
-    i_func_879_S136_0.S136_m3_i = i_func_877(i_func_879_a1_S136_0[-1238621531].S136_m7_a1_a2_f, a2_S138_L1[-1303174113]);
-    i_func_879_a1_S136_0[i_func_879_S136_0.S136_m5_i].S136_m2_a1_f[i_func_879_S136_0.S136_m5_i] = (a2_f_L91[1906956616] - 0.000000);
-    if (i_func_879_S136_0.S136_m3_i = (i_func_879_S136_0.S136_m0_i * i_func_879_S136_0.S136_m5_i)) {
-      i_func_879_S136_0.S136_m1_a1_f[-1230747226] = (a2_f_L91[1826881730] / i_func_879_a1_f_0[-1367995362]);
-    }
-    else {
-      i_func_879_S136_0.S136_m1_a1_f[i_func_879_S136_0.S136_m0_i] = (i_func_879_a1_f_0[-462820732] - a2_f_L91[823458846]);
-      i_func_878();
-      i_func_879_S136_0.S136_m0_i = 398882264;
-      i_func_879_S136_0.S136_m1_a1_f[i_func_879_S136_0.S136_m5_i] = (-898018048.000000 * i_func_879_a1_f_0[555580699]);
-      a1_a1_S136_L1[i_func_879_S136_0.S136_m4_i][1973873075].S136_m5_i = (i_func_879_S136_0.S136_m4_i > i_func_879_S136_0.S136_m0_i);
-      a1_a1_S136_L1[-1274416804][i_func_879_S136_0.S136_m3_i].S136_m3_i = (i_func_879_S136_0.S136_m0_i == 0);
-    }
-    a1_a1_S136_L1[i_func_879_S136_0.S136_m0_i][i_func_879_S136_0.S136_m0_i].S136_m5_i = (i_func_879_S136_0.S136_m0_i * i_func_879_S136_0.S136_m0_i);
-    a1_a1_S136_L1[i_func_879_S136_0.S136_m0_i][i_func_879_S136_0.S136_m0_i].S136_m5_i = i_func_877(i_func_879_a1_S136_0[499067919].S136_m7_a1_a2_f, a2_S138_L1[-321908113]);
-    i_func_879_S136_0.S136_m0_i = (i_func_879_S136_0.S136_m4_i - i_func_879_S136_0.S136_m0_i);
-  }
-  i_func_877(i_func_879_S136_0.S136_m7_a1_a2_f, (a2_S138_L1[i_func_879_S136_0.S136_m4_i] = (a2_S138_L1[i_func_879_S136_0.S136_m0_i] = a2_S138_L1[i_func_879_S136_0.S136_m0_i])));
-  i_func_879_a1_f_0[i_func_879_S136_0.S136_m0_i] = (-6043386525392340798134026240.000000 - i_func_879_a1_f_0[1968006674]);
-  i_func_879_S136_0.S136_m5_i = (!i_func_879_S136_0.S136_m3_i);
-  return i_func_879_S136_0.S136_m0_i = i_func_879_a1_S136_0[2097725766].S136_m3_i;
-}
-
-int i_func_880(struct S138 i_func_880_a2_S138_0[2], struct S138 i_func_880_a1_a2_S138_0[1][2], float i_func_880_a1_a1_f_0[1][1]) {
-  struct S136 S136_L2;
-  float a1_f_L153[1];
-  float a2_f_L92[2];
-  struct S136 a1_S136_L0[1];
-  struct S136 a1_a1_S136_L2[1][1];
-  float a1_a2_a1_a1_f_L0[1][2][1][1];
-  S136_L2.S136_m7_a1_a2_f[0][1] = 2590795.500000;
-  S136_L2.S136_m7_a1_a2_f[0][0] = 0.000000;
-  S136_L2.S136_m6_a2_f[1] = 30436875520041627418624.000000;
-  S136_L2.S136_m6_a2_f[0] = -0.000000;
-  S136_L2.S136_m5_i = 662768501;
-  S136_L2.S136_m4_i = -1801858394;
-  S136_L2.S136_m3_i = 658459530;
-  S136_L2.S136_m2_a1_f[0] = -556931036778634596027727872.000000;
-  S136_L2.S136_m1_a1_f[0] = 2092369838080.000000;
-  S136_L2.S136_m0_i = 529163815;
-  a1_f_L153[0] = -0.000000;
-  a2_f_L92[1] = 0.000000;
-  a2_f_L92[0] = 3317349515196270379008.000000;
-  a1_S136_L0[0].S136_m7_a1_a2_f[0][1] = 18502660390912.000000 / a1_f_L153[89471883];
-  a1_S136_L0[0].S136_m7_a1_a2_f[0][0] = 161366409216.000000;
-  a1_S136_L0[0].S136_m6_a2_f[1] = a1_f_L153[-1259724444] + a1_f_L153[1942250319];
-  a1_S136_L0[0].S136_m6_a2_f[0] = 0.000000 / a1_f_L153[1218920705];
-  a1_S136_L0[0].S136_m5_i = i_func_877(S136_L2.S136_m7_a1_a2_f, i_func_880_a2_S138_0[2023509486]);
-  a1_S136_L0[0].S136_m4_i = 1204435256;
-  a1_S136_L0[0].S136_m3_i = S136_L2.S136_m0_i + S136_L2.S136_m0_i;
-  a1_S136_L0[0].S136_m2_a1_f[0] = a1_f_L153[1122343185] * a1_f_L153[96287208];
-  a1_S136_L0[0].S136_m1_a1_f[0] = a1_f_L153[-741368359] / a1_f_L153[417009507];
-  a1_S136_L0[0].S136_m0_i = i_func_878();
-  a1_a1_S136_L2[0][0].S136_m7_a1_a2_f[0][1] = a1_f_L153[665554258] / -0.000000;
-  a1_a1_S136_L2[0][0].S136_m7_a1_a2_f[0][0] = a1_f_L153[1668810438] - a2_f_L92[-1511220186];
-  a1_a1_S136_L2[0][0].S136_m6_a2_f[1] = a2_f_L92[135836249] + a2_f_L92[1154313966];
-  a1_a1_S136_L2[0][0].S136_m6_a2_f[0] = a1_f_L153[-491322638] * a1_f_L153[-135452851];
-  a1_a1_S136_L2[0][0].S136_m5_i = 37300297;
-  a1_a1_S136_L2[0][0].S136_m4_i = i_func_880(i_func_880_a1_a2_S138_0[-1096712300], i_func_880_a1_a2_S138_0, i_func_880_a1_a1_f_0);
-  a1_a1_S136_L2[0][0].S136_m3_i = S136_L2.S136_m0_i * S136_L2.S136_m0_i;
-  a1_a1_S136_L2[0][0].S136_m2_a1_f[0] = a1_f_L153[-1988256729] - a1_f_L153[-440706413];
-  a1_a1_S136_L2[0][0].S136_m1_a1_f[0] = -6765269504.000000;
-  a1_a1_S136_L2[0][0].S136_m0_i = i_func_880(i_func_880_a1_a2_S138_0[-896434838], i_func_880_a1_a2_S138_0, i_func_880_a1_a1_f_0);
-  a1_a2_a1_a1_f_L0[0][1][0][0] = a1_f_L153[S136_L2.S136_m0_i] = (a1_f_L153[-1936754589] - -0.000000);
-  a1_a2_a1_a1_f_L0[0][0][0][0] = S136_L2.S136_m1_a1_f[S136_L2.S136_m0_i] = (a2_f_L92[-1760825082] / a1_f_L153[1194840209]);
-  i_func_880_a1_a1_f_0[S136_L2.S136_m5_i][-370148235] = (a1_f_L153[65901749] + a2_f_L92[687454295]);
-  S136_L2.S136_m0_i = (S136_L2.S136_m4_i + S136_L2.S136_m0_i);
-  i_func_880_a2_S138_0[S136_L2.S136_m0_i].S138_m0_i = (S136_L2.S136_m0_i != S136_L2.S136_m5_i);
-  S136_L2.S136_m5_i = i_func_878();
-  i_func_879(S136_L2.S136_m0_i, (a1_S136_L0[S136_L2.S136_m5_i] = (a1_S136_L0[S136_L2.S136_m0_i] = a1_S136_L0[781155498])), a1_a1_S136_L2[S136_L2.S136_m3_i], i_func_880_a1_a1_f_0[S136_L2.S136_m0_i]);
-  a1_a1_S136_L2[S136_L2.S136_m3_i][S136_L2.S136_m4_i].S136_m3_i = (S136_L2.S136_m0_i * S136_L2.S136_m0_i);
-  return i_func_877(a1_a1_S136_L2[S136_L2.S136_m5_i][S136_L2.S136_m0_i].S136_m7_a1_a2_f, (i_func_880_a1_a2_S138_0[S136_L2.S136_m0_i][S136_L2.S136_m0_i] = (i_func_880_a1_a2_S138_0[S136_L2.S136_m0_i][S136_L2.S136_m4_i] = (i_func_880_a1_a2_S138_0[S136_L2.S136_m4_i][S136_L2.S136_m4_i] = (i_func_880_a2_S138_0[S136_L2.S136_m5_i] = i_func_880_a2_S138_0[S136_L2.S136_m0_i])))));
-}
-
-int i_func_881(struct S138 i_func_881_a1_a1_a2_S138_0[1][1][2], struct S136 i_func_881_a1_S136_0[1], struct S138 i_func_881_a2_S138_0[2], float i_func_881_a1_a2_a1_a1_f_0[1][2][1][1]) {
-  float a1_f_L154[1];
-  struct S136 S136_L4;
-  float a2_f_L93[2];
-  struct S136 S136_L3;
-  struct S136 a1_a1_S136_L3[1][1];
-  struct S138 a1_a2_S138_L0[1][2];
-  a1_f_L154[0] = -0.000000;
-  S136_L4.S136_m7_a1_a2_f[0][1] = 23036222156279119872.000000;
-  S136_L4.S136_m7_a1_a2_f[0][0] = 26626726.000000;
-  S136_L4.S136_m6_a2_f[1] = 18794334349807286070397196304384.000000;
-  S136_L4.S136_m6_a2_f[0] = -2515109675008.000000;
-  S136_L4.S136_m5_i = -1538195773;
-  S136_L4.S136_m4_i = 452052794;
-  S136_L4.S136_m3_i = -509804324;
-  S136_L4.S136_m2_a1_f[0] = 0.000000;
-  S136_L4.S136_m1_a1_f[0] = -111747395410198528.000000;
-  S136_L4.S136_m0_i = -1137128954;
-  a2_f_L93[1] = 5894378171392931227287737167649964032.000000;
-  a2_f_L93[0] = -0.000346;
-  S136_L3.S136_m7_a1_a2_f[0][1] = a1_f_L154[613457803] / -0.000000;
-  S136_L3.S136_m7_a1_a2_f[0][0] = a1_f_L154[1337754919] * a1_f_L154[648444783];
-  S136_L3.S136_m6_a2_f[1] = -699632779264.000000;
-  S136_L3.S136_m6_a2_f[0] = a1_f_L154[1338983415] - a1_f_L154[2131959756];
-  S136_L3.S136_m5_i = i_func_881(i_func_881_a1_a1_a2_S138_0, i_func_881_a1_S136_0, i_func_881_a2_S138_0, i_func_881_a1_a2_a1_a1_f_0);
-  S136_L3.S136_m4_i = i_func_879(S136_L4.S136_m3_i, i_func_881_a1_S136_0[-121465163], i_func_881_a1_S136_0, S136_L4.S136_m1_a1_f);
-  S136_L3.S136_m3_i = S136_L4.S136_m0_i != 721685626;
-  S136_L3.S136_m2_a1_f[0] = a2_f_L93[1222637740] * 0.000198;
-  S136_L3.S136_m1_a1_f[0] = 2451246619214030589053099499847680.000000;
-  S136_L3.S136_m0_i = S136_L4.S136_m0_i - S136_L4.S136_m5_i;
-  a1_a1_S136_L3[0][0].S136_m7_a1_a2_f[0][1] = a2_f_L93[1549293698];
-  a1_a1_S136_L3[0][0].S136_m7_a1_a2_f[0][0] = a1_f_L154[988056230];
-  a1_a1_S136_L3[0][0].S136_m6_a2_f[1] = a1_f_L154[-638685248];
-  a1_a1_S136_L3[0][0].S136_m6_a2_f[0] = a1_f_L154[1928657271];
-  a1_a1_S136_L3[0][0].S136_m5_i = S136_L4.S136_m5_i;
-  a1_a1_S136_L3[0][0].S136_m4_i = S136_L3.S136_m3_i;
-  a1_a1_S136_L3[0][0].S136_m3_i = S136_L3.S136_m0_i;
-  a1_a1_S136_L3[0][0].S136_m2_a1_f[0] = a1_f_L154[1709907866];
-  a1_a1_S136_L3[0][0].S136_m1_a1_f[0] = a1_f_L154[-1792398930];
-  a1_a1_S136_L3[0][0].S136_m0_i = S136_L3.S136_m0_i;
-  a1_a2_S138_L0[0][1].S138_m0_i = 722493706;
-  a1_a2_S138_L0[0][0].S138_m0_i = -1626768089;
-  S136_L3.S136_m4_i = i_func_881(i_func_881_a1_a1_a2_S138_0, a1_a1_S136_L3[-1546075054], a1_a2_S138_L0[556617423], i_func_881_a1_a2_a1_a1_f_0);
-  S136_L4.S136_m1_a1_f[S136_L4.S136_m0_i] = (a2_f_L93[-1983020821] + -4770067388090596015304483708862464.000000);
-  S136_L4.S136_m0_i = i_func_878();
-  a1_a1_S136_L3[S136_L4.S136_m0_i][S136_L4.S136_m0_i].S136_m5_i = (S136_L3.S136_m0_i <= S136_L4.S136_m0_i);
-  return a1_a1_S136_L3[S136_L3.S136_m0_i][S136_L4.S136_m0_i].S136_m5_i = (i_func_881_a1_S136_0[-300224503].S136_m3_i = S136_L4.S136_m3_i);
+int w97Bc(float jzvcEZku9r[2], float D_reH[1][1][2]) {
+  struct IwpDaE36km5 x58vvwYX[1][2];
+  struct IwpDaE36km5 x58vvwYX[1][2];
+  float A0jHt7T[1];
+  struct IwpDaE36km5 Q1ohzcrD6PNpN0[2];
+  struct otmwkXPDX gWKCIZ1vLdofa;
+  struct kluNQZPi NCOyclzcAKP0M;
+  A0jHt7T[0] = 12072983740654702232244060160.000000;
+  Q1ohzcrD6PNpN0[1].pN7XNBot = _SUMr99HcwF;
+  Q1ohzcrD6PNpN0[0].pN7XNBot = -609649982;
+  gWKCIZ1vLdofa.hlq_TJvGRbrqvJ[1][0] = jzvcEZku9r[-1569826367] / A0jHt7T[1522014866];
+  gWKCIZ1vLdofa.hlq_TJvGRbrqvJ[0][0] = jzvcEZku9r[554443464] / A0jHt7T[1888683286];
+  gWKCIZ1vLdofa.EgAzGIzX = -661636678 != _SUMr99HcwF;
+  gWKCIZ1vLdofa.BFOadFuqHl7[0][0] = A0jHt7T[1121598734] + jzvcEZku9r[731948766];
+  gWKCIZ1vLdofa.CLHgsg = GKb0MpYmp(Q1ohzcrD6PNpN0[-206543507]);
+  gWKCIZ1vLdofa.wHEE4FU[0][0][1] = 0.000000 + A0jHt7T[780255198];
+  gWKCIZ1vLdofa.wHEE4FU[0][0][0] = jzvcEZku9r[-653435009] - -0.000000;
+  gWKCIZ1vLdofa.d4j495WuuOBdnh[0] = -276686595 <= _SUMr99HcwF;
+  gWKCIZ1vLdofa.bIrwowYV6Ze[0] = 0.000000;
+  gWKCIZ1vLdofa.tF6RyiBqoTKs = _SUMr99HcwF * _SUMr99HcwF;
+  NCOyclzcAKP0M.UkYsNfd[1][0] = A0jHt7T[gWKCIZ1vLdofa.tF6RyiBqoTKs] = -0.000000;
+  NCOyclzcAKP0M.UkYsNfd[0][0] = A0jHt7T[gWKCIZ1vLdofa.tF6RyiBqoTKs] = 23216755368490172416.000000;
+  gWKCIZ1vLdofa.EgAzGIzX = (gWKCIZ1vLdofa.tF6RyiBqoTKs && gWKCIZ1vLdofa.tF6RyiBqoTKs);
+  return gWKCIZ1vLdofa.CLHgsg = (gWKCIZ1vLdofa.tF6RyiBqoTKs >= gWKCIZ1vLdofa.EgAzGIzX);
 }
 
 int top_caller() {
-  struct S138 redef_L225[1][2];
-  struct S138 redef_L225[1][2];
-  struct S138 redef_L227[1][1][1][2];
-  struct S138 redef_L227[1][1][1][2];
-  float a1_f_L156[1];
-  float a1_f_L155[1];
-  struct S136 S136_L5;
-  float a2_f_L94[2];
-  struct S136 a1_a1_S136_L4[1][1];
-  struct S138 a1_a1_a1_a2_S138_L0[1][1][1][2];
-  a1_f_L156[0] = 0.000000;
-  a1_f_L155[0] = a1_f_L156[1428857871] + a1_f_L156[838942883];
-  S136_L5.S136_m7_a1_a2_f[0][1] = 11281806.000000;
-  S136_L5.S136_m7_a1_a2_f[0][0] = 19934802230320532069656951699537920.000000;
-  S136_L5.S136_m6_a2_f[1] = -122387858786414746170161379672064.000000;
-  S136_L5.S136_m6_a2_f[0] = 65710179149678199190516987582218240.000000;
-  S136_L5.S136_m5_i = -2040112798;
-  S136_L5.S136_m4_i = 1877542338;
-  S136_L5.S136_m3_i = -2047904850;
-  S136_L5.S136_m2_a1_f[0] = 32953051778725707776.000000;
-  S136_L5.S136_m1_a1_f[0] = -0.211628;
-  S136_L5.S136_m0_i = 60248995;
-  a2_f_L94[1] = -0.000000;
-  a2_f_L94[0] = -101648932864.000000;
-  a1_a1_S136_L4[0][0].S136_m7_a1_a2_f[0][1] = a1_f_L156[963926589];
-  a1_a1_S136_L4[0][0].S136_m7_a1_a2_f[0][0] = a1_f_L156[1871162751];
-  a1_a1_S136_L4[0][0].S136_m6_a2_f[1] = a2_f_L94[525731810];
-  a1_a1_S136_L4[0][0].S136_m6_a2_f[0] = a1_f_L156[1513759949];
-  a1_a1_S136_L4[0][0].S136_m5_i = S136_L5.S136_m0_i;
-  a1_a1_S136_L4[0][0].S136_m4_i = S136_L5.S136_m0_i;
-  a1_a1_S136_L4[0][0].S136_m3_i = S136_L5.S136_m0_i;
-  a1_a1_S136_L4[0][0].S136_m2_a1_f[0] = a2_f_L94[1465972253];
-  a1_a1_S136_L4[0][0].S136_m1_a1_f[0] = a1_f_L155[-395608446];
-  a1_a1_S136_L4[0][0].S136_m0_i = S136_L5.S136_m4_i;
-  a1_a1_a1_a2_S138_L0[0][0][0][1].S138_m0_i = S136_L5.S136_m3_i = i_func_879(S136_L5.S136_m0_i, S136_L5, a1_a1_S136_L4[-1331379134], S136_L5.S136_m1_a1_f);
-  a1_a1_a1_a2_S138_L0[0][0][0][0].S138_m0_i = a1_a1_S136_L4[S136_L5.S136_m0_i][S136_L5.S136_m0_i].S136_m0_i = i_func_878();
-  a1_f_L155[S136_L5.S136_m5_i] = (324930837336293376.000000 - a1_f_L156[315366726]);
-  S136_L5.S136_m7_a1_a2_f[S136_L5.S136_m0_i][S136_L5.S136_m0_i] = (a1_f_L155[1850876552] - a1_f_L156[-1437474819]);
-  return S136_L5.S136_m4_i = (S136_L5.S136_m0_i && S136_L5.S136_m4_i);
+  struct D5o2vTacHULsz iULJPAi4[1];
+  struct D5o2vTacHULsz iULJPAi4[1];
+  float eeqNhX[1][1];
+  float eeqNhX[1][1];
+  float TpAjXZU89K7z[2];
+  float lG0LwGEPfvE2[1];
+  float l9V2B2uI[1];
+  struct Bl5hbrmfEWF cXH3D0e;
+  struct IwpDaE36km5 mkcGm[2];
+  struct c8ScG4ehDjLQNC xmVzYTSN9AEXz0;
+  struct HynbjOsUVUjryh bcG0IW;
+  TpAjXZU89K7z[1] = -0.000000;
+  TpAjXZU89K7z[0] = -255188618607199021694976.000000;
+  lG0LwGEPfvE2[0] = -8128980321811552329007104.000000;
+  l9V2B2uI[0] = TpAjXZU89K7z[1575708288] / lG0LwGEPfvE2[-1953462722];
+  cXH3D0e.D53Y_ZVH2MUxow[0][0][0][1] = 0.000000;
+  cXH3D0e.D53Y_ZVH2MUxow[0][0][0][0] = -0.000000;
+  cXH3D0e.rpHToDgDus = 1176172392;
+  cXH3D0e.GiOubN90jjn[0][0][0][0][1] = 0.000002;
+  cXH3D0e.GiOubN90jjn[0][0][0][0][0] = -0.000000;
+  cXH3D0e.EXiioudrCbCv = 729442894;
+  cXH3D0e.MYbOHDNyBPDdI_ = 314690119;
+  cXH3D0e.qyVWUNMA9Qb9[0][0][0][1] = -1690820258897617396763135662801027072.000000;
+  cXH3D0e.qyVWUNMA9Qb9[0][0][0][0] = 948570203140549473468416.000000;
+  cXH3D0e.tbaI0eKa53LbY = -890709441;
+  cXH3D0e.xo1fNm7uxZR9[0][0][1] = 1332.585327;
+  cXH3D0e.xo1fNm7uxZR9[0][0][0] = 1.158349;
+  cXH3D0e._rCvZQhyu[0][0][1] = -0.000000;
+  cXH3D0e._rCvZQhyu[0][0][0] = 7294743038439854656454656.000000;
+  mkcGm[1].pN7XNBot = cXH3D0e.tbaI0eKa53LbY;
+  mkcGm[0].pN7XNBot = cXH3D0e.tbaI0eKa53LbY;
+  xmVzYTSN9AEXz0.su58EdLCp[0][1][0] = cXH3D0e.tbaI0eKa53LbY = -1830283988;
+  xmVzYTSN9AEXz0.su58EdLCp[0][0][0] = cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.tbaI0eKa53LbY && cXH3D0e.tbaI0eKa53LbY);
+  xmVzYTSN9AEXz0.uxI2rZ[0][1][0] = cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.tbaI0eKa53LbY + cXH3D0e.MYbOHDNyBPDdI_);
+  xmVzYTSN9AEXz0.uxI2rZ[0][0][0] = top_caller();
+  xmVzYTSN9AEXz0.aA6MG[0][0][0] = WL_EOUi[cXH3D0e.tbaI0eKa53LbY].jlsBR[cXH3D0e.tbaI0eKa53LbY] = (-0.000001 * TpAjXZU89K7z[1401018361]);
+  xmVzYTSN9AEXz0.CLy8psmEbF = cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.tbaI0eKa53LbY - cXH3D0e.tbaI0eKa53LbY);
+  xmVzYTSN9AEXz0.IIsTxh[0].hlq_TJvGRbrqvJ[1][0] = l9V2B2uI[cXH3D0e.tbaI0eKa53LbY] = 324499953621153448198144.000000;
+  xmVzYTSN9AEXz0.IIsTxh[0].hlq_TJvGRbrqvJ[0][0] = TpAjXZU89K7z[cXH3D0e.tbaI0eKa53LbY] = (l9V2B2uI[1244516171] + 30612166957674806435890855936.000000);
+  xmVzYTSN9AEXz0.IIsTxh[0].EgAzGIzX = cXH3D0e.rpHToDgDus = H3ivhxFwh();
+  xmVzYTSN9AEXz0.IIsTxh[0].BFOadFuqHl7[0][0] = l9V2B2uI[cXH3D0e.rpHToDgDus] = -0.000000;
+  xmVzYTSN9AEXz0.IIsTxh[0].CLHgsg = cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.tbaI0eKa53LbY != -293755066);
+  xmVzYTSN9AEXz0.IIsTxh[0].wHEE4FU[0][0][1] = lG0LwGEPfvE2[cXH3D0e.tbaI0eKa53LbY] = (lG0LwGEPfvE2[-566259747] * l9V2B2uI[894009514]);
+  xmVzYTSN9AEXz0.IIsTxh[0].wHEE4FU[0][0][0] = l9V2B2uI[-1786043614] = (TpAjXZU89K7z[-1429969948] + l9V2B2uI[1003565059]);
+  xmVzYTSN9AEXz0.IIsTxh[0].d4j495WuuOBdnh[0] = cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.tbaI0eKa53LbY / cXH3D0e.tbaI0eKa53LbY);
+  xmVzYTSN9AEXz0.IIsTxh[0].bIrwowYV6Ze[0] = WL_EOUi[cXH3D0e.tbaI0eKa53LbY].jlsBR[cXH3D0e.tbaI0eKa53LbY] = (l9V2B2uI[1127958235] - l9V2B2uI[1777746074]);
+  xmVzYTSN9AEXz0.IIsTxh[0].tF6RyiBqoTKs = H3ivhxFwh();
+  xmVzYTSN9AEXz0.iAsnA = cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.tbaI0eKa53LbY < cXH3D0e.tbaI0eKa53LbY);
+  xmVzYTSN9AEXz0.eUtQm = cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.tbaI0eKa53LbY >= cXH3D0e.tbaI0eKa53LbY);
+  xmVzYTSN9AEXz0.CBbWJWVpb3N[1][0] = cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.tbaI0eKa53LbY >= cXH3D0e.tbaI0eKa53LbY);
+  xmVzYTSN9AEXz0.CBbWJWVpb3N[0][0] = cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.EXiioudrCbCv / cXH3D0e.tbaI0eKa53LbY);
+  bcG0IW.ocOIvZvz[0][0][0][1] = WL_EOUi[xmVzYTSN9AEXz0.eUtQm].jlsBR[cXH3D0e.tbaI0eKa53LbY] = (l9V2B2uI[1920876560] - TpAjXZU89K7z[22004014]);
+  bcG0IW.ocOIvZvz[0][0][0][0] = lG0LwGEPfvE2[cXH3D0e.tbaI0eKa53LbY] = (TpAjXZU89K7z[-964967233] - lG0LwGEPfvE2[-1836092315]);
+  bcG0IW.ULtExXwoxm[0].Si2Aa69hgTr = cXH3D0e.EXiioudrCbCv = (cXH3D0e.tbaI0eKa53LbY * xmVzYTSN9AEXz0.eUtQm);
+  bcG0IW.ULtExXwoxm[0]._LmnH[0][0][1] = lG0LwGEPfvE2[cXH3D0e.EXiioudrCbCv] = (TpAjXZU89K7z[-276469407] - l9V2B2uI[-2147483647]);
+  bcG0IW.ULtExXwoxm[0]._LmnH[0][0][0] = l9V2B2uI[-276732705] = (lG0LwGEPfvE2[-334486286] + lG0LwGEPfvE2[-831276850]);
+  bcG0IW.ULtExXwoxm[0].YQfi7Kn = xmVzYTSN9AEXz0.CBbWJWVpb3N[cXH3D0e.tbaI0eKa53LbY][xmVzYTSN9AEXz0.eUtQm] = H3ivhxFwh();
+  bcG0IW.ULtExXwoxm[0].hvuVbkm = cXH3D0e.MYbOHDNyBPDdI_ = top_caller();
+  bcG0IW.JirbGh = xmVzYTSN9AEXz0.IIsTxh[xmVzYTSN9AEXz0.eUtQm].d4j495WuuOBdnh[cXH3D0e.tbaI0eKa53LbY] = (cXH3D0e.tbaI0eKa53LbY = cXH3D0e.tbaI0eKa53LbY);
+  bcG0IW.a_PUT1PnV[0][1] = TpAjXZU89K7z[xmVzYTSN9AEXz0.eUtQm] = (-24069547785700366430817484800.000000 - TpAjXZU89K7z[49938289]);
+  bcG0IW.a_PUT1PnV[0][0] = lG0LwGEPfvE2[xmVzYTSN9AEXz0.eUtQm] = (lG0LwGEPfvE2[-262816891] * 0.000038);
+  bcG0IW.UGpNyNeuOzd[1][0] = lG0LwGEPfvE2[xmVzYTSN9AEXz0.eUtQm] = (l9V2B2uI[1874167872] + l9V2B2uI[-993545335]);
+  bcG0IW.UGpNyNeuOzd[0][0] = l9V2B2uI[xmVzYTSN9AEXz0.eUtQm] = (-110600949235418750609891786752.000000 / l9V2B2uI[574453352]);
+  bcG0IW.D0qQ4GB5 = cXH3D0e.tbaI0eKa53LbY = (xmVzYTSN9AEXz0.eUtQm && xmVzYTSN9AEXz0.eUtQm);
+  l9V2B2uI[cXH3D0e.EXiioudrCbCv] = 601566826456658895536228680073216.000000;
+  cXH3D0e.tbaI0eKa53LbY = H3ivhxFwh();
+  TpAjXZU89K7z[cXH3D0e.tbaI0eKa53LbY] = 0.000053;
+  cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.EXiioudrCbCv < cXH3D0e.tbaI0eKa53LbY);
+  cXH3D0e.tbaI0eKa53LbY = (cXH3D0e.rpHToDgDus && cXH3D0e.tbaI0eKa53LbY);
+  TpAjXZU89K7z[cXH3D0e.tbaI0eKa53LbY] = (lG0LwGEPfvE2[-1717376515] / 0.000012);
+  TpAjXZU89K7z[cXH3D0e.tbaI0eKa53LbY] = (lG0LwGEPfvE2[-555400837] + l9V2B2uI[-1153290816]);
+  TpAjXZU89K7z[cXH3D0e.tbaI0eKa53LbY] = -0.000000;
+  return cXH3D0e.tbaI0eKa53LbY = GKb0MpYmp(mkcGm[-1530417002]);
+  xmVzYTSN9AEXz0.eUtQm = (xmVzYTSN9AEXz0.eUtQm / cXH3D0e.tbaI0eKa53LbY);
+  return xmVzYTSN9AEXz0.iAsnA = (cXH3D0e.tbaI0eKa53LbY < cXH3D0e.tbaI0eKa53LbY);
 }
 
 int initialize_global_objects() {
+  WL_EOUi[0].kb7uPd[0][1] = -3524.033447 + -21475887164680354059744444416.000000;
+  WL_EOUi[0].kb7uPd[0][0] = -0.000000 * -0.000000;
+  WL_EOUi[0].DQc69dyLSFsv = !114544423;
+  WL_EOUi[0].jlsBR[1] = -489.964325 + 0.000000;
+  WL_EOUi[0].jlsBR[0] = 0.000000;
+  _SUMr99HcwF = -723653704 && -1401703808;
+  sacwr[0][1][0] = 0.085078;
+  sacwr[0][0][0] = 0.000000;
   return 0;
 }
 

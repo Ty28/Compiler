@@ -1,8 +1,7 @@
-Error Type 13 at Line 113: request member from something not an struct
-Error Type 13 at Line 116: request member from something not an struct
-Error Type 13 at Line 130: request member from something not an struct
-Error Type 13 at Line 132: request member from something not an struct
-Error Type 13 at Line 158: request member from something not an struct
-Error Type 13 at Line 193: request member from something not an struct
-Error Type 13 at Line 202: request member from something not an struct
-Error Type 13 at Line 213: request member from something not an struct
+Error Type 13 at Line 87: request member from something not an struct
+Error Type 13 at Line 94: request member from something not an struct
+Error Type 13 at Line 95: request member from something not an struct
+Error Type 13 at Line 100: request member from something not an struct
+Error Type 13 at Line 123: request member from something not an struct
+Error Type 13 at Line 124: request member from something not an struct
+Error Type 13 at Line 162: request member from something not an struct
