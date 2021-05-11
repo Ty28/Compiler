@@ -39,7 +39,7 @@ void errorOutput(int errorType, int line, char *msg)
         break;
     case 9:
         // TODO: complete func name and params
-        printf("Error type 9 at Line %d: Function \"func(int)\" is not applicable for arguments \"(int, int)\".\n", line);
+        printf("Error type 9 at Line %d: Function \"%s\" is not applicable for arguments.\n", line, msg);
         break;
     case 10:
         printf("Error type 10 at Line %d: \"%s\" is not an array.\n", line, msg);
@@ -57,7 +57,7 @@ void errorOutput(int errorType, int line, char *msg)
         printf("Error type 14 at Line %d: Non-existent field \"%s\".\n", line, msg);
         break;
     case 15:
-        printf("Error type 15 at Line %d: Non-existent field \"%s\".\n", line, msg);
+        printf("Error type 15 at Line %d: Redefined or intialized field \"%s\".\n", line, msg);
         break;
     case 16:
         printf("Error type 16 at Line %d: Duplicated name \"%s\".\n", line, msg);
@@ -215,7 +215,7 @@ FieldList StructVarDec(node root, Type decType)
     {
         node IDNode = root->child;
         //judge whether the val of this struct member exist in our symbol table
-        if (findSymbol(IDNode->val) != NULL)
+        if (0 && findSymbol(IDNode->val) != NULL)
         {
             semLog(root->child->val);
             errorOutput(3, root->child->lineno, IDNode->val);
@@ -393,15 +393,22 @@ FieldList StructDefList(node root)
     if (root == NULL || root->child == NULL)
         return NULL;
     FieldList fieldHead = StructDef(root->child);
-    if (fieldHead == NULL)
-        return NULL; //this means that semantic error happens in fieldHead;
+    // if (fieldHead == NULL)
+    //     return NULL;
     if (getKChild(root, 1) != NULL)
     {
         FieldList fieldNext = StructDefList(getKChild(root, 1));
-        FieldList fieldTail = fieldHead;
-        while (fieldTail->tail != NULL)
-            fieldTail = fieldTail->tail;
-        fieldTail->tail = fieldNext;
+        if (fieldHead != NULL)
+        {
+            FieldList fieldTail = fieldHead;
+            while (fieldTail->tail != NULL)
+                fieldTail = fieldTail->tail;
+            fieldTail->tail = fieldNext;
+        }
+        else //this means that semantic error happens in fieldHead;
+        {
+            fieldHead = fieldNext;
+        }
     }
     return fieldHead;
 }
@@ -483,7 +490,7 @@ void FunDec(node root, Type funcSpecifierType)
     if (findTuple != NULL)
     {
         errorOutput(4, root->child->lineno, root->child->val); //func name redefined;
-        return;
+        // return;
     }
     FuncList paramList = NULL;
     if (getKChild(root, 3) != NULL) //it means the function has parameters
@@ -504,12 +511,15 @@ void FunDec(node root, Type funcSpecifierType)
 FuncList VarList(node root)
 {
     FuncList paramListHead = ParamDec(root->child);
-    if (paramListHead == NULL)
-        return NULL; //it means that somthing wrong happens with the parameter
+    // if (paramListHead == NULL)
+    //     return NULL;
     if (getKChild(root, 1) != NULL)
     {
         node varListNode = getKChild(root, 2);
-        paramListHead->tail = VarList(varListNode);
+        if (paramListHead != NULL)
+            paramListHead->tail = VarList(varListNode);
+        else //it means that somthing wrong happens with the parameter
+            paramListHead = VarList(varListNode);
     }
     return paramListHead;
 }
@@ -589,7 +599,10 @@ void Stmt(node root, Type funcType)
     }
     else if (strcmp(firstUnitOfStmt->name, "IF") == 0)
     {
-        Exp(getKChild(root, 2));
+        Type t = Exp(getKChild(root, 2));
+        // if(t->kind == FUNCTION || t->kind == STRUCTURE) {
+        //     errorOutput(1, getKChild(root, 2)->lineno, getKChild(root, 2)->val);
+        // }
         Stmt(getKChild(root, 4), funcType);
         if (getChildNum(root) == 7) //to process circumstances of ELSE
         {
@@ -598,7 +611,7 @@ void Stmt(node root, Type funcType)
     }
     else if (strcmp(firstUnitOfStmt->name, "WHILE") == 0)
     {
-        Exp(getKChild(root, 2));
+        Type t = Exp(getKChild(root, 2));
         Stmt(getKChild(root, 4), funcType);
     }
     else
@@ -634,6 +647,8 @@ Type Exp(node root)
                 // left-hand
                 if (findTuple->type->kind != FUNCTION)
                     root->flag = 1;
+                // if (findTuple->type->kind == STRUCTURE)
+                //     errorOutput(1, n0->lineno, n0->val);
                 return findTuple->type;
             }
         }
@@ -659,6 +674,8 @@ Type Exp(node root)
             if (t->kind != BASIC)
             {
                 errorOutput(7, n1->lineno, "");
+                if (t->kind == FUNCTION || t->kind == STRUCTURE)
+                    errorOutput(1, n1->lineno, n1->child->val);
                 return createErrorType(7);
             }
             return t;
@@ -671,6 +688,8 @@ Type Exp(node root)
             else
             {
                 errorOutput(7, n1->lineno, "");
+                if (t->kind == FUNCTION || t->kind == STRUCTURE)
+                    errorOutput(1, n1->lineno, n1->child->val);
                 return createErrorType(7);
             }
         }
@@ -708,6 +727,10 @@ Type Exp(node root)
             }
             else
             {
+                if (t0->kind == FUNCTION || t0->kind == STRUCTURE)
+                    errorOutput(1, n0->lineno, n0->child->val);
+                if (t2->kind == FUNCTION || t2->kind == STRUCTURE)
+                    errorOutput(1, n2->lineno, n2->child->val);
                 errorOutput(5, n0->lineno, "");
                 return createErrorType(5);
             }
@@ -723,6 +746,10 @@ Type Exp(node root)
             }
             else
             {
+                if (t0->kind == FUNCTION || t0->kind == STRUCTURE)
+                    errorOutput(1, n0->lineno, n0->child->val);
+                if (t2->kind == FUNCTION || t2->kind == STRUCTURE)
+                    errorOutput(1, n2->lineno, n2->child->val);
                 errorOutput(7, n0->lineno, "");
                 return createErrorType(7);
             }
@@ -743,6 +770,10 @@ Type Exp(node root)
             }
             else
             {
+                if (t0->kind == FUNCTION || t0->kind == STRUCTURE)
+                    errorOutput(1, n0->lineno, n0->child->val);
+                if (t2->kind == FUNCTION || t2->kind == STRUCTURE)
+                    errorOutput(1, n2->lineno, n2->child->val);
                 errorOutput(7, n0->lineno, "");
                 return createErrorType(7);
             }
@@ -758,8 +789,12 @@ Type Exp(node root)
             }
             else
             {
+                if (t0->kind == FUNCTION || t0->kind == STRUCTURE)
+                    errorOutput(1, n0->lineno, n0->child->val);
+                if (t2->kind == FUNCTION || t2->kind == STRUCTURE)
+                    errorOutput(1, n2->lineno, n2->child->val);
                 errorOutput(7, n0->lineno, "");
-                return createErrorType(7);
+                return t0;
             }
         }
     }
@@ -800,7 +835,13 @@ Type ExpFunc(node root)
         }
         // FUNCTION with no Args
         if (getChildNum(root) == 3)
+        {
+            if (findTuple->type->u.function->tail != NULL)
+            {
+                errorOutput(9, n0->lineno, n0->val);
+            }
             return findTuple->type->u.function->type;
+        }
         else
         {
             if (Args(n2, findTuple->type->u.function->tail))
@@ -810,7 +851,7 @@ Type ExpFunc(node root)
             else
             {
                 errorOutput(9, n0->lineno, n0->val);
-                return createErrorType(9);
+                return findTuple->type->u.function->type;
             }
         }
     }
@@ -844,7 +885,7 @@ Type ExpStruct(node root)
     }
     else if (t0->kind == STRUCTURE)
     {
-        errorOutput(1, n0->lineno, n0->val);
+        errorOutput(1, n0->lineno, n0->child->val);
         return createErrorType(1);
     }
     else
@@ -863,13 +904,15 @@ Type ExpArray(node root)
     Type t2 = Exp(n2);
     if (t0->kind != ARRAY)
     {
-        errorOutput(10, n0->lineno, n0->val);
+        errorOutput(10, n0->lineno, n0->child->val);
         return createErrorType(10);
     }
     if (t2->kind != BASIC || t2->u.basic != 1)
     {
         errorOutput(12, n0->lineno, n0->val);
-        return createErrorType(12);
+        // printf("%d \n",  t0->u.array.elem->u.basic);
+        root->flag = 1;
+        return t0->u.array.elem;
     }
     root->flag = 1;
     return t0->u.array.elem;
