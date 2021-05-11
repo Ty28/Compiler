@@ -4,6 +4,7 @@
 #include "treeNode.h"
 #include "symbol.h"
 #include "semantic.h"
+#include "interCode.h"
 
 extern int yylex(void);
 extern int yyparse(void);
@@ -21,4 +22,8 @@ extern StructSymbol* structSymbolTable;
 extern Symbol* createSymbolTable();
 extern Symbol findSymbol(char *name);
 extern void insertSymbolTable(char *name);
+
+extern InterCode head;
+extern InterCode tail;
+extern int labelNum;
 #endif
