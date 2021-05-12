@@ -511,8 +511,6 @@ void FunDec(node root, Type funcSpecifierType)
 FuncList VarList(node root)
 {
     FuncList paramListHead = ParamDec(root->child);
-    // if (paramListHead == NULL)
-    //     return NULL;
     if (getKChild(root, 1) != NULL)
     {
         node varListNode = getKChild(root, 2);

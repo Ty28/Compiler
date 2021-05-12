@@ -2,8 +2,8 @@
 #define _SYMBOL_H
 
 #include "treeNode.h"
-#define SYMBOLTABLESIZE 0x3ffff
-#define STRUCTTABLESIZE 0xffff
+#define SYMBOLTABLESIZE 0x3fff
+#define STRUCTTABLESIZE 0x3fff
 //#define semanticdebug
 void semLog(char *msg);
 typedef struct SymbolTuple *Symbol;
@@ -43,28 +43,28 @@ struct Type_
 
 struct SymbolTuple
 {
-    char name[32];
+    char name[CHARMAXSIZE];
     Type type;
     Symbol hashLink;
 };
 
 struct FieldList_
 {
-    char name[32];
+    char name[CHARMAXSIZE];
     Type type;
     FieldList tail;
 };
 
 struct FuncList_
 {
-    char name[32];
+    char name[CHARMAXSIZE];
     Type type;
     FuncList tail;
 };
 
 struct StructSymbolTuple
 {
-    char name[32];
+    char name[CHARMAXSIZE];
     StructSymbol link;
 };
 
@@ -104,6 +104,7 @@ StructSymbol *createStructTable();
 void freeStructMember(StructSymbol _current); //recursive free one hashline
 void freeStructTable(); //free the whole struct symbol table
 void freeFunction(FuncList _function);
+
 StructSymbol createMember(char* name);
 int findMember(char *name);
 
@@ -114,3 +115,4 @@ int isFuncEqual(FuncList f1, FuncList f2);
 Type createErrorType(int _errorCode);
 
 #endif
+
