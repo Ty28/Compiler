@@ -1,17 +1,21 @@
 #ifndef _INTERCODE_H
 #define _INTERCODE_H
-#include "treeNode.h"
 typedef struct Operand_* Operand;
 typedef struct InterCode_* InterCode;
 typedef struct Label_Node_* Label_Node;
 InterCode head;
 InterCode tail;
 int labelNum;
+int tNum;
 struct Operand_ {
     enum {
         VARIABLE,
         CONSTANT,
-        ADDRESS
+        ADDRESS,
+        COSNTVAR,
+        TEMPVAR,
+        NOTHING,
+        LABEL
     } kind;
     union  
     {
@@ -61,9 +65,13 @@ struct Label_Node_{
 	Label_Node next;
 };
 
+void initInterCode(node root);
 void insertCode(InterCode code);
 InterCode createCode();
-
+Operand createOpTmp();
+Operand createOpLabel();
+Operand copyOpLabel(int num);
+char* int2String(int num,char *str);
 void translateProgram(node root);
 void translateExtDefList(node root);
 void translateExtDef(node root);
@@ -74,4 +82,12 @@ void translateVarList(node root);
 void translateParamDec(node root);
 void translateVarDec_A(node root);
 void translateVarDec_B(node root);
+void translateDefList_A(node root);
+void translateStmtList(node root);
+void translateStmt(node root);
+void translateDef_A(node root);
+void translateDecList_A(node root);
+void translateDec_A(node root);
+void translateExp(node root, Operand op);
+void translateCond(node root, int label_true, int label_false);
 #endif
