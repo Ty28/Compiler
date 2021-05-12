@@ -2,8 +2,8 @@
 #define _SYMBOL_H
 
 #include "treeNode.h"
-#define SYMBOLTABLESIZE 0x3fff
-#define STRUCTTABLESIZE 0xfff
+#define SYMBOLTABLESIZE 0x3ffff
+#define STRUCTTABLESIZE 0xffff
 //#define semanticdebug
 void semLog(char *msg);
 typedef struct SymbolTuple *Symbol;
@@ -103,6 +103,7 @@ void insertTuple(Symbol tuple);
 StructSymbol *createStructTable();
 void freeStructMember(StructSymbol _current); //recursive free one hashline
 void freeStructTable(); //free the whole struct symbol table
+void freeFunction(FuncList _function);
 StructSymbol createMember(char* name);
 int findMember(char *name);
 
