@@ -89,5 +89,8 @@ void translateDef_A(node root);
 void translateDecList_A(node root);
 void translateDec_A(node root);
 void translateExp(node root, Operand op);
+void translateExpCommon(node root, Operand place);
+void translateExpFunc(node root, Operand place);
+void translateExpMath(node root, Operand place);
 void translateCond(node root, int label_true, int label_false);
 #endif
