@@ -2,7 +2,7 @@
 #define _INTERCODE_H
 typedef struct Operand_* Operand;
 typedef struct InterCode_* InterCode;
-typedef struct Label_Node_* Label_Node;
+typedef struct argNode_* argNode;
 InterCode head;
 InterCode tail;
 int labelNum;
@@ -15,7 +15,8 @@ struct Operand_ {
         COSNTVAR,
         TEMPVAR,
         NOTHING,
-        LABEL
+        LABEL,
+        FUNCTION__
     } kind;
     union  
     {
@@ -50,7 +51,7 @@ struct InterCode_ {
 
         struct{ Operand left, right; } op_assign;
 
-		struct{ Operand result, op1, op2; } op_binary;
+		struct{ Operand result, op1, op2; char _operator;} op_binary;//REVISE: add _operator to represent +-*/
 
 		struct{ Operand x; Operand y; Operand label; char relop[CHARMAXSIZE]; } op_triple;
 
@@ -60,9 +61,9 @@ struct InterCode_ {
 	InterCode next;
 };
 
-struct Label_Node_{
-	char name[32];
-	Label_Node next;
+struct argNode_{
+	Operand op;
+	argNode next;
 };
 
 void initInterCode(node root);
@@ -92,5 +93,7 @@ void translateExp(node root, Operand op);
 void translateExpCommon(node root, Operand place);
 void translateExpFunc(node root, Operand place);
 void translateExpMath(node root, Operand place);
+void translateExpArray(node root, Operand place);
 void translateCond(node root, int label_true, int label_false);
+argNode translateArgs(node root);
 #endif

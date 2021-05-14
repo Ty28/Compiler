@@ -80,9 +80,21 @@ Type StructVarCopy(Type structureDecType)
         return createStructType(structureDecType->u.structure, 1);
 }
 
+void initializeIO()
+{
+    FuncList paramList = createParamWithType("\0", createBasicType(1));     //the first parameter
+    Type writeReturnType = createFuncType(createBasicType(1), paramList); //return value type
+    Symbol writeFuncTuple = createTupleWithType("write", writeReturnType);
+    insertTuple(writeFuncTuple);
+    Type readReturnType = createFuncType(createBasicType(1), NULL);
+    Symbol readFuncTuple = createTupleWithType("read", readReturnType);
+    insertTuple(readFuncTuple);
+}
+
 void Program(node root)
 {
     semLog("HAHA, Let's check the Program\n");
+    initializeIO();
     ExtDefList(getKChild(root, 0));
 }
 

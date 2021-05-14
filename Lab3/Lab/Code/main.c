@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
         //preOrder(ROOT, 0);
         semanticCheck(ROOT);
         initInterCode(ROOT);
+        printCode();
     }
     return 0;
 }

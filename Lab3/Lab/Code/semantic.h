@@ -5,6 +5,7 @@
 
 int semanticCheck(node root);
 void errorOutput(int errorType, int line, char *msg);
+void initializeIO();
 void Program(node root);
 void ExtDefList(node root);
 void ExtDef(node root);
