@@ -14,11 +14,10 @@ void printOpSingle(Operand op)
         printf("#%d", op->u.var_no);
         break;
     default:
-        printf("we can't process this type");
+        printf("we can't process this type:NOTHING");
         break;
     }
 }
-
 
 void printCode()
 {
@@ -52,11 +51,17 @@ void printCode()
             break;
         //TODO:need to complete MYREAD and MYWRITE
         case (MYREAD):
+            printf("READ ");
+            printOpSingle(current->u.op_single.op);
             break;
         case (MYWRITE):
+            printf("WRITE ");
+            printOpSingle(current->u.op_single.op);
             break;
         //TODO:need to complete MYARG
         case (MYARG):
+            printf("ARG ");
+            printOpSingle(current->u.op_single.op);
             break;
         case (MYASSIGN):
             printOpSingle(current->u.op_assign.left);
@@ -70,6 +75,9 @@ void printCode()
             break;
         //TODO:need to complete MYCALL
         case (MYCALL):
+            printOpSingle(current->u.op_assign.left);
+            printf(" := CALL ");
+            printOpSingle(current->u.op_assign.right);
             break;
         case (MYADD):
         case (MYSUB):
@@ -81,8 +89,20 @@ void printCode()
             printf(" %c ", current->u.op_binary._operator);
             printOpSingle(current->u.op_binary.op2);
             break;
+        case (MYIFGOTO):
+            printf("IF ");
+            printOpSingle(current->u.op_triple.x);
+            printf(" %s ", current->u.op_triple.relop);
+            printOpSingle(current->u.op_triple.y);
+            printf(" GOTO ");
+            printOpSingle(current->u.op_triple.label);
+            break;
+        //TODO:need to complete MYADDRESS ?
+        case (MYADDRESS):
+            break;
         default:
             printf("others");
+            break;
         }
         printf("\n");
         current = current->next;
