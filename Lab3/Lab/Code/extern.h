@@ -26,4 +26,5 @@ extern void insertSymbolTable(char *name);
 extern InterCode head;
 extern InterCode tail;
 extern int labelNum;
+extern int tNum;
 #endif

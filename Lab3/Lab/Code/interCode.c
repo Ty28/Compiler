@@ -71,7 +71,6 @@ void insertCode(InterCode code)
     }
 }
 
-//REVISE:add return code
 InterCode createCode()
 {
     InterCode code = (InterCode)malloc(sizeof(struct InterCode_));
@@ -112,12 +111,10 @@ Operand copyOpLabel(int num)
     strcat(res->u.value, str);
     return res;
 }
-
 void initInterCode(node root)
 {
     head = tail = NULL;
     tNum = labelNum = 0;
-    //printf("1");
     translateProgram(root);
 }
 
@@ -188,10 +185,15 @@ void translateVarDec_A(node root)
         {
             //TODO1: mutil-dimensional array(should pass, because params only have 1d-array)
             //TODO2: params of 1d-array
+            Type arrayElem = findTuple->type->u.array.elem;
+            if (arrayElem->kind != BASIC)
+            {
+                printf("Cannot translate: Code contains mutil-dimensional array\n");
+            }
         }
         else if (findTuple->type->kind == STRUCTURE || findTuple->type->kind == STRUCTVAR)
         {
-            printf("Cannot translate: Code contains variables or paraneters of structure type\n");
+            printf("Cannot translate: Code contains variables or parameters of structure type\n");
         }
     }
 }
@@ -210,7 +212,8 @@ void translateVarDec_B(node root)
         {
             if (findTuple->type->kind == ARRAY)
             {
-                //TODO3: mutil-dimensional array
+                //TODO3: mutil-dimensional arrayS
+
             }
             else
             {
@@ -230,16 +233,15 @@ void translateVarDec_B(node root)
         translateVarDec_B(n0);
 }
 
-//REVISE tranlateCompst:process situation when DefList or StmtList doesn't exist
 void translateCompst(node root)
 {
-    node n1 = getKChild(root, 1); 
-    if(strcmp(n1->name,"DefList")==0)
+    node n1 = getKChild(root, 1);
+    if (strcmp(n1->name, "DefList") == 0)
     {
         translateDefList_A(n1);
-        n1=n1->sibling;
+        n1 = n1->sibling;
     }
-    if(strcmp(n1->name,"StmtList")==0)
+    if (strcmp(n1->name, "StmtList") == 0)
         translateStmtList(n1);
 }
 
@@ -278,6 +280,7 @@ void translateDec_A(node root)
         Operand op_left = (Operand)malloc(sizeof(struct Operand_));
         op_left->kind = VARIABLE;
         strcpy(op_left->u.value, root->child->child->val);
+        codeLog(root->child->child->val);
         Operand op_right = createOpTmp();
         translateExp(getKChild(root, 2), op_right);
         InterCode code = createCode();
@@ -410,23 +413,129 @@ void translateStmt(node root)
         code1->u.op_single.op = op_label1;
         insertCode(code1);
 
-        //increase cnt1
+        //set cnt = 1
         node n2 = getKChild(root, 2);
         translateCond(n2, label2, label3);
-        //decrease cnt2
+        //set cnt = 0
 
         InterCode code2 = createCode();
         code2->kind = MYLABEL;
-        Operand op_tmp3 = copyOpLabel(label3);
-        code2->u.op_single.op = op_tmp3;
+        code2->u.op_single.op = op_label2;
         insertCode(code2);
+
+        // cnt1 ++;
+        node n4 = getKChild(root, 4);
+        translateStmt(n4);
+        // cnt1 --;
+
+        InterCode code3 = createCode();
+        code3->kind = MYGOTO;
+        Operand op_tmp1 = copyOpLabel(label1);
+        code3->u.op_single.op = op_tmp1;
+        insertCode(code3);
+
+        InterCode code4 = createCode();
+        code4->kind = MYLABEL;
+        code4->u.op_single.op = op_label3;
+        insertCode(code4);
     }
 }
 
 void translateExp(node root, Operand op)
 {
+    node n0 = getKChild(root, 0);
+    int childNum = getChildNum(root);
+    if (childNum == 1)
+    {
+        if (strcmp(n0->name, "ID"))
+        {
+            Symbol findTuple = findSymbol(n0->val);
+            op->kind = VARIABLE;
+            strcpy(op->u.value, n0->val);
+        }
+        else if (strcmp(n0->name, "INT"))
+        {
+            op->kind = CONSTANT;
+            op->u.var_no = atoi(root->val);
+        }
+    }
 }
 
 void translateCond(node root, int label_true, int label_false)
 {
+    node n1 = getKChild(root, 1);
+    node n0 = getKChild(root, 0);
+    node n2 = getKChild(root, 2);
+    if (strcmp(n1->name, "RELOP") == 0)
+    {
+        Operand t1 = createOpTmp();
+        Operand t2 = createOpTmp();
+
+        translateExp(n0, t1);
+        translateExp(n2, t2);
+
+        InterCode code3 = createCode();
+        code3->kind = MYIFGOTO;
+        code3->u.op_triple.x = t1;
+        code3->u.op_triple.y = t2;
+        strcpy(code3->u.op_triple.relop, n1->val);
+        code3->u.op_triple.label = copyOpLabel(label_true);
+        insertCode(code3);
+
+        InterCode code4 = createCode();
+        code4->kind = MYGOTO;
+        code4->u.op_single.op = copyOpLabel(label_false);
+        insertCode(code4);
+    }
+    else if (strcmp(n0->name, "NOT") == 0)
+        translateCond(n1, label_false, label_true);
+    else if (strcmp(n1->name, "AND") == 0)
+    {
+        Operand op_label1 = createOpLabel();
+        int label1 = labelNum;
+
+        translateCond(n0, label1, label_false);
+
+        InterCode code1 = createCode();
+        code1->kind = MYLABEL;
+        code1->u.op_single.op = op_label1;
+        insertCode(code1);
+
+        translateCond(n2, label_true, label_false);
+    }
+    else if (strcmp(n1->name, "OR") == 0)
+    {
+        Operand op_label1 = createOpLabel();
+        int label1 = labelNum;
+
+        translateCond(n0, label_true, label1);
+
+        InterCode code1 = createCode();
+        code1->kind = MYLABEL;
+        code1->u.op_single.op = op_label1;
+        insertCode(code1);
+
+        translateCond(n2, label_true, label_false);
+    }
+    else
+    {
+        Operand t1 = createOpTmp();
+        translateExp(n0, t1);
+        Operand t2 = (Operand)malloc(sizeof(struct Operand_));
+        t2->kind = CONSTANT;
+        t2->u.var_no = 0;
+
+        InterCode code2 = createCode();
+        code2->kind = MYIFGOTO;
+        code2->u.op_triple.x = t1;
+        code2->u.op_triple.y = t2;
+        code2->u.op_triple.label = copyOpLabel(label_true);
+        strcpy(code2->u.op_triple.relop, "!=");
+        insertCode(code2);
+
+        InterCode code3 = createCode();
+        code3->kind = MYGOTO;
+        code3->u.op_single.op = copyOpLabel(label_false);
+        insertCode(code3);
+    }
 }

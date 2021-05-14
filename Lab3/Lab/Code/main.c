@@ -13,6 +13,7 @@ int main(int argc, char** argv) {
     if(lexicalError == 0 && syntaxError == 0){
         //preOrder(ROOT, 0);
         semanticCheck(ROOT);
+        initInterCode(ROOT);
     }
     return 0;
 }
