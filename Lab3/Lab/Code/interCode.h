@@ -51,7 +51,7 @@ struct InterCode_ {
 
         struct{ Operand left, right; } op_assign;
 
-		struct{ Operand result, op1, op2; } op_binary;
+		struct{ Operand result, op1, op2; char _operator;} op_binary;//REVISE: add _operator to represent +-*/
 
 		struct{ Operand x; Operand y; Operand label; char relop[CHARMAXSIZE]; } op_triple;
 

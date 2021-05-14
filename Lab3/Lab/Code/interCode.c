@@ -188,6 +188,7 @@ void translateVarDec_A(node root) {
         }
     }
 }
+
 //Local Variable: VarDec
 void translateVarDec_B(node root) {
     node n0 = getKChild(root, 0);
@@ -197,20 +198,16 @@ void translateVarDec_B(node root) {
             printf("Cannot translate: Code contains variables or paraneters of structure type\n");
         }
         else if(findTuple->type->kind == ARRAY) {
-            if(findTuple->type->kind == ARRAY) {
-                //TODO3: mutil-dimensional array 
-            }
-            else {
-                int size = calculateSize(findTuple->type);
-                Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
-                op_tmp->kind = VARIABLE;
-                strcpy(op_tmp->u.value, n0->val);
-                InterCode code = createCode();
-                code->kind = MYDEC;
-                code->u.op_dec.op = op_tmp;
-                code->u.op_dec.size = size;
-                insertCode(code);
-            }
+            //REVISE:delete multi-dimensional array process
+            int size = calculateSize(findTuple->type);
+            Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
+            op_tmp->kind = VARIABLE;
+            strcpy(op_tmp->u.value, n0->val);
+            InterCode code = createCode();
+            code->kind = MYDEC;
+            code->u.op_dec.op = op_tmp;
+            code->u.op_dec.size = size;
+            insertCode(code);
         }
     }
     else 
@@ -548,14 +545,27 @@ void translateExpMath(node root, Operand place) {
     }
     else {
         InterCode code2 = createCode();
+        //REVISE:ADD code2->u.op_binary._operator
         if(strcmp(n1->name, "PLUS") == 0) 
+        {
             code2->kind = MYADD;
+            code2->u.op_binary._operator='+';
+        }
         else if(strcmp(n1->name, "MINUS") == 0) 
+        {
             code2->kind = MYSUB;
-        else if(strcmp(n1->name, "STAR") == 0) 
+            code2->u.op_binary._operator='-';
+        }
+        else if(strcmp(n1->name, "STAR") == 0)
+        { 
             code2->kind = MYMUL;
+            code2->u.op_binary._operator='*';
+        }
         else if(strcmp(n1->name, "DIV") == 0) 
+        {
             code2->kind = MYDIV;
+            code2->u.op_binary._operator='/';
+        }
         code2->u.op_binary.op1 = t1;
         code2->u.op_binary.op2 = t2;
         code2->u.op_binary.result = place;
