@@ -107,4 +107,8 @@ void printCode()
         printf("\n");
         current = current->next;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> main

@@ -6,6 +6,7 @@
 #include "semantic.h"
 #include "interCode.h"
 #include "interCodePrint.h"
+
 extern int yylex(void);
 extern int yyparse(void);
 extern void yyrestart(FILE*);
