@@ -261,7 +261,7 @@ void translateStmt(node root) {
         op->kind = NOTHING;
         translateExp(n0, op);
     }
-    else if(strcmp(n0->name, "Compst") == 0)
+    else if(strcmp(n0->name, "CompSt") == 0)
         translateCompst(n0);
     else if(strcmp(n0->name, "RETURN") == 0) {
         Operand op = createOpTmp();
@@ -630,7 +630,10 @@ void translateExpArray(node root, Operand place) {
     strcpy(t3->u.value, place->u.value);
     InterCode code = createCode();
     code->kind = MYADD;
-    t2->kind = VARIABLE;
+    if(t2->kind != STAR__)
+        t2->kind = ADDRESS;
+    else 
+        t2->kind = VARIABLE;
     code->u.op_binary.op1 = t2;
     if(t1->kind == CONSTANT) {
         t1->u.var_no = 4 * t1->u.var_no;
@@ -653,7 +656,7 @@ void translateExpArray(node root, Operand place) {
     }
     code->u.op_binary.result = t3;
     insertCode(code);
-    place->kind = MYADDRESS;
+    place->kind = STAR__;
 }
 
 void translateCond(node root, int label_true, int label_false) {

@@ -10,11 +10,16 @@ int main(int argc, char** argv) {
     }
     yyrestart(f);
     yyparse();
+    char fileName[CHARMAXSIZE];
     if(lexicalError == 0 && syntaxError == 0){
         //preOrder(ROOT, 0);
         semanticCheck(ROOT);
         initInterCode(ROOT);
-        printCode();
+        if(argc < 3)
+            strcpy(fileName, "out.ir");
+        else 
+            strcpy(fileName, argv[2]);
+        printCode(fileName);
     }
     return 0;
 }

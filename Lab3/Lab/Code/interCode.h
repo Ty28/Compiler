@@ -12,6 +12,7 @@ struct Operand_ {
         VARIABLE,
         CONSTANT,
         ADDRESS,
+        STAR__,
         COSNTVAR,
         TEMPVAR,
         NOTHING,
