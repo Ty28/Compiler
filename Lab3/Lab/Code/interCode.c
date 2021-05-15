@@ -197,12 +197,12 @@ void translateVarDec_B(node root) {
 
 void translateCompst(node root) {
     node n1 = getKChild(root, 1); 
-    if(strcmp(n1->name,"DefList")==0)
+    if(strcmp(n1->name,"DefList") == 0)
     {
         translateDefList_A(n1);
         n1=n1->sibling;
     }
-    if(strcmp(n1->name,"StmtList")==0)
+    if(strcmp(n1->name,"StmtList") == 0)
         translateStmtList(n1);
 }
 // DefList in Function
@@ -463,7 +463,7 @@ void translateExp(node root, Operand op) {
         }
     }
     else if(childNum == 4) {
-        if(strcmp(n0->name, "Exp")) {
+        if(strcmp(n0->name, "Exp") == 0) {
             translateExpArray(root, op);
         }
         else {
