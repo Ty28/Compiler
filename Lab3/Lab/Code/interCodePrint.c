@@ -1,114 +1,141 @@
 #include "extern.h"
 
-void printOpSingle(Operand op)
+void printOpSingle(FILE *fp, Operand op)
 {
     switch (op->kind)
     {
     case (VARIABLE):
     case (LABEL):
     case (TEMPVAR):
-        printf("%s", op->u.value);
+    case (FUNCTION__):
+        fprintf(fp, "%s", op->u.value);
         break;
     case (CONSTANT):
     case (COSNTVAR):
-        printf("#%d", op->u.var_no);
+        fprintf(fp, "#%d", op->u.var_no);
+        break;
+    case (ADDRESS):
+        fprintf(fp, "&%d", op->u.var_no);
+        break;
+    case (STAR_):
+        fprintf(fp, "*%d", op->u.var_no);
+        break;
+    case (NOTHING):
+        fprintf(fp, "nothing");
         break;
     default:
-        printf("we can't process this type:NOTHING");
+        fprintf(fp, "we can't process this type:%d", op->kind);
         break;
     }
 }
 
 void printCode()
 {
+    FILE *fp;
+    fp = fopen("out.ir", "w+");
     InterCode current = head;
     while (current != NULL)
     {
         switch (current->kind)
         {
         case (MYFUNCTION):
-            printf("FUNCTION ");
-            printOpSingle(current->u.op_single.op);
-            printf(" :");
+            fprintf(fp, "FUNCTION ");
+            printOpSingle(fp,current->u.op_single.op);
+            fprintf(fp, " :");
             break;
         case (MYPARAM):
-            printf("PARAM ");
-            printOpSingle(current->u.op_single.op);
+            fprintf(fp, "PARAM ");
+            printOpSingle(fp,current->u.op_single.op);
             break;
         case (MYRETURN):
-            printf("RETURN ");
-            printOpSingle(current->u.op_single.op);
-            printf("\n");
+            fprintf(fp, "RETURN ");
+            printOpSingle(fp,current->u.op_single.op);
+            fprintf(fp, "\n");
             break;
         case (MYLABEL):
-            printf("LABEL ");
-            printOpSingle(current->u.op_single.op);
-            printf(" :");
+            fprintf(fp, "LABEL ");
+            printOpSingle(fp,current->u.op_single.op);
+            fprintf(fp, " :");
             break;
         case (MYGOTO):
-            printf("GOTO ");
-            printOpSingle(current->u.op_single.op);
+            fprintf(fp, "GOTO ");
+            printOpSingle(fp,current->u.op_single.op);
             break;
         //TODO:need to complete MYREAD and MYWRITE
         case (MYREAD):
-            printf("READ ");
-            printOpSingle(current->u.op_single.op);
+            fprintf(fp, "READ ");
+            printOpSingle(fp,current->u.op_single.op);
             break;
         case (MYWRITE):
-            printf("WRITE ");
-            printOpSingle(current->u.op_single.op);
+            fprintf(fp, "WRITE ");
+            printOpSingle(fp,current->u.op_single.op);
             break;
         //TODO:need to complete MYARG
         case (MYARG):
-            printf("ARG ");
-            printOpSingle(current->u.op_single.op);
+            fprintf(fp, "ARG ");
+            printOpSingle(fp,current->u.op_single.op);
             break;
         case (MYASSIGN):
-            printOpSingle(current->u.op_assign.left);
-            printf(" := ");
-            printOpSingle(current->u.op_assign.right);
+            printOpSingle(fp,current->u.op_assign.left);
+            fprintf(fp, " := ");
+            printOpSingle(fp,current->u.op_assign.right);
             break;
         case (MYDEC):
-            printf("DEC ");
-            printOpSingle(current->u.op_dec.op);
-            printf(" %d", current->u.op_dec.size);
+            fprintf(fp, "DEC ");
+            printOpSingle(fp,current->u.op_dec.op);
+            fprintf(fp, " %d", current->u.op_dec.size);
             break;
         //TODO:need to complete MYCALL
         case (MYCALL):
-            printOpSingle(current->u.op_assign.left);
-            printf(" := CALL ");
-            printOpSingle(current->u.op_assign.right);
+            printOpSingle(fp,current->u.op_assign.left);
+            fprintf(fp, " := CALL ");
+            printOpSingle(fp,current->u.op_assign.right);
             break;
         case (MYADD):
+            printOpSingle(fp,current->u.op_binary.result);
+            fprintf(fp, " := ");
+            printOpSingle(fp,current->u.op_binary.op1);
+            fprintf(fp, " + ");
+            printOpSingle(fp,current->u.op_binary.op2);
+            break;
         case (MYSUB):
+            printOpSingle(fp,current->u.op_binary.result);
+            fprintf(fp, " := ");
+            printOpSingle(fp,current->u.op_binary.op1);
+            fprintf(fp, " - ");
+            printOpSingle(fp,current->u.op_binary.op2);
+            break;
         case (MYMUL):
+            printOpSingle(fp,current->u.op_binary.result);
+            fprintf(fp, " := ");
+            printOpSingle(fp,current->u.op_binary.op1);
+            fprintf(fp, " * ");
+            printOpSingle(fp,current->u.op_binary.op2);
+            break;
         case (MYDIV):
-            printOpSingle(current->u.op_binary.result);
-            printf(" := ");
-            printOpSingle(current->u.op_binary.op1);
-            printf(" %c ", current->u.op_binary._operator);
-            printOpSingle(current->u.op_binary.op2);
+            printOpSingle(fp,current->u.op_binary.result);
+            fprintf(fp, " := ");
+            printOpSingle(fp,current->u.op_binary.op1);
+            fprintf(fp, " / ");
+            printOpSingle(fp,current->u.op_binary.op2);
+            break;
             break;
         case (MYIFGOTO):
-            printf("IF ");
-            printOpSingle(current->u.op_triple.x);
-            printf(" %s ", current->u.op_triple.relop);
-            printOpSingle(current->u.op_triple.y);
-            printf(" GOTO ");
-            printOpSingle(current->u.op_triple.label);
+            fprintf(fp, "IF ");
+            printOpSingle(fp,current->u.op_triple.x);
+            fprintf(fp, " %s ", current->u.op_triple.relop);
+            printOpSingle(fp,current->u.op_triple.y);
+            fprintf(fp, " GOTO ");
+            printOpSingle(fp,current->u.op_triple.label);
             break;
         //TODO:need to complete MYADDRESS ?
         case (MYADDRESS):
             break;
         default:
-            printf("others");
+            fprintf(fp, "others");
             break;
         }
-        printf("\n");
+        fprintf(fp, "\n");
         current = current->next;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> main
