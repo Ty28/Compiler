@@ -261,7 +261,7 @@ void translateStmt(node root) {
         op->kind = NOTHING;
         translateExp(n0, op);
     }
-    else if(strcmp(n0->name, "Compst") == 0)
+    else if(strcmp(n0->name, "CompSt") == 0)
         translateCompst(n0);
     else if(strcmp(n0->name, "RETURN") == 0) {
         Operand op = createOpTmp();
@@ -630,30 +630,31 @@ void translateExpArray(node root, Operand place) {
     strcpy(t3->u.value, place->u.value);
     InterCode code = createCode();
     code->kind = MYADD;
-    t2->kind = VARIABLE;
+    //t1:represents [Exp]
+    //t2:represents Exp[]
+    //t3:represents place
+    if(t2->kind != STAR__)
+        t2->kind = ADDRESS;
+    else 
+        t2->kind = VARIABLE;
     code->u.op_binary.op1 = t2;
-    if(t1->kind == CONSTANT) {
-        t1->u.var_no = 4 * t1->u.var_no;
-        code->u.op_binary.op2 = t1;
-    }
-    else {
-        Operand t4 = createOpTmp();
-        Type type = Exp(n0);
-        Operand constsize = (Operand)malloc(sizeof(struct Operand_));
-        constsize->kind = CONSTANT;
-        constsize->u.var_no = calculateSize(type->u.array.elem);
-        InterCode code1 = createCode();
-        code1->kind = MYMUL;
-        code1->u.op_binary.op1 = constsize;
-        code1->u.op_binary.op2 = t1;
-        code1->u.op_binary.result = t4;
-        code1->u.op_binary._operator = '*';
-        insertCode(code1);
-        code->u.op_binary.op2 = t4;
-    }
+
+    Operand t4 = createOpTmp();
+    Type type = Exp(n0);
+    Operand constsize = (Operand)malloc(sizeof(struct Operand_));
+    constsize->kind = CONSTANT;
+    constsize->u.var_no = calculateSize(type->u.array.elem);
+    InterCode code1 = createCode();
+    code1->kind = MYMUL;
+    code1->u.op_binary.op1 = constsize;
+    code1->u.op_binary.op2 = t1;
+    code1->u.op_binary.result = t4;
+    insertCode(code1);
+    code->u.op_binary.op2 = t4;
+
     code->u.op_binary.result = t3;
     insertCode(code);
-    place->kind = MYADDRESS;
+    place->kind = STAR__;
 }
 
 void translateCond(node root, int label_true, int label_false) {
