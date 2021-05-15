@@ -3,7 +3,7 @@
 #define InterCodeDebug
 typedef struct Operand_* Operand;
 typedef struct InterCode_* InterCode;
-typedef struct Label_Node_* Label_Node;
+typedef struct argNode_* argNode;
 InterCode head;
 InterCode tail;
 int labelNum;
@@ -16,7 +16,8 @@ struct Operand_ {
         COSNTVAR,
         TEMPVAR,
         NOTHING,
-        LABEL
+        LABEL,
+        FUNCTION__
     } kind;
     union  
     {
@@ -61,12 +62,11 @@ struct InterCode_ {
 	InterCode next;
 };
 
-struct Label_Node_{
-	char name[32];
-	Label_Node next;
+struct argNode_{
+	Operand op;
+	argNode next;
 };
 
-void codeLog(char *msg);
 void initInterCode(node root);
 void insertCode(InterCode code);
 InterCode createCode();
@@ -94,5 +94,7 @@ void translateExp(node root, Operand op);
 void translateExpCommon(node root, Operand place);
 void translateExpFunc(node root, Operand place);
 void translateExpMath(node root, Operand place);
+void translateExpArray(node root, Operand place);
 void translateCond(node root, int label_true, int label_false);
+argNode translateArgs(node root);
 #endif

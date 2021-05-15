@@ -6,47 +6,44 @@ void codeLog(char *msg)
 #endif
 }
 
-char *int2String(int num, char *str)
+char* int2String(int num,char *str)
 {
-    int i = 0;
-    if (num < 0)
-    {
-        num = -num;
-        str[i++] = '-';
-    }
-    do
-    {
-        str[i++] = num % 10 + 48;
-        num /= 10;
-    } while (num);
-    str[i] = '\0';
-    int j = 0;
-    if (str[0] == '-')
-    {
-        j = 1;
-        ++i;
-    }
-    for (; j < i / 2; j++)
-    {
-        str[j] = str[j] + str[i - 1 - j];
-        str[i - 1 - j] = str[j] - str[i - 1 - j];
-        str[j] = str[j] - str[i - 1 - j];
-    }
-    return str;
+	int i = 0;
+	if(num<0)
+	{
+		num = -num;
+		str[i++] = '-';
+	} 
+	do
+	{
+		str[i++] = num%10+48;
+		num /= 10;
+	}while(num);
+	str[i] = '\0';
+	int j = 0;
+	if(str[0]=='-')
+	{
+		j = 1;
+		++i;
+	}
+	for(;j<i/2;j++)
+	{
+		str[j] = str[j] + str[i-1-j];
+		str[i-1-j] = str[j] - str[i-1-j];
+		str[j] = str[j] - str[i-1-j];
+	} 
+	return str;
 }
 
-int calculateSize(Type type)
-{
-    if (type->kind == BASIC)
+int calculateSize(Type type) {
+    if(type->kind == BASIC) 
         return 4;
-    else if (type->kind == ARRAY)
+    else if(type->kind == ARRAY) 
         return type->u.array.size * calculateSize(type->u.array.elem);
-    else if (type->kind == STRUCTVAR)
-    {
+    else if(type->kind == STRUCTVAR) {
         int size = 0;
         FieldList p = type->u.structure;
-        while (p)
-        {
+        while(p) {
             size += calculateSize(p->type);
             p = p->tail;
         }
@@ -54,16 +51,13 @@ int calculateSize(Type type)
     }
 }
 
-void insertCode(InterCode code)
-{
-    if (head == NULL)
-    {
+void insertCode(InterCode code) {
+    if(head == NULL) {
         head = code;
         tail = code;
         head->next = head->prev = NULL;
     }
-    else
-    {
+    else {
         tail->next = code;
         code->prev = tail;
         code->next = NULL;
@@ -71,17 +65,14 @@ void insertCode(InterCode code)
     }
 }
 
-
-InterCode createCode()
-{
+InterCode createCode() {
     InterCode code = (InterCode)malloc(sizeof(struct InterCode_));
     code->next = code->prev = NULL;
     return code;
 }
 
-Operand createOpTmp()
-{
-    tNum++;
+Operand createOpTmp() {
+    tNum ++;
     Operand res = (Operand)malloc(sizeof(struct Operand_));
     res->kind = TEMPVAR;
     strcpy(res->u.value, "tt");
@@ -91,9 +82,8 @@ Operand createOpTmp()
     return res;
 }
 
-Operand createOpLabel()
-{
-    labelNum++;
+Operand createOpLabel() {
+    labelNum ++;
     Operand res = (Operand)malloc(sizeof(struct Operand_));
     res->kind = LABEL;
     strcpy(res->u.value, "label");
@@ -102,8 +92,7 @@ Operand createOpLabel()
     strcat(res->u.value, str);
     return res;
 }
-Operand copyOpLabel(int num)
-{
+Operand copyOpLabel(int num) {
     Operand res = (Operand)malloc(sizeof(struct Operand_));
     res->kind = LABEL;
     strcpy(res->u.value, "label");
@@ -112,40 +101,33 @@ Operand copyOpLabel(int num)
     strcat(res->u.value, str);
     return res;
 }
-void initInterCode(node root)
-{
+void initInterCode(node root) {
     head = tail = NULL;
     tNum = labelNum = 0;
     translateProgram(root);
 }
 
-void translateProgram(node root)
-{
+void translateProgram(node root) {
     translateExtDefList(root->child);
 }
 
-void translateExtDefList(node root)
-{
-    if (root == NULL)
-        return;
+void translateExtDefList(node root) {
+    if(root == NULL)
+        return ;
     translateExtDef(root->child);
     translateExtDefList(root->child->sibling);
 }
 
-void translateExtDef(node root)
-{
+void translateExtDef(node root) {
     node n1 = getKChild(root, 1);
     node n2 = getKChild(root, 2);
-    if (strcmp(n1->name, "FunDec") == 0)
-    {
+    if(strcmp(n1->name, "FunDec") == 0) {
         translateFunDec(n1);
         translateCompst(n2);
     }
 }
 
-//REVISE FUNCTION -> MYFUNCTION
-void translateFunDec(node root)
-{
+void translateFunDec(node root) {
     Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
     op_tmp->kind = VARIABLE;
     strcpy(op_tmp->u.value, root->child->val);
@@ -153,7 +135,7 @@ void translateFunDec(node root)
     code->kind = MYFUNCTION;
     code->u.op_single.op = op_tmp;
     insertCode(code);
-    if (getChildNum(root) == 4)
+    if(getChildNum(root) == 4)
         translateVarList(getKChild(root, 2));
 }
 
@@ -188,7 +170,6 @@ void translateVarDec_A(node root) {
         }
     }
 }
-
 //Local Variable: VarDec
 void translateVarDec_B(node root) {
     node n0 = getKChild(root, 0);
@@ -216,12 +197,12 @@ void translateVarDec_B(node root) {
 
 void translateCompst(node root) {
     node n1 = getKChild(root, 1); 
-    if(strcmp(n1->name,"DefList")==0)
+    if(strcmp(n1->name,"DefList") == 0)
     {
         translateDefList_A(n1);
         n1=n1->sibling;
     }
-    if(strcmp(n1->name,"StmtList")==0)
+    if(strcmp(n1->name,"StmtList") == 0)
         translateStmtList(n1);
 }
 // DefList in Function
@@ -481,6 +462,14 @@ void translateExp(node root, Operand op) {
             translateExpMath(root, op);
         }
     }
+    else if(childNum == 4) {
+        if(strcmp(n0->name, "Exp") == 0) {
+            translateExpArray(root, op);
+        }
+        else {
+            translateExpFunc(root, op);
+        }
+    }
 }
 
 void translateExpCommon(node root, Operand place) {
@@ -488,10 +477,10 @@ void translateExpCommon(node root, Operand place) {
     int label1 = labelNum;
     Operand op_label2 = createOpLabel();
     int label2 = labelNum;
-    Operand const0 = (Operand)malloc(sizeof(struct Operand_));;
+    Operand const0 = (Operand)malloc(sizeof(struct Operand_));
     const0->kind = CONSTANT;
     const0->u.var_no = 0;
-    Operand const1 = (Operand)malloc(sizeof(struct Operand_));;
+    Operand const1 = (Operand)malloc(sizeof(struct Operand_));
     const1->kind = CONSTANT;
     const1->u.var_no = 1;
 
@@ -521,7 +510,76 @@ void translateExpCommon(node root, Operand place) {
 }
 
 void translateExpFunc(node root, Operand place) {
+    char name[CHARMAXSIZE];
+    strcpy(name, root->child->val);
+    Symbol findTuple = findSymbol(name);
+    int childNum = getChildNum(root);
+    if(childNum == 3) {
+        InterCode code = createCode();
+        if(strcmp(name, "read") == 0) {
+            code->kind = MYREAD;
+            code->u.op_single.op = place;
+            insertCode(code);
+        }
+        else {
+            Operand funcName = (Operand)malloc(sizeof(struct Operand_));
+            funcName->kind = FUNCTION__;
+            strcpy(funcName->u.value, name);
+            code->kind = MYCALL;
+            code->u.op_assign.left = place;
+            code->u.op_assign.right = funcName;
+            insertCode(code);
+        }
+    }
+    else {
+        argNode argList = NULL;
+        argList = translateArgs(getKChild(root, 2));
+        InterCode code = createCode();
+        if(strcmp(name, "write") == 0) {
+            code->kind = MYWRITE;
+            code->u.op_single.op = argList->op;
+            insertCode(code);
+        }
+        else {
+            argNode p = argList;
+            while(p) {
+                InterCode tmp = createCode();
+                tmp->kind = MYARG;
+                tmp->u.op_single.op = p->op;
+                insertCode(tmp);
+                p = p->next;
+            }
+            Operand funcName = (Operand)malloc(sizeof(struct Operand_));
+            funcName->kind = FUNCTION__;
+            strcpy(funcName->u.value, name);
+            code->kind = MYCALL;
+            code->u.op_assign.left = place;
+            code->u.op_assign.right = funcName;
+            insertCode(code);
+        }
+    }
+}
 
+argNode translateArgs(node root) {
+    argNode argListHead = NULL;
+    while(getChildNum(root) > 1) {
+        Operand t1 = createOpTmp();
+        node n0 = getKChild(root, 0);
+        translateExp(n0, t1);
+        argNode node1 = (argNode)malloc(sizeof(struct argNode_));
+        node1->op = t1;
+        node1->next = argListHead;
+        argListHead = node1;
+        root = getKChild(root, 2);
+    }
+    Operand t1 = createOpTmp();
+    node n0 = getKChild(root, 0);
+    translateExp(n0, t1);
+    argNode node1 = (argNode)malloc(sizeof(struct argNode_));
+    node1->op = t1;
+    node1->next = argListHead;
+    argListHead = node1;
+    return argListHead;
 }
 
 void translateExpMath(node root, Operand place) {
@@ -545,32 +603,57 @@ void translateExpMath(node root, Operand place) {
     }
     else {
         InterCode code2 = createCode();
-        //REVISE:ADD code2->u.op_binary._operator
         if(strcmp(n1->name, "PLUS") == 0) 
-        {
-            code2->kind = MYADD;
-            code2->u.op_binary._operator='+';
-        }
+            code2->kind = MYADD, code2->u.op_binary._operator='+';
         else if(strcmp(n1->name, "MINUS") == 0) 
-        {
-            code2->kind = MYSUB;
-            code2->u.op_binary._operator='-';
-        }
-        else if(strcmp(n1->name, "STAR") == 0)
-        { 
-            code2->kind = MYMUL;
-            code2->u.op_binary._operator='*';
-        }
+            code2->kind = MYSUB, code2->u.op_binary._operator='-';
+        else if(strcmp(n1->name, "STAR") == 0) 
+            code2->kind = MYMUL, code2->u.op_binary._operator='*';
         else if(strcmp(n1->name, "DIV") == 0) 
-        {
-            code2->kind = MYDIV;
-            code2->u.op_binary._operator='/';
-        }
+            code2->kind = MYDIV, code2->u.op_binary._operator='/';
         code2->u.op_binary.op1 = t1;
         code2->u.op_binary.op2 = t2;
         code2->u.op_binary.result = place;
         insertCode(code2);
     }
+}
+
+void translateExpArray(node root, Operand place) {
+    Operand t1= createOpTmp();
+    node n0 = getKChild(root, 0);
+    node n2 = getKChild(root, 2);
+    translateExp(n2, t1);
+    Operand t2 = createOpTmp();
+    translateExp(n0, t2);
+    Operand t3 = createOpTmp();
+    t3->kind = place->kind;
+    strcpy(t3->u.value, place->u.value);
+    InterCode code = createCode();
+    code->kind = MYADD;
+    t2->kind = VARIABLE;
+    code->u.op_binary.op1 = t2;
+    if(t1->kind == CONSTANT) {
+        t1->u.var_no = 4 * t1->u.var_no;
+        code->u.op_binary.op2 = t1;
+    }
+    else {
+        Operand t4 = createOpTmp();
+        Type type = Exp(n0);
+        Operand constsize = (Operand)malloc(sizeof(struct Operand_));
+        constsize->kind = CONSTANT;
+        constsize->u.var_no = calculateSize(type->u.array.elem);
+        InterCode code1 = createCode();
+        code1->kind = MYMUL;
+        code1->u.op_binary.op1 = constsize;
+        code1->u.op_binary.op2 = t1;
+        code1->u.op_binary.result = t4;
+        code1->u.op_binary._operator = '*';
+        insertCode(code1);
+        code->u.op_binary.op2 = t4;
+    }
+    code->u.op_binary.result = t3;
+    insertCode(code);
+    place->kind = MYADDRESS;
 }
 
 void translateCond(node root, int label_true, int label_false) {
