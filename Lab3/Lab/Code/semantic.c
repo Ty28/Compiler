@@ -169,8 +169,14 @@ Symbol VarDec(node root, Type decType)
         {
             Type lastArrayType = varDecTuple->type;
             int arraySize = atoi(getKChild(root, 2)->val);
-            //printf("last size:%d\n",arraySize);
-            Type newArrayType = createArrayType(lastArrayType, arraySize);
+            Type newArrayType = createArrayType(lastArrayType, lastArrayType->u.array.size);
+            Type current = newArrayType;
+            while (current->u.array.elem->kind != BASIC) //a method to adjust size
+            {
+                current->u.array.size = current->u.array.elem->u.array.size;
+                current = current->u.array.elem;
+            }
+            current->u.array.size = arraySize;
             varDecTuple->type = newArrayType;
         }
         return varDecTuple;
@@ -205,10 +211,21 @@ FuncList FuncVarDec(node root, Type decType)
         FuncList varDecParam = FuncVarDec(root->child, decType);
         if (varDecParam != NULL)
         {
+            // Type lastArrayType = varDecParam->type;
+            // int arraySize = atoi(getKChild(root, 2)->val);
+            // Type newArrayType = createArrayType(lastArrayType, arraySize);
+            // varDecParam->type = newArrayType;
+
             Type lastArrayType = varDecParam->type;
             int arraySize = atoi(getKChild(root, 2)->val);
-            //printf("last size:%d\n", arraySize);
-            Type newArrayType = createArrayType(lastArrayType, arraySize);
+            Type newArrayType = createArrayType(lastArrayType, lastArrayType->u.array.size);
+            Type current = newArrayType;
+            while (current->u.array.elem->kind != BASIC) //a method to adjust size
+            {
+                current->u.array.size = current->u.array.elem->u.array.size;
+                current = current->u.array.elem;
+            }
+            current->u.array.size = arraySize;
             varDecParam->type = newArrayType;
         }
         return varDecParam;

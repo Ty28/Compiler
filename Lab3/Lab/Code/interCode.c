@@ -392,7 +392,10 @@ void translateExp(node root, Operand op) {
     if(childNum == 1) {
         if(strcmp(n0->name, "ID") == 0) {
             Symbol findTuple = findSymbol(n0->val); 
-            op->kind = VARIABLE;
+            if(findTuple->type->kind == ARRAY) 
+                op->kind = ADDRESS;
+            else 
+                op->kind = VARIABLE;
             strcpy(op->u.value, n0->val);
         }
         else if(strcmp(n0->name, "INT") == 0) {
@@ -438,15 +441,127 @@ void translateExp(node root, Operand op) {
             }
             Operand t1 = createOpTmp();
             translateExp(n2, t1);
-            InterCode code1 = createCode();
-            code1->kind = MYASSIGN;
-            code1->u.op_assign.left = op_tmp;
-            code1->u.op_assign.right = t1;
-            insertCode(code1);
-            // place := varialbe.name
-            if(op->kind != NOTHING) {
-                op->kind = op_tmp->kind;
-                strcpy(op->u.value, op_tmp->u.value);
+            if(t1->kind != ADDRESS && op_tmp->kind != ADDRESS) {
+                InterCode code1 = createCode();
+                code1->kind = MYASSIGN;
+                code1->u.op_assign.left = op_tmp;
+                code1->u.op_assign.right = t1;
+                insertCode(code1);
+                // place := varialbe.name
+                if(op->kind != NOTHING) {
+                    op->kind = op_tmp->kind;
+                    strcpy(op->u.value, op_tmp->u.value);
+                }
+            }
+            else {
+                // i = &addr1
+                Operand addr1 = (Operand)malloc(sizeof(struct Operand_));
+                addr1->kind = ADDRESS;
+                strcpy(addr1->u.value, n0->child->val);
+                Operand i = createOpTmp();
+                InterCode c1 = createCode();
+                c1->kind = MYASSIGN;
+                c1->u.op_assign.left = i;
+                c1->u.op_assign.right = addr1;
+                insertCode(c1);
+
+                // j = &addr2
+                Operand addr2 = (Operand)malloc(sizeof(struct Operand_));
+                addr2->kind = ADDRESS;
+                strcpy(addr2->u.value, n2->child->val);
+                Operand j = createOpTmp();
+                InterCode c2 = createCode();
+                c2->kind = MYASSIGN;
+                c2->u.op_assign.left = j;
+                c2->u.op_assign.right = addr2;
+                insertCode(c2);
+
+                // k = j + sizeof(addr2)
+                Operand k = createOpTmp();
+                Type type = Exp(n2);
+                Operand constsize = (Operand)malloc(sizeof(struct Operand_));
+                constsize->kind = CONSTANT;
+                constsize->u.var_no = calculateSize(type);
+                InterCode c3 = createCode();
+                c3->kind = MYADD;
+                c3->u.op_binary.op1 = j;
+                c3->u.op_binary.op2 = constsize;
+                c3->u.op_binary.result = k;
+                c3->u.op_binary._operator = '+';
+                insertCode(c3);
+
+                //label1
+                Operand op_label1 = createOpLabel();
+                int label1 = labelNum;
+                InterCode c4 = createCode();
+                c4->kind = MYLABEL;
+                c4->u.op_single.op = op_label1;
+                insertCode(c4);
+
+                // ifgoto label2
+                Operand op_label2 = createOpLabel();
+                int label2 = labelNum;
+                InterCode c5 = createCode();
+                c5->kind = MYIFGOTO;
+                c5->u.op_triple.x = j;
+                c5->u.op_triple.y = k;
+                c5->u.op_triple.label = op_label2;
+                strcpy(c5->u.op_triple.relop, ">=");
+                insertCode(c5);
+
+                // *i = *j
+                
+                Operand tmp1 = (Operand)malloc(sizeof(struct Operand_));
+                tmp1->kind = STAR__;
+                strcpy(tmp1->u.value, i->u.value);
+
+                Operand tmp2 = (Operand)malloc(sizeof(struct Operand_));
+                tmp2->kind = STAR__;
+                strcpy(tmp2->u.value, j->u.value);
+
+                InterCode c6 = createCode();
+                c6->kind = MYASSIGN;
+                c6->u.op_assign.left = tmp1;
+                c6->u.op_assign.right = tmp2;
+                insertCode(c6);
+
+                // i = i + 4
+                
+                Operand constsize4 = (Operand)malloc(sizeof(struct Operand_));
+                constsize4->kind = CONSTANT;
+                constsize4->u.var_no = 4;
+                InterCode c7 = createCode();
+                c7->kind = MYADD;
+                c7->u.op_binary.op1 = i;
+                c7->u.op_binary.op2 = constsize4;
+                c7->u.op_binary.result = i;
+                c7->u.op_binary._operator = '+';
+                insertCode(c7);
+
+                // j = j + 4
+
+                InterCode c8 = createCode();
+                c8->kind = MYADD;
+                c8->u.op_binary.op1 = j;
+                c8->u.op_binary.op2 = constsize4;
+                c8->u.op_binary.result = j;
+                c8->u.op_binary._operator = '+';
+                insertCode(c8);
+
+                // GOTO LABEL1
+                
+                InterCode c9 = createCode();
+                c9->kind = MYGOTO;
+                Operand op_tmp1 = copyOpLabel(label1);
+                c9->u.op_single.op = op_tmp1;
+                insertCode(c9);
+
+                // LABEL2
+
+                InterCode c10 = createCode();
+                c10->kind = MYLABEL;
+                c10->u.op_single.op = copyOpLabel(label2);
+                insertCode(c10);
             }
         }
         else if(strcmp(n1->name, "AND") == 0 || strcmp(n1->name, "OR") == 0 || strcmp(n1->name, "RELOP") == 0) {
@@ -630,30 +745,27 @@ void translateExpArray(node root, Operand place) {
     strcpy(t3->u.value, place->u.value);
     InterCode code = createCode();
     code->kind = MYADD;
+    //t1:represents [Exp]
+    //t2:represents Exp[]
+    //t3:represents place
     if(t2->kind != STAR__)
         t2->kind = ADDRESS;
     else 
         t2->kind = VARIABLE;
     code->u.op_binary.op1 = t2;
-    if(t1->kind == CONSTANT) {
-        t1->u.var_no = 4 * t1->u.var_no;
-        code->u.op_binary.op2 = t1;
-    }
-    else {
-        Operand t4 = createOpTmp();
-        Type type = Exp(n0);
-        Operand constsize = (Operand)malloc(sizeof(struct Operand_));
-        constsize->kind = CONSTANT;
-        constsize->u.var_no = calculateSize(type->u.array.elem);
-        InterCode code1 = createCode();
-        code1->kind = MYMUL;
-        code1->u.op_binary.op1 = constsize;
-        code1->u.op_binary.op2 = t1;
-        code1->u.op_binary.result = t4;
-        code1->u.op_binary._operator = '*';
-        insertCode(code1);
-        code->u.op_binary.op2 = t4;
-    }
+    Operand t4 = createOpTmp();
+    Type type = Exp(n0);
+    Operand constsize = (Operand)malloc(sizeof(struct Operand_));
+    constsize->kind = CONSTANT;
+    constsize->u.var_no = calculateSize(type->u.array.elem);
+    InterCode code1 = createCode();
+    code1->kind = MYMUL;
+    code1->u.op_binary.op1 = constsize;
+    code1->u.op_binary.op2 = t1;
+    code1->u.op_binary.result = t4;
+    code1->u.op_binary._operator = '*';
+    insertCode(code1);
+    code->u.op_binary.op2 = t4;
     code->u.op_binary.result = t3;
     insertCode(code);
     place->kind = STAR__;
