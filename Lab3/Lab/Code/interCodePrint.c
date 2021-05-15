@@ -15,10 +15,10 @@ void printOpSingle(FILE *fp, Operand op)
         fprintf(fp, "#%d", op->u.var_no);
         break;
     case (ADDRESS):
-        fprintf(fp, "&%d", op->u.var_no);
+        fprintf(fp, "&%s", op->u.value);
         break;
     case (STAR_):
-        fprintf(fp, "*%d", op->u.var_no);
+        fprintf(fp, "*%s", op->u.value);
         break;
     case (NOTHING):
         fprintf(fp, "nothing");
