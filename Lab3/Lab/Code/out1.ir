@@ -1,126 +1,98 @@
-FUNCTION Swap :
-PARAM a
-PARAM l
-PARAM h
-tt6 := #4 * l
-tt2 := &a + tt6
-temp := *tt2
-tt11 := #4 * l
-tt7 := &a + tt11
-tt16 := #4 * h
-tt12 := &a + tt16
-*tt7 := *tt12
-tt21 := #4 * h
-tt17 := &a + tt21
-*tt17 := temp
-RETURN #0
-
-FUNCTION Partition :
-PARAM b
-PARAM low
-PARAM high
-tt28 := #4 * low
-tt24 := &b + tt28
-base := *tt24
+FUNCTION main :
+DEC a 72
+DEC b 72
+i := #0
 LABEL label1 :
-IF low < high GOTO label2
+IF i < #18 GOTO label2
 GOTO label3
 LABEL label2 :
-LABEL label4 :
-IF low < high GOTO label7
-GOTO label6
-LABEL label7 :
-tt38 := #4 * high
-tt33 := &b + tt38
-IF *tt33 >= base GOTO label5
-GOTO label6
-LABEL label5 :
-tt40 := high - #1
-high := tt40
-GOTO label4
-LABEL label6 :
-ARG high
-ARG low
-ARG &b
-nothing := CALL Swap
-LABEL label8 :
-IF low < high GOTO label11
-GOTO label10
-LABEL label11 :
-tt53 := #4 * low
-tt48 := &b + tt53
-IF *tt48 <= base GOTO label9
-GOTO label10
-LABEL label9 :
-tt55 := low + #1
-low := tt55
-GOTO label8
-LABEL label10 :
-ARG high
-ARG low
-ARG &b
-nothing := CALL Swap
+tt12 := #36 * #0
+tt8 := &b + tt12
+tt14 := #12 * #0
+tt6 := tt8 + tt14
+tt16 := #4 * i
+tt4 := tt6 + tt16
+*tt4 := i
+tt19 := i + #1
+i := tt19
 GOTO label1
 LABEL label3 :
-RETURN low
-
-FUNCTION QuickSort :
-PARAM c
-PARAM low1
-PARAM high1
-IF low1 < high1 GOTO label12
-GOTO label13
-LABEL label12 :
-ARG high1
-ARG low1
-ARG &c
-tt64 := CALL Partition
-base1 := tt64
-tt70 := base1 - #1
-ARG tt70
-ARG low1
-ARG &c
-nothing := CALL QuickSort
-tt74 := base1 + #1
-ARG high1
-ARG tt74
-ARG &c
-nothing := CALL QuickSort
-LABEL label13 :
-RETURN #0
-
-FUNCTION main :
-n := #8
-DEC arr 32
-i := #0
-LABEL label14 :
-IF i < n GOTO label15
-GOTO label16
-LABEL label15 :
-tt87 := #4 * i
-tt83 := &arr + tt87
-READ tt88
-*tt83 := tt88
-tt90 := i + #1
-i := tt90
-GOTO label14
-LABEL label16 :
-tt95 := n - #1
-ARG tt95
-ARG #0
-ARG &arr
-nothing := CALL QuickSort
-i := #0
-LABEL label17 :
-IF i < n GOTO label18
-GOTO label19
-LABEL label18 :
-tt106 := #4 * i
-tt102 := &arr + tt106
-WRITE *tt102
-tt108 := i + #1
-i := tt108
-GOTO label17
-LABEL label19 :
+tt28 := #36 * #1
+tt24 := &a + tt28
+tt30 := #12 * #1
+tt22 := tt24 + tt30
+tt37 := #36 * #1
+tt33 := &b + tt37
+tt39 := #12 * #0
+tt31 := tt33 + tt39
+tt40 := tt22
+tt41 := tt31
+tt42 := tt41 + #12
+LABEL label4 :
+IF tt41 >= tt42 GOTO label5
+*tt40 := *tt41
+tt40 := tt40 + #4
+tt41 := tt41 + #4
+GOTO label4
+LABEL label5 :
+tt47 := #36 * #0
+tt43 := &a + tt47
+tt52 := #36 * #1
+tt48 := &b + tt52
+tt53 := tt43
+tt54 := tt48
+tt55 := tt54 + #36
+LABEL label6 :
+IF tt54 >= tt55 GOTO label7
+*tt53 := *tt54
+tt53 := tt53 + #4
+tt54 := tt54 + #4
+GOTO label6
+LABEL label7 :
+tt64 := #36 * #0
+tt60 := &a + tt64
+tt66 := #12 * #0
+tt58 := tt60 + tt66
+tt68 := #4 * #1
+tt56 := tt58 + tt68
+*tt56 := #-1
+tt80 := #36 * #0
+tt76 := &a + tt80
+tt82 := #12 * #0
+tt74 := tt76 + tt82
+tt84 := #4 * #1
+tt72 := tt74 + tt84
+tt93 := #36 * #0
+tt89 := &b + tt93
+tt95 := #12 * #0
+tt87 := tt89 + tt95
+tt97 := #4 * #1
+tt85 := tt87 + tt97
+tt71 := *tt72 + *tt85
+WRITE tt71
+tt100 := &a
+tt101 := &b
+tt102 := tt101 + #72
+LABEL label8 :
+IF tt101 >= tt102 GOTO label9
+*tt100 := *tt101
+tt100 := tt100 + #4
+tt101 := tt101 + #4
+GOTO label8
+LABEL label9 :
+tt112 := #36 * #0
+tt108 := &a + tt112
+tt114 := #12 * #0
+tt106 := tt108 + tt114
+tt116 := #4 * #1
+tt104 := tt106 + tt116
+tt125 := #36 * #0
+tt121 := &b + tt125
+tt127 := #12 * #0
+tt119 := tt121 + tt127
+tt129 := #4 * #1
+tt117 := tt119 + tt129
+tt103 := *tt104 + *tt117
+WRITE tt103
 RETURN #0
 
