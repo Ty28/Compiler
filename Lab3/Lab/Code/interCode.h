@@ -1,34 +1,42 @@
 #ifndef _INTERCODE_H
 #define _INTERCODE_H
-#define InterCodeDebug
-typedef struct Operand_* Operand;
-typedef struct InterCode_* InterCode;
-typedef struct argNode_* argNode;
+#include "symbol.h"
+#define FORMALPARAMETERSIZE 0x3fff
+//#define InterCodeDebug
+typedef struct Operand_ *Operand;
+typedef struct InterCode_ *InterCode;
+typedef struct argNode_ *argNode;
+typedef struct FPTableNode_ *FPTableNode;
 InterCode head;
 InterCode tail;
 int labelNum;
 int tNum;
-struct Operand_ {
-    enum {
+struct Operand_
+{
+    enum
+    {
         VARIABLE,
         CONSTANT,
         ADDRESS,
+        STAR__,
         COSNTVAR,
         TEMPVAR,
         NOTHING,
         LABEL,
         FUNCTION__
     } kind;
-    union  
+    union
     {
         int var_no;
         char value[CHARMAXSIZE];
         Operand op;
-    } u;  
+    } u;
 };
 
-struct InterCode_ {
-    enum {
+struct InterCode_
+{
+    enum
+    {
         MYFUNCTION,
         MYPARAM,
         MYRETURN,
@@ -44,36 +52,70 @@ struct InterCode_ {
         MYSUB,
         MYMUL,
         MYDIV,
-        MYIFGOTO,
-        MYADDRESS
+        MYIFGOTO
     } kind;
-    union {
-        struct{ Operand op; } op_single;
+    union
+    {
+        struct
+        {
+            Operand op;
+        } op_single;
 
-        struct{ Operand left, right; } op_assign;
+        struct
+        {
+            Operand left, right;
+        } op_assign;
 
-		struct{ Operand result, op1, op2; char _operator;} op_binary;//REVISE: add _operator to represent +-*/
+        struct
+        {
+            Operand result, op1, op2;
+            char _operator;
+        } op_binary; //REVISE: add _operator to represent +-*/
 
-		struct{ Operand x; Operand y; Operand label; char relop[CHARMAXSIZE]; } op_triple;
+        struct
+        {
+            Operand x;
+            Operand y;
+            Operand label;
+            char relop[CHARMAXSIZE];
+        } op_triple;
 
-		struct{ Operand op; int size; } op_dec;
+        struct
+        {
+            Operand op;
+            int size;
+        } op_dec;
     } u;
     InterCode prev;
-	InterCode next;
+    InterCode next;
 };
 
-struct argNode_{
-	Operand op;
-	argNode next;
+struct argNode_
+{
+    Operand op;
+    argNode next;
 };
+
+struct FPTableNode_ //to construct a formal parameter table
+{
+    char name[CHARMAXSIZE];
+    FPTableNode link;
+};
+
+FPTableNode *FPTable;
+FPTableNode *createFPTable();
+FPTableNode createFPMember(char *name);
+int findFPMember(char *name,int _insert);
 
 void initInterCode(node root);
 void insertCode(InterCode code);
+void newInterCode(int kind, ...);
 InterCode createCode();
 Operand createOpTmp();
 Operand createOpLabel();
 Operand copyOpLabel(int num);
-char* int2String(int num,char *str);
+
+char *int2String(int num, char *str);
 void translateProgram(node root);
 void translateExtDefList(node root);
 void translateExtDef(node root);
