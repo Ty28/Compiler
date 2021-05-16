@@ -44,8 +44,7 @@ struct InterCode_ {
         MYSUB,
         MYMUL,
         MYDIV,
-        MYIFGOTO,
-        MYADDRESS
+        MYIFGOTO
     } kind;
     union {
         struct{ Operand op; } op_single;
@@ -69,10 +68,12 @@ struct argNode_{
 
 void initInterCode(node root);
 void insertCode(InterCode code);
+void newInterCode(int kind, ...);
 InterCode createCode();
 Operand createOpTmp();
 Operand createOpLabel();
 Operand copyOpLabel(int num);
+
 char* int2String(int num,char *str);
 void translateProgram(node root);
 void translateExtDefList(node root);

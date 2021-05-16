@@ -92,6 +92,7 @@ Operand createOpLabel() {
     strcat(res->u.value, str);
     return res;
 }
+
 Operand copyOpLabel(int num) {
     Operand res = (Operand)malloc(sizeof(struct Operand_));
     res->kind = LABEL;
@@ -101,6 +102,79 @@ Operand copyOpLabel(int num) {
     strcat(res->u.value, str);
     return res;
 }
+
+void newInterCode(int kind, ...) {
+    va_list args;
+    va_start(args, kind);
+    InterCode code = createCode();
+    code->kind = kind;
+    switch(kind) {
+        case MYFUNCTION:
+        case MYPARAM:
+        case MYRETURN:
+        case MYLABEL:
+        case MYGOTO:
+        case MYREAD:
+        case MYWRITE:
+        case MYARG: {
+            code->u.op_single.op = va_arg(args, Operand);
+            break;
+        }
+        case MYASSIGN:
+        case MYCALL: {
+            code->u.op_assign.left = va_arg(args, Operand);
+            code->u.op_assign.right = va_arg(args, Operand);
+            break;
+        }
+        case MYDEC: {
+            code->u.op_dec.op = va_arg(args, Operand);
+            code->u.op_dec.size = va_arg(args, int);
+            break;
+        }
+        case MYADD: {
+            code->u.op_binary.result = va_arg(args, Operand);
+            code->u.op_binary.op1 = va_arg(args, Operand);
+            code->u.op_binary.op2 = va_arg(args, Operand);
+            code->u.op_binary._operator = '+';
+            break;
+        }
+        case MYSUB: {
+            code->u.op_binary.result = va_arg(args, Operand);
+            code->u.op_binary.op1 = va_arg(args, Operand);
+            code->u.op_binary.op2 = va_arg(args, Operand);
+            code->u.op_binary._operator = '-';
+            break;
+        }
+        case MYMUL: {
+            code->u.op_binary.result = va_arg(args, Operand);
+            code->u.op_binary.op1 = va_arg(args, Operand);
+            code->u.op_binary.op2 = va_arg(args, Operand);
+            code->u.op_binary._operator = '*';
+            break;
+        }
+        case MYDIV: {
+            code->u.op_binary.result = va_arg(args, Operand);
+            code->u.op_binary.op1 = va_arg(args, Operand);
+            code->u.op_binary.op2 = va_arg(args, Operand);
+            code->u.op_binary._operator = '/';
+            break;
+        }
+        case MYIFGOTO: {
+            code->u.op_triple.x = va_arg(args, Operand);
+            strcpy(code->u.op_triple.relop, va_arg(args, char*));
+            code->u.op_triple.y = va_arg(args, Operand);
+            code->u.op_triple.label = va_arg(args, Operand);
+            break;
+        }
+        default :
+            printf("to be continued\n");
+            break;
+    }
+    insertCode(code);
+	va_end(args);
+}
+
+
 void initInterCode(node root) {
     head = tail = NULL;
     tNum = labelNum = 0;
@@ -131,10 +205,7 @@ void translateFunDec(node root) {
     Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
     op_tmp->kind = VARIABLE;
     strcpy(op_tmp->u.value, root->child->val);
-    InterCode code = createCode();
-    code->kind = MYFUNCTION;
-    code->u.op_single.op = op_tmp;
-    insertCode(code);
+    newInterCode(MYFUNCTION, op_tmp);
     if(getChildNum(root) == 4)
         translateVarList(getKChild(root, 2));
 }
@@ -157,18 +228,16 @@ void translateVarDec_A(node root) {
         Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
         op_tmp->kind = VARIABLE;
         strcpy(op_tmp->u.value, n0->val);
-        InterCode code = createCode();
-        code->kind = MYPARAM;
-        code->u.op_single.op = op_tmp;
-        insertCode(code);
+        newInterCode(MYPARAM, op_tmp);
         if(findTuple->type->kind == ARRAY) {
-            //TODO1: mutil-dimensional array(should pass, because params only have 1d-array)
-            //TODO2: params of 1d-array 
+            //TODO: params of 1d-array 
         }
         else if(findTuple->type->kind == STRUCTURE || findTuple->type->kind == STRUCTVAR) {
             printf("Cannot translate: Code contains variables or paraneters of structure type\n");
         }
     }
+    else 
+        translateVarDec_A(n0);
 }
 //Local Variable: VarDec
 void translateVarDec_B(node root) {
@@ -184,11 +253,7 @@ void translateVarDec_B(node root) {
             Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
             op_tmp->kind = VARIABLE;
             strcpy(op_tmp->u.value, n0->val);
-            InterCode code = createCode();
-            code->kind = MYDEC;
-            code->u.op_dec.op = op_tmp;
-            code->u.op_dec.size = size;
-            insertCode(code);
+            newInterCode(MYDEC, op_tmp, size);
         }
     }
     else 
@@ -235,11 +300,7 @@ void translateDec_A(node root) {
         strcpy(op_left->u.value, root->child->child->val);
         Operand op_right = createOpTmp();
         translateExp(getKChild(root, 2), op_right);
-        InterCode code = createCode();
-        code->kind = MYASSIGN;
-        code->u.op_assign.left = op_left;
-        code->u.op_assign.right = op_right;
-        insertCode(code);
+        newInterCode(MYASSIGN, op_left, op_right);
         if(op_right->kind == CONSTANT || op_right->kind == COSNTVAR) {
             // TODO
         }
@@ -267,10 +328,7 @@ void translateStmt(node root) {
         Operand op = createOpTmp();
         node n1 = getKChild(root, 1);
         translateExp(n1, op);
-        InterCode code = createCode();
-        code->kind = MYRETURN;
-        code->u.op_single.op = op;
-        insertCode(code);
+        newInterCode(MYRETURN, op);
     }
     else if(strcmp(n0->name, "IF") == 0) {
         // IF LP EXP RP STMT
@@ -283,20 +341,14 @@ void translateStmt(node root) {
             node n2 = getKChild(root, 2);
             translateCond(n2, label1, label2);
 
-            InterCode code1 = createCode();
-            code1->kind = MYLABEL;
-            code1->u.op_single.op = op_label1;
-            insertCode(code1);
+            newInterCode(MYLABEL, op_label1);
 
             //increase cnt2
             node n4 = getKChild(root, 4);
             translateStmt(n4);
             //decrease cnt2
 
-            InterCode code2 = createCode();
-            code2->kind = MYLABEL;
-            code2->u.op_single.op = op_label2;
-            insertCode(code2);
+            newInterCode(MYLABEL, op_label2);
         }
         // IF LP EXP RP STMT ELSE STMT
         else {
@@ -310,36 +362,24 @@ void translateStmt(node root) {
             node n2 = getKChild(root, 2);
             translateCond(n2, label1, label2);
 
-            InterCode code1 = createCode();
-            code1->kind = MYLABEL;
-            code1->u.op_single.op = op_label1;
-            insertCode(code1);
+            newInterCode(MYLABEL, op_label1);
 
             //increase cnt2
             node n4 = getKChild(root, 4);
             translateStmt(n4);
             //decrease cnt2
 
-            InterCode code2 = createCode();
-            code2->kind = MYGOTO;
             Operand op_tmp3 = copyOpLabel(label3);
-            code2->u.op_single.op = op_tmp3;
-            insertCode(code2);
+            newInterCode(MYGOTO, op_tmp3);
 
-            InterCode code3 = createCode();
-            code3->kind = MYLABEL;
-            code3->u.op_single.op = op_label2;
-            insertCode(code3);
+            newInterCode(MYLABEL, op_label2);
 
             //increase cnt2
             node n6 = getKChild(root, 6);
             translateStmt(n6);
             //decrease cnt2
 
-            InterCode code4 = createCode();
-            code4->kind = MYLABEL;
-            code4->u.op_single.op = op_label3;
-            insertCode(code4);
+            newInterCode(MYLABEL, op_label3);
         }
     }
     // WHILE LP EXP RP STMT (unfinished)
@@ -351,36 +391,24 @@ void translateStmt(node root) {
         Operand op_label3 = createOpLabel();
         int label3 = labelNum;
 
-        InterCode code1 = createCode();
-        code1->kind = MYLABEL;
-        code1->u.op_single.op = op_label1;
-        insertCode(code1);
+        newInterCode(MYLABEL, op_label1);
 
         //set cnt = 1
         node n2 = getKChild(root, 2);
         translateCond(n2, label2, label3);
         //set cnt = 0
 
-        InterCode code2 = createCode();
-        code2->kind = MYLABEL;
-        code2->u.op_single.op = op_label2;
-        insertCode(code2);
+        newInterCode(MYLABEL, op_label2);
 
         // cnt1 ++;
         node n4 = getKChild(root, 4);
         translateStmt(n4);
         // cnt1 --;
 
-        InterCode code3 = createCode();
-        code3->kind = MYGOTO;
         Operand op_tmp1 = copyOpLabel(label1);
-        code3->u.op_single.op = op_tmp1;
-        insertCode(code3);
+        newInterCode(MYGOTO, op_tmp1);
 
-        InterCode code4 = createCode();
-        code4->kind = MYLABEL;
-        code4->u.op_single.op = op_label3;
-        insertCode(code4);
+        newInterCode(MYLABEL, op_label3);
     }
 }
 
@@ -416,12 +444,7 @@ void translateExp(node root, Operand op) {
                 op_const->kind = CONSTANT;
                 op_const->u.var_no = 0;
 
-                InterCode code2 = createCode();
-                code2->kind = MYSUB;
-                code2->u.op_binary.op1 = op_const;
-                code2->u.op_binary.op2 = op_tmp;
-                code2->u.op_binary.result = op;
-                insertCode(code2);
+                newInterCode(MYSUB, op, op_const, op_tmp);
             }
         }
         else if(strcmp(n0->name, "NOT") == 0) {
@@ -442,11 +465,7 @@ void translateExp(node root, Operand op) {
             Operand t1 = createOpTmp();
             translateExp(n2, t1);
             if(t1->kind != ADDRESS && op_tmp->kind != ADDRESS) {
-                InterCode code1 = createCode();
-                code1->kind = MYASSIGN;
-                code1->u.op_assign.left = op_tmp;
-                code1->u.op_assign.right = t1;
-                insertCode(code1);
+                newInterCode(MYASSIGN, op_tmp, t1);
                 // place := varialbe.name
                 if(op->kind != NOTHING) {
                     op->kind = op_tmp->kind;
@@ -459,22 +478,15 @@ void translateExp(node root, Operand op) {
                 addr1->kind = ADDRESS;
                 strcpy(addr1->u.value, n0->child->val);
                 Operand i = createOpTmp();
-                InterCode c1 = createCode();
-                c1->kind = MYASSIGN;
-                c1->u.op_assign.left = i;
-                c1->u.op_assign.right = addr1;
-                insertCode(c1);
+
+                newInterCode(MYASSIGN, i, addr1);
 
                 // j = &addr2
                 Operand addr2 = (Operand)malloc(sizeof(struct Operand_));
                 addr2->kind = ADDRESS;
                 strcpy(addr2->u.value, n2->child->val);
                 Operand j = createOpTmp();
-                InterCode c2 = createCode();
-                c2->kind = MYASSIGN;
-                c2->u.op_assign.left = j;
-                c2->u.op_assign.right = addr2;
-                insertCode(c2);
+                newInterCode(MYASSIGN, j, addr2);
 
                 // k = j + sizeof(addr2)
                 Operand k = createOpTmp();
@@ -482,86 +494,42 @@ void translateExp(node root, Operand op) {
                 Operand constsize = (Operand)malloc(sizeof(struct Operand_));
                 constsize->kind = CONSTANT;
                 constsize->u.var_no = calculateSize(type);
-                InterCode c3 = createCode();
-                c3->kind = MYADD;
-                c3->u.op_binary.op1 = j;
-                c3->u.op_binary.op2 = constsize;
-                c3->u.op_binary.result = k;
-                c3->u.op_binary._operator = '+';
-                insertCode(c3);
+                newInterCode(MYADD, k, j, constsize);
 
                 //label1
                 Operand op_label1 = createOpLabel();
                 int label1 = labelNum;
-                InterCode c4 = createCode();
-                c4->kind = MYLABEL;
-                c4->u.op_single.op = op_label1;
-                insertCode(c4);
+                newInterCode(MYLABEL, op_label1);
 
                 // ifgoto label2
                 Operand op_label2 = createOpLabel();
                 int label2 = labelNum;
-                InterCode c5 = createCode();
-                c5->kind = MYIFGOTO;
-                c5->u.op_triple.x = j;
-                c5->u.op_triple.y = k;
-                c5->u.op_triple.label = op_label2;
-                strcpy(c5->u.op_triple.relop, ">=");
-                insertCode(c5);
+                newInterCode(MYIFGOTO, j, ">=", k, op_label2);
 
                 // *i = *j
-                
                 Operand tmp1 = (Operand)malloc(sizeof(struct Operand_));
                 tmp1->kind = STAR__;
                 strcpy(tmp1->u.value, i->u.value);
-
                 Operand tmp2 = (Operand)malloc(sizeof(struct Operand_));
                 tmp2->kind = STAR__;
                 strcpy(tmp2->u.value, j->u.value);
+                newInterCode(MYASSIGN, tmp1, tmp2);
 
-                InterCode c6 = createCode();
-                c6->kind = MYASSIGN;
-                c6->u.op_assign.left = tmp1;
-                c6->u.op_assign.right = tmp2;
-                insertCode(c6);
-
-                // i = i + 4
-                
+                // i = i + 4 
                 Operand constsize4 = (Operand)malloc(sizeof(struct Operand_));
                 constsize4->kind = CONSTANT;
                 constsize4->u.var_no = 4;
-                InterCode c7 = createCode();
-                c7->kind = MYADD;
-                c7->u.op_binary.op1 = i;
-                c7->u.op_binary.op2 = constsize4;
-                c7->u.op_binary.result = i;
-                c7->u.op_binary._operator = '+';
-                insertCode(c7);
+                newInterCode(MYADD, i, i, constsize4);
 
                 // j = j + 4
-
-                InterCode c8 = createCode();
-                c8->kind = MYADD;
-                c8->u.op_binary.op1 = j;
-                c8->u.op_binary.op2 = constsize4;
-                c8->u.op_binary.result = j;
-                c8->u.op_binary._operator = '+';
-                insertCode(c8);
+                newInterCode(MYADD, j, j, constsize4);
 
                 // GOTO LABEL1
-                
-                InterCode c9 = createCode();
-                c9->kind = MYGOTO;
                 Operand op_tmp1 = copyOpLabel(label1);
-                c9->u.op_single.op = op_tmp1;
-                insertCode(c9);
+                newInterCode(MYGOTO, op_tmp1);
 
                 // LABEL2
-
-                InterCode c10 = createCode();
-                c10->kind = MYLABEL;
-                c10->u.op_single.op = copyOpLabel(label2);
-                insertCode(c10);
+                newInterCode(MYLABEL, copyOpLabel(label2));
             }
         }
         else if(strcmp(n1->name, "AND") == 0 || strcmp(n1->name, "OR") == 0 || strcmp(n1->name, "RELOP") == 0) {
@@ -599,29 +567,15 @@ void translateExpCommon(node root, Operand place) {
     const1->kind = CONSTANT;
     const1->u.var_no = 1;
 
-    InterCode code0 = createCode();
-    code0->kind = MYASSIGN;
-    code0->u.op_assign.left = place;
-    code0->u.op_assign.right = const0;
-    insertCode(code0);
+    newInterCode(MYASSIGN, place, const0);
 
     translateCond(root, label1, label2);
     
-    InterCode code1 = createCode();
-    code1->kind = MYLABEL;
-    code1->u.op_single.op = op_label1;
-    insertCode(code1);
+    newInterCode(MYLABEL, op_label1);
 
-    InterCode code2 = createCode();
-    code2->kind = MYASSIGN;
-    code2->u.op_assign.left = place;
-    code2->u.op_assign.right = const1;
-    insertCode(code2);
+    newInterCode(MYASSIGN, place, const1);
     
-    InterCode code3 = createCode();
-    code3->kind = MYLABEL;
-    code3->u.op_single.op = op_label2;
-    insertCode(code3);
+    newInterCode(MYLABEL, op_label2);
 }
 
 void translateExpFunc(node root, Operand place) {
@@ -630,47 +584,32 @@ void translateExpFunc(node root, Operand place) {
     Symbol findTuple = findSymbol(name);
     int childNum = getChildNum(root);
     if(childNum == 3) {
-        InterCode code = createCode();
         if(strcmp(name, "read") == 0) {
-            code->kind = MYREAD;
-            code->u.op_single.op = place;
-            insertCode(code);
+            newInterCode(MYREAD, place);
         }
         else {
             Operand funcName = (Operand)malloc(sizeof(struct Operand_));
             funcName->kind = FUNCTION__;
             strcpy(funcName->u.value, name);
-            code->kind = MYCALL;
-            code->u.op_assign.left = place;
-            code->u.op_assign.right = funcName;
-            insertCode(code);
+            newInterCode(MYCALL, place, funcName);
         }
     }
     else {
         argNode argList = NULL;
         argList = translateArgs(getKChild(root, 2));
-        InterCode code = createCode();
         if(strcmp(name, "write") == 0) {
-            code->kind = MYWRITE;
-            code->u.op_single.op = argList->op;
-            insertCode(code);
+            newInterCode(MYWRITE, argList->op);
         }
         else {
             argNode p = argList;
             while(p) {
-                InterCode tmp = createCode();
-                tmp->kind = MYARG;
-                tmp->u.op_single.op = p->op;
-                insertCode(tmp);
+                newInterCode(MYARG, p->op);
                 p = p->next;
             }
             Operand funcName = (Operand)malloc(sizeof(struct Operand_));
             funcName->kind = FUNCTION__;
             strcpy(funcName->u.value, name);
-            code->kind = MYCALL;
-            code->u.op_assign.left = place;
-            code->u.op_assign.right = funcName;
-            insertCode(code);
+            newInterCode(MYCALL, place, funcName);
         }
     }
 }
@@ -719,17 +658,13 @@ void translateExpMath(node root, Operand place) {
     else {
         InterCode code2 = createCode();
         if(strcmp(n1->name, "PLUS") == 0) 
-            code2->kind = MYADD, code2->u.op_binary._operator='+';
+            newInterCode(MYADD, place, t1, t2);
         else if(strcmp(n1->name, "MINUS") == 0) 
-            code2->kind = MYSUB, code2->u.op_binary._operator='-';
+            newInterCode(MYSUB, place, t1, t2);
         else if(strcmp(n1->name, "STAR") == 0) 
-            code2->kind = MYMUL, code2->u.op_binary._operator='*';
+            newInterCode(MYMUL, place, t1, t2);
         else if(strcmp(n1->name, "DIV") == 0) 
-            code2->kind = MYDIV, code2->u.op_binary._operator='/';
-        code2->u.op_binary.op1 = t1;
-        code2->u.op_binary.op2 = t2;
-        code2->u.op_binary.result = place;
-        insertCode(code2);
+            newInterCode(MYDIV, place, t1, t2);
     }
 }
 
@@ -743,8 +678,6 @@ void translateExpArray(node root, Operand place) {
     Operand t3 = createOpTmp();
     t3->kind = place->kind;
     strcpy(t3->u.value, place->u.value);
-    InterCode code = createCode();
-    code->kind = MYADD;
     //t1:represents [Exp]
     //t2:represents Exp[]
     //t3:represents place
@@ -752,22 +685,14 @@ void translateExpArray(node root, Operand place) {
         t2->kind = ADDRESS;
     else 
         t2->kind = VARIABLE;
-    code->u.op_binary.op1 = t2;
     Operand t4 = createOpTmp();
     Type type = Exp(n0);
     Operand constsize = (Operand)malloc(sizeof(struct Operand_));
     constsize->kind = CONSTANT;
     constsize->u.var_no = calculateSize(type->u.array.elem);
-    InterCode code1 = createCode();
-    code1->kind = MYMUL;
-    code1->u.op_binary.op1 = constsize;
-    code1->u.op_binary.op2 = t1;
-    code1->u.op_binary.result = t4;
-    code1->u.op_binary._operator = '*';
-    insertCode(code1);
-    code->u.op_binary.op2 = t4;
-    code->u.op_binary.result = t3;
-    insertCode(code);
+
+    newInterCode(MYMUL, t4, constsize, t1);
+    newInterCode(MYADD, t3, t2, t4);
     place->kind = STAR__;
 }
 
@@ -782,18 +707,9 @@ void translateCond(node root, int label_true, int label_false) {
         translateExp(n0, t1);
         translateExp(n2, t2);
 
-        InterCode code3 = createCode();
-        code3->kind = MYIFGOTO;
-        code3->u.op_triple.x = t1;
-        code3->u.op_triple.y = t2;
-        strcpy(code3->u.op_triple.relop, n1->val);
-        code3->u.op_triple.label = copyOpLabel(label_true);
-        insertCode(code3);
+        newInterCode(MYIFGOTO, t1, n1->val, t2, copyOpLabel(label_true));
 
-        InterCode code4 = createCode();
-        code4->kind = MYGOTO;
-        code4->u.op_single.op = copyOpLabel(label_false);
-        insertCode(code4);
+        newInterCode(MYGOTO, copyOpLabel(label_false));
     }
     else if(n0 && strcmp(n0->name, "NOT") == 0) 
         translateCond(n1, label_false, label_true);
@@ -803,11 +719,7 @@ void translateCond(node root, int label_true, int label_false) {
 
         translateCond(n0, label1, label_false);
 
-        InterCode code1 = createCode();
-        code1->kind = MYLABEL;
-        code1->u.op_single.op = op_label1;
-        insertCode(code1);
-
+        newInterCode(MYLABEL, op_label1);
         translateCond(n2, label_true, label_false);
     }
     else if(n1 && strcmp(n1->name, "OR") == 0) {
@@ -816,10 +728,7 @@ void translateCond(node root, int label_true, int label_false) {
 
         translateCond(n0, label_true, label1);
 
-        InterCode code1 = createCode();
-        code1->kind = MYLABEL;
-        code1->u.op_single.op = op_label1;
-        insertCode(code1);
+        newInterCode(MYLABEL, op_label1);
 
         translateCond(n2, label_true, label_false);
     }
@@ -830,17 +739,8 @@ void translateCond(node root, int label_true, int label_false) {
         t2->kind = CONSTANT;
         t2->u.var_no = 0;
 
-        InterCode code2 = createCode();
-        code2->kind = MYIFGOTO;
-        code2->u.op_triple.x = t1;
-        code2->u.op_triple.y = t2;
-        code2->u.op_triple.label = copyOpLabel(label_true);
-        strcpy(code2->u.op_triple.relop, "!=");
-        insertCode(code2);
+        newInterCode(MYIFGOTO, t1, "!=", t2, copyOpLabel(label_true));
 
-        InterCode code3 = createCode();
-        code3->kind = MYGOTO;
-        code3->u.op_single.op = copyOpLabel(label_false);
-        insertCode(code3);
+        newInterCode(MYGOTO, copyOpLabel(label_false));
     }
 }

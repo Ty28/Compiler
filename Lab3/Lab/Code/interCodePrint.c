@@ -130,9 +130,6 @@ void printCode(char *outputFileName)
             fprintf(fp, " GOTO ");
             printOpSingle(fp, current->u.op_triple.label);
             break;
-        //TODO:need to complete MYADDRESS ?
-        case (MYADDRESS):
-            break;
         default:
             fprintf(fp, "others");
             break;
