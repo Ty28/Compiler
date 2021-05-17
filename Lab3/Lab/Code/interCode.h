@@ -7,6 +7,7 @@ typedef struct Operand_ *Operand;
 typedef struct InterCode_ *InterCode;
 typedef struct argNode_ *argNode;
 typedef struct FPTableNode_ *FPTableNode;
+typedef struct LabelNode_ *LabelNode;
 InterCode head;
 InterCode tail;
 int labelNum;
@@ -101,6 +102,11 @@ struct FPTableNode_ //to construct a formal parameter table
     FPTableNode link;
 };
 
+struct LabelNode_ {
+    char name[CHARMAXSIZE];
+    LabelNode link;
+};
+
 FPTableNode *FPTable;
 FPTableNode *createFPTable();
 FPTableNode createFPMember(char *name);
@@ -108,6 +114,7 @@ int findFPMember(char *name,int _insert);
 
 void initInterCode(node root);
 void insertCode(InterCode code);
+void deleteCode(InterCode code);
 void newInterCode(int kind, ...);
 InterCode createCode();
 Operand createOpTmp();
@@ -115,6 +122,8 @@ Operand createOpLabel();
 Operand copyOpLabel(int num);
 Operand createOperand(int kind, ...);
 char *int2String(int num, char *str);
+
+// translate InterCode
 void translateProgram(node root);
 void translateExtDefList(node root);
 void translateExtDef(node root);
@@ -138,4 +147,9 @@ void translateExpMath(node root, Operand place);
 void translateExpArray(node root, Operand place);
 void translateCond(node root, int label_true, int label_false);
 argNode translateArgs(node root);
+
+// optimize InterCode
+void optimize1_mergeLabel();
+LabelNode deleteContinuedLabel(InterCode* q);
+LabelNode createLabelNode(char* labelName);
 #endif

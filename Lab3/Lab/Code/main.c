@@ -19,6 +19,7 @@ int main(int argc, char** argv) {
             strcpy(fileName, "out.ir");
         else 
             strcpy(fileName, argv[2]);
+        optimize1_mergeLabel();
         printCode(fileName);
     }
     return 0;

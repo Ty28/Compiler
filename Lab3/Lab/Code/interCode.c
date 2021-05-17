@@ -70,6 +70,29 @@ void insertCode(InterCode code)
         tail = tail->next;
     }
 }
+void deleteCode(InterCode code) {
+    if(code == head && code== tail)
+    {
+        head = NULL;
+        tail=NULL;
+    }
+    else if(code == head)
+    {
+        head = code->next;
+        head->prev = NULL;
+    }
+    else if(code == tail)
+    {
+        tail = code->prev;
+        tail->next=NULL;
+    }
+    else
+    {
+        code->prev->next = code->next;
+        code->next->prev = code->prev;
+    }
+    free(code);
+}
 
 InterCode createCode()
 {
@@ -894,5 +917,61 @@ void translateCond(node root, int label_true, int label_false)
         newInterCode(MYIFGOTO, t1, "!=", t2, copyOpLabel(label_true));
 
         newInterCode(MYGOTO, copyOpLabel(label_false));
+    }
+}
+
+LabelNode createLabelNode(char* labelName) {
+    LabelNode lnode = (LabelNode)malloc(sizeof(struct LabelNode_));
+    strcpy(lnode->name, labelName);
+    lnode->link = NULL;
+    return lnode;
+}
+
+LabelNode deleteContinuedLabel(InterCode* q) {
+    LabelNode labelHead, labelTail;
+    labelHead = labelTail = NULL;
+    InterCode p = *q;
+    LabelNode label_ = createLabelNode(p->u.op_single.op->u.value);
+    labelHead = labelTail = label_;
+    labelTail->link=NULL;
+    p = p->next;
+    while(p && p->kind == MYLABEL)
+    {
+        LabelNode label_ = createLabelNode(p->u.op_single.op->u.value);
+        labelTail->link = label_;
+        labelTail = label_;
+        InterCode toDelete = p;
+        p = p->next;
+        deleteCode(toDelete);
+    }
+    *q = p;
+    return labelHead;
+}
+void optimize1_mergeLabel() {
+    InterCode p = head;
+    while(p) {
+        if(p->kind != MYLABEL)  p = p->next;
+        else {
+            LabelNode labelHead = deleteContinuedLabel(&p);
+            // delete continued label and store into a list called labelHead
+            if(labelHead->link) {
+                InterCode tmp = head;
+                while(tmp) {
+                    if(tmp->kind == MYGOTO || tmp->kind == MYIFGOTO) {
+                        char name[CHARMAXSIZE];
+                        strcpy(name, (tmp->kind == MYGOTO) ? tmp->u.op_single.op->u.value : tmp->u.op_triple.label->u.value);
+                        LabelNode q = labelHead;
+                        while(q) {
+                            if(strcmp(q->name, name) == 0) {
+                                strcpy((tmp->kind == MYGOTO) ? tmp->u.op_single.op->u.value : tmp->u.op_triple.label->u.value, labelHead->name);
+                                break;
+                            }
+                            q = q->link;
+                        }
+                    }
+                    tmp = tmp->next;
+                }
+            }   
+        }
     }
 }
