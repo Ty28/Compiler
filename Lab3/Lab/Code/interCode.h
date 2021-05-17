@@ -29,7 +29,6 @@ struct Operand_
     {
         int var_no;
         char value[CHARMAXSIZE];
-        Operand op;
     } u;
 };
 
@@ -114,7 +113,7 @@ InterCode createCode();
 Operand createOpTmp();
 Operand createOpLabel();
 Operand copyOpLabel(int num);
-
+Operand createOperand(int kind, ...);
 char *int2String(int num, char *str);
 void translateProgram(node root);
 void translateExtDefList(node root);

@@ -194,6 +194,33 @@ void newInterCode(int kind, ...)
     va_end(args);
 }
 
+Operand createOperand(int kind, ...) {
+    va_list args;
+    va_start(args, kind);
+    Operand op_ = (Operand)malloc(sizeof(struct Operand_));
+    op_->kind = kind;
+    switch (kind)
+    {
+    case VARIABLE:
+    case STAR__:
+    case FUNCTION__:
+    {
+        strcpy(op_->u.value, va_arg(args, char*));
+        break;
+    }
+    case CONSTANT: 
+    {
+        op_->u.var_no = va_arg(args, int);
+        break;
+    }
+    default:
+        printf("to be continued\n");
+        break;
+    }
+    va_end(args);
+    return op_;
+}
+
 FPTableNode *createFPTable()
 {
     FPTableNode *table = (FPTableNode *)malloc(FORMALPARAMETERSIZE * sizeof(FPTableNode));
@@ -274,9 +301,10 @@ void translateExtDef(node root)
 
 void translateFunDec(node root)
 {
-    Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
-    op_tmp->kind = VARIABLE;
-    strcpy(op_tmp->u.value, root->child->val);
+    // Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
+    // op_tmp->kind = VARIABLE;
+    // strcpy(op_tmp->u.value, root->child->val);
+    Operand op_tmp = createOperand(VARIABLE,root->child->val);
     newInterCode(MYFUNCTION, op_tmp);
     if (getChildNum(root) == 4)
         translateVarList(getKChild(root, 2));
@@ -301,9 +329,7 @@ void translateVarDec_A(node root)
     if (strcmp(n0->name, "ID") == 0)
     {
         Symbol findTuple = findSymbol(n0->val);
-        Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
-        op_tmp->kind = VARIABLE;
-        strcpy(op_tmp->u.value, n0->val);
+        Operand op_tmp = createOperand(VARIABLE, n0->val);
         findFPMember(n0->val, 1);
         newInterCode(MYPARAM, op_tmp);
         if (findTuple->type->kind == ARRAY)
@@ -333,9 +359,7 @@ void translateVarDec_B(node root)
         {
             //REVISE:delete multi-dimensional array process
             int size = calculateSize(findTuple->type);
-            Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
-            op_tmp->kind = VARIABLE;
-            strcpy(op_tmp->u.value, n0->val);
+            Operand op_tmp = createOperand(VARIABLE, n0->val);
             newInterCode(MYDEC, op_tmp, size);
         }
     }
@@ -386,9 +410,7 @@ void translateDec_A(node root)
         translateVarDec_B(getKChild(root, 0));
     else
     {
-        Operand op_left = (Operand)malloc(sizeof(struct Operand_));
-        op_left->kind = VARIABLE;
-        strcpy(op_left->u.value, root->child->child->val);
+        Operand op_left = createOperand(VARIABLE,root->child->child->val);
         Operand op_right = createOpTmp();
         translateExp(getKChild(root, 2), op_right);
         newInterCode(MYASSIGN, op_left, op_right);
@@ -548,10 +570,7 @@ void translateExp(node root, Operand op)
             }
             else
             {
-                Operand op_const = (Operand)malloc(sizeof(struct Operand_));
-                op_const->kind = CONSTANT;
-                op_const->u.var_no = 0;
-
+                Operand op_const = createOperand(CONSTANT, 0);
                 newInterCode(MYSUB, op, op_const, op_tmp);
             }
         }
@@ -613,9 +632,7 @@ void translateExp(node root, Operand op)
 
                 // k = &array2 + sizeof(array2)
                 Operand k = createOpTmp();
-                Operand constsize = (Operand)malloc(sizeof(struct Operand_));
-                constsize->kind = CONSTANT;
-                constsize->u.var_no = calculateSize(type2);
+                Operand constsize = createOperand(CONSTANT, calculateSize(type2));
                 newInterCode(MYADD, k, j, constsize);
 
                 //label1
@@ -629,18 +646,12 @@ void translateExp(node root, Operand op)
                 newInterCode(MYIFGOTO, j, ">=", k, op_label2);
 
                 // *i = *j
-                Operand tmp1 = (Operand)malloc(sizeof(struct Operand_));
-                tmp1->kind = STAR__;
-                strcpy(tmp1->u.value, i->u.value);
-                Operand tmp2 = (Operand)malloc(sizeof(struct Operand_));
-                tmp2->kind = STAR__;
-                strcpy(tmp2->u.value, j->u.value);
+                Operand tmp1 = createOperand(STAR__, i->u.value);
+                Operand tmp2 = createOperand(STAR__, j->u.value);
                 newInterCode(MYASSIGN, tmp1, tmp2);
 
                 // i = i + 4
-                Operand constsize4 = (Operand)malloc(sizeof(struct Operand_));
-                constsize4->kind = CONSTANT;
-                constsize4->u.var_no = 4;
+                Operand constsize4 = createOperand(CONSTANT, 4);
                 newInterCode(MYADD, i, i, constsize4);
 
                 // j = j + 4
@@ -690,12 +701,8 @@ void translateExpCommon(node root, Operand place)
     int label1 = labelNum;
     Operand op_label2 = createOpLabel();
     int label2 = labelNum;
-    Operand const0 = (Operand)malloc(sizeof(struct Operand_));
-    const0->kind = CONSTANT;
-    const0->u.var_no = 0;
-    Operand const1 = (Operand)malloc(sizeof(struct Operand_));
-    const1->kind = CONSTANT;
-    const1->u.var_no = 1;
+    Operand const0 = createOperand(CONSTANT, 0);
+    Operand const1 = createOperand(CONSTANT, 1);
 
     newInterCode(MYASSIGN, place, const0);
 
@@ -722,9 +729,7 @@ void translateExpFunc(node root, Operand place)
         }
         else
         {
-            Operand funcName = (Operand)malloc(sizeof(struct Operand_));
-            funcName->kind = FUNCTION__;
-            strcpy(funcName->u.value, name);
+            Operand funcName = createOperand(FUNCTION__, name);
             newInterCode(MYCALL, place, funcName);
         }
     }
@@ -744,9 +749,7 @@ void translateExpFunc(node root, Operand place)
                 newInterCode(MYARG, p->op);
                 p = p->next;
             }
-            Operand funcName = (Operand)malloc(sizeof(struct Operand_));
-            funcName->kind = FUNCTION__;
-            strcpy(funcName->u.value, name);
+            Operand funcName = createOperand(FUNCTION__, name);
             newInterCode(MYCALL, place, funcName);
         }
     }
@@ -835,9 +838,7 @@ void translateExpArray(node root, Operand place)
         t2->kind = VARIABLE;
     Operand t4 = createOpTmp();
     Type type = Exp(n0);
-    Operand constsize = (Operand)malloc(sizeof(struct Operand_));
-    constsize->kind = CONSTANT;
-    constsize->u.var_no = calculateSize(type->u.array.elem);
+    Operand constsize = createOperand(CONSTANT, calculateSize(type->u.array.elem));
 
     newInterCode(MYMUL, t4, constsize, t1);
     newInterCode(MYADD, t3, t2, t4);
@@ -888,10 +889,8 @@ void translateCond(node root, int label_true, int label_false)
     {
         Operand t1 = createOpTmp();
         translateExp(root, t1);
-        Operand t2 = (Operand)malloc(sizeof(struct Operand_));
-        t2->kind = CONSTANT;
-        t2->u.var_no = 0;
-
+        Operand t2 = createOperand(CONSTANT, 0);
+        
         newInterCode(MYIFGOTO, t1, "!=", t2, copyOpLabel(label_true));
 
         newInterCode(MYGOTO, copyOpLabel(label_false));
