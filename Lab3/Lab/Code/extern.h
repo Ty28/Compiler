@@ -28,4 +28,5 @@ extern InterCode head;
 extern InterCode tail;
 extern int labelNum;
 extern int tNum;
+extern int structNum;
 #endif
