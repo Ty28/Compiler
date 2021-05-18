@@ -17,7 +17,7 @@ void printOpSingle(FILE *fp, Operand op)
     case (ADDRESS):
         fprintf(fp, "&%s", op->u.value);
         break;
-    case (STAR_):
+    case (STAR__):
         fprintf(fp, "*%s", op->u.value);
         break;
     case (NOTHING):
@@ -32,10 +32,9 @@ void printOpSingle(FILE *fp, Operand op)
 void printCode(char *outputFileName)
 {
     FILE *fp;
-    if (strcmp(outputFileName, "\0") == 0)
-        fp = fopen("out.ir", "w+");
-    else
-        fp = fopen(outputFileName, "w+");
+    fp = fopen(outputFileName, "w+");
+    if(fp == NULL)
+        return;
     InterCode current = head;
     while (current != NULL)
     {
@@ -130,9 +129,6 @@ void printCode(char *outputFileName)
             printOpSingle(fp, current->u.op_triple.y);
             fprintf(fp, " GOTO ");
             printOpSingle(fp, current->u.op_triple.label);
-            break;
-        //TODO:need to complete MYADDRESS ?
-        case (MYADDRESS):
             break;
         default:
             fprintf(fp, "others");

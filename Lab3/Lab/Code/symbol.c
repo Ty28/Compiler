@@ -268,7 +268,7 @@ int findMember(char *name)
             return 1;
         else
         {
-            current = createMember(name);
+            current->link = createMember(name);
             return 0; //if that name does not exist in our table, insert it and return False
         }
     }

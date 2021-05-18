@@ -70,6 +70,29 @@ void insertCode(InterCode code)
         tail = tail->next;
     }
 }
+void deleteCode(InterCode code) {
+    if(code == head && code== tail)
+    {
+        head = NULL;
+        tail=NULL;
+    }
+    else if(code == head)
+    {
+        head = code->next;
+        head->prev = NULL;
+    }
+    else if(code == tail)
+    {
+        tail = code->prev;
+        tail->next=NULL;
+    }
+    else
+    {
+        code->prev->next = code->next;
+        code->next->prev = code->prev;
+    }
+    free(code);
+}
 
 InterCode createCode()
 {
@@ -194,6 +217,33 @@ void newInterCode(int kind, ...)
     va_end(args);
 }
 
+Operand createOperand(int kind, ...) {
+    va_list args;
+    va_start(args, kind);
+    Operand op_ = (Operand)malloc(sizeof(struct Operand_));
+    op_->kind = kind;
+    switch (kind)
+    {
+    case VARIABLE:
+    case STAR__:
+    case FUNCTION__:
+    {
+        strcpy(op_->u.value, va_arg(args, char*));
+        break;
+    }
+    case CONSTANT: 
+    {
+        op_->u.var_no = va_arg(args, int);
+        break;
+    }
+    default:
+        printf("to be continued\n");
+        break;
+    }
+    va_end(args);
+    return op_;
+}
+
 FPTableNode *createFPTable()
 {
     FPTableNode *table = (FPTableNode *)malloc(FORMALPARAMETERSIZE * sizeof(FPTableNode));
@@ -274,9 +324,10 @@ void translateExtDef(node root)
 
 void translateFunDec(node root)
 {
-    Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
-    op_tmp->kind = VARIABLE;
-    strcpy(op_tmp->u.value, root->child->val);
+    // Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
+    // op_tmp->kind = VARIABLE;
+    // strcpy(op_tmp->u.value, root->child->val);
+    Operand op_tmp = createOperand(VARIABLE,root->child->val);
     newInterCode(MYFUNCTION, op_tmp);
     if (getChildNum(root) == 4)
         translateVarList(getKChild(root, 2));
@@ -301,9 +352,7 @@ void translateVarDec_A(node root)
     if (strcmp(n0->name, "ID") == 0)
     {
         Symbol findTuple = findSymbol(n0->val);
-        Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
-        op_tmp->kind = VARIABLE;
-        strcpy(op_tmp->u.value, n0->val);
+        Operand op_tmp = createOperand(VARIABLE, n0->val);
         findFPMember(n0->val, 1);
         newInterCode(MYPARAM, op_tmp);
         if (findTuple->type->kind == ARRAY)
@@ -333,9 +382,7 @@ void translateVarDec_B(node root)
         {
             //REVISE:delete multi-dimensional array process
             int size = calculateSize(findTuple->type);
-            Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
-            op_tmp->kind = VARIABLE;
-            strcpy(op_tmp->u.value, n0->val);
+            Operand op_tmp = createOperand(VARIABLE, n0->val);
             newInterCode(MYDEC, op_tmp, size);
         }
     }
@@ -386,9 +433,7 @@ void translateDec_A(node root)
         translateVarDec_B(getKChild(root, 0));
     else
     {
-        Operand op_left = (Operand)malloc(sizeof(struct Operand_));
-        op_left->kind = VARIABLE;
-        strcpy(op_left->u.value, root->child->child->val);
+        Operand op_left = createOperand(VARIABLE,root->child->child->val);
         Operand op_right = createOpTmp();
         translateExp(getKChild(root, 2), op_right);
         newInterCode(MYASSIGN, op_left, op_right);
@@ -548,10 +593,7 @@ void translateExp(node root, Operand op)
             }
             else
             {
-                Operand op_const = (Operand)malloc(sizeof(struct Operand_));
-                op_const->kind = CONSTANT;
-                op_const->u.var_no = 0;
-
+                Operand op_const = createOperand(CONSTANT, 0);
                 newInterCode(MYSUB, op, op_const, op_tmp);
             }
         }
@@ -576,7 +618,9 @@ void translateExp(node root, Operand op)
             }
             Operand t1 = createOpTmp();
             translateExp(n2, t1);
-            if (t1->kind != ADDRESS && op_tmp->kind != ADDRESS)
+            Type type1 = Exp(n0);
+            Type type2 = Exp(n2);
+            if (type1->kind != ARRAY)
             {
                 newInterCode(MYASSIGN, op_tmp, t1);
                 // place := varialbe.name
@@ -590,25 +634,28 @@ void translateExp(node root, Operand op)
             {
                 // i = &addr1
                 Operand addr1 = (Operand)malloc(sizeof(struct Operand_));
-                addr1->kind = ADDRESS;
-                strcpy(addr1->u.value, n0->child->val);
+                if(op_tmp->kind == ADDRESS)
+                    addr1->kind = ADDRESS;
+                else
+                    addr1->kind = VARIABLE;
+                strcpy(addr1->u.value, op_tmp->u.value);
                 Operand i = createOpTmp();
 
                 newInterCode(MYASSIGN, i, addr1);
 
                 // j = &addr2
                 Operand addr2 = (Operand)malloc(sizeof(struct Operand_));
-                addr2->kind = ADDRESS;
-                strcpy(addr2->u.value, n2->child->val);
+                if(t1->kind == ADDRESS)
+                    addr2->kind = ADDRESS;
+                else
+                    addr2->kind = VARIABLE;
+                strcpy(addr2->u.value, t1->u.value);
                 Operand j = createOpTmp();
                 newInterCode(MYASSIGN, j, addr2);
 
-                // k = j + sizeof(addr2)
+                // k = &array2 + sizeof(array2)
                 Operand k = createOpTmp();
-                Type type = Exp(n2);
-                Operand constsize = (Operand)malloc(sizeof(struct Operand_));
-                constsize->kind = CONSTANT;
-                constsize->u.var_no = calculateSize(type);
+                Operand constsize = createOperand(CONSTANT, calculateSize(type2));
                 newInterCode(MYADD, k, j, constsize);
 
                 //label1
@@ -622,18 +669,12 @@ void translateExp(node root, Operand op)
                 newInterCode(MYIFGOTO, j, ">=", k, op_label2);
 
                 // *i = *j
-                Operand tmp1 = (Operand)malloc(sizeof(struct Operand_));
-                tmp1->kind = STAR__;
-                strcpy(tmp1->u.value, i->u.value);
-                Operand tmp2 = (Operand)malloc(sizeof(struct Operand_));
-                tmp2->kind = STAR__;
-                strcpy(tmp2->u.value, j->u.value);
+                Operand tmp1 = createOperand(STAR__, i->u.value);
+                Operand tmp2 = createOperand(STAR__, j->u.value);
                 newInterCode(MYASSIGN, tmp1, tmp2);
 
                 // i = i + 4
-                Operand constsize4 = (Operand)malloc(sizeof(struct Operand_));
-                constsize4->kind = CONSTANT;
-                constsize4->u.var_no = 4;
+                Operand constsize4 = createOperand(CONSTANT, 4);
                 newInterCode(MYADD, i, i, constsize4);
 
                 // j = j + 4
@@ -645,6 +686,9 @@ void translateExp(node root, Operand op)
 
                 // LABEL2
                 newInterCode(MYLABEL, copyOpLabel(label2));
+
+                op->kind = op_tmp->kind;
+                strcpy(op->u.value, op_tmp->u.value);
             }
         }
         else if (strcmp(n1->name, "AND") == 0 || strcmp(n1->name, "OR") == 0 || strcmp(n1->name, "RELOP") == 0)
@@ -683,12 +727,8 @@ void translateExpCommon(node root, Operand place)
     int label1 = labelNum;
     Operand op_label2 = createOpLabel();
     int label2 = labelNum;
-    Operand const0 = (Operand)malloc(sizeof(struct Operand_));
-    const0->kind = CONSTANT;
-    const0->u.var_no = 0;
-    Operand const1 = (Operand)malloc(sizeof(struct Operand_));
-    const1->kind = CONSTANT;
-    const1->u.var_no = 1;
+    Operand const0 = createOperand(CONSTANT, 0);
+    Operand const1 = createOperand(CONSTANT, 1);
 
     newInterCode(MYASSIGN, place, const0);
 
@@ -715,9 +755,7 @@ void translateExpFunc(node root, Operand place)
         }
         else
         {
-            Operand funcName = (Operand)malloc(sizeof(struct Operand_));
-            funcName->kind = FUNCTION__;
-            strcpy(funcName->u.value, name);
+            Operand funcName = createOperand(FUNCTION__, name);
             newInterCode(MYCALL, place, funcName);
         }
     }
@@ -737,9 +775,7 @@ void translateExpFunc(node root, Operand place)
                 newInterCode(MYARG, p->op);
                 p = p->next;
             }
-            Operand funcName = (Operand)malloc(sizeof(struct Operand_));
-            funcName->kind = FUNCTION__;
-            strcpy(funcName->u.value, name);
+            Operand funcName = createOperand(FUNCTION__, name);
             newInterCode(MYCALL, place, funcName);
         }
     }
@@ -828,9 +864,7 @@ void translateExpArray(node root, Operand place)
         t2->kind = VARIABLE;
     Operand t4 = createOpTmp();
     Type type = Exp(n0);
-    Operand constsize = (Operand)malloc(sizeof(struct Operand_));
-    constsize->kind = CONSTANT;
-    constsize->u.var_no = calculateSize(type->u.array.elem);
+    Operand constsize = createOperand(CONSTANT, calculateSize(type->u.array.elem));
 
     newInterCode(MYMUL, t4, constsize, t1);
     newInterCode(MYADD, t3, t2, t4);
@@ -881,12 +915,66 @@ void translateCond(node root, int label_true, int label_false)
     {
         Operand t1 = createOpTmp();
         translateExp(root, t1);
-        Operand t2 = (Operand)malloc(sizeof(struct Operand_));
-        t2->kind = CONSTANT;
-        t2->u.var_no = 0;
-
+        Operand t2 = createOperand(CONSTANT, 0);
+        
         newInterCode(MYIFGOTO, t1, "!=", t2, copyOpLabel(label_true));
 
         newInterCode(MYGOTO, copyOpLabel(label_false));
+    }
+}
+
+LabelNode createLabelNode(char* labelName) {
+    LabelNode lnode = (LabelNode)malloc(sizeof(struct LabelNode_));
+    strcpy(lnode->name, labelName);
+    lnode->link = NULL;
+    return lnode;
+}
+
+LabelNode deleteContinuedLabel(InterCode* q) {
+    LabelNode labelHead, labelTail;
+    labelHead = labelTail = NULL;
+    InterCode p = *q;
+    LabelNode label_ = createLabelNode(p->u.op_single.op->u.value);
+    labelHead = labelTail = label_;
+    labelTail->link=NULL;
+    p = p->next;
+    while(p && p->kind == MYLABEL)
+    {
+        LabelNode label_ = createLabelNode(p->u.op_single.op->u.value);
+        labelTail->link = label_;
+        labelTail = label_;
+        InterCode toDelete = p;
+        p = p->next;
+        deleteCode(toDelete);
+    }
+    *q = p;
+    return labelHead;
+}
+void optimize1_mergeLabel() {
+    InterCode p = head;
+    while(p) {
+        if(p->kind != MYLABEL)  p = p->next;
+        else {
+            LabelNode labelHead = deleteContinuedLabel(&p);
+            // delete continued label and store into a list called labelHead
+            if(labelHead->link) {
+                InterCode tmp = head;
+                while(tmp) {
+                    if(tmp->kind == MYGOTO || tmp->kind == MYIFGOTO) {
+                        char name[CHARMAXSIZE];
+                        strcpy(name, (tmp->kind == MYGOTO) ? tmp->u.op_single.op->u.value : tmp->u.op_triple.label->u.value);
+                        LabelNode q = labelHead;
+                        while(q) {
+                            if(strcmp(q->name, name) == 0) {
+                                strcpy((tmp->kind == MYGOTO) ? tmp->u.op_single.op->u.value : tmp->u.op_triple.label->u.value, labelHead->name);
+                                break;
+                            }
+                            q = q->link;
+                        }
+                    }
+                    tmp = tmp->next;
+                }
+            }   
+        }
     }
 }
