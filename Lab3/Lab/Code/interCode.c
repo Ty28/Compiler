@@ -1066,6 +1066,11 @@ void reverseCodeRELOP(InterCode* q) {
         strcpy(p->u.op_triple.relop, ">");
 }
 
-void optimize3_deleteLABEL() {
-    
+void optimize3_deleteNONEVAR() {
+    InterCode p = head;
+    while(p) {
+        if(p->kind == MYASSIGN && p->u.op_assign.left->kind == NOTHING) 
+            deleteCode(p);
+        p = p->next;
+    }
 }

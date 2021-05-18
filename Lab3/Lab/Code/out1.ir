@@ -1,83 +1,10 @@
-FUNCTION one :
+FUNCTION func :
 PARAM a
-tt5 := #4 * #0
-tt1 := a + tt5
-tt11 := #4 * #0
-tt7 := a + tt11
-tt6 := *tt7 + #1
-*tt1 := tt6
-RETURN #1
+WRITE a
+RETURN #0
 
 FUNCTION main :
-x := #0
-DEC t 4
-ARG &t
-tt15 := CALL one
-ARG &t
-tt17 := CALL one
-tt21 := #4 * tt17
-nothing := &t + tt21
-ARG &t
-tt23 := CALL one
-nothing := x + tt23
-ARG &t
-tt25 := CALL one
-nothing := #0 - tt25
-ARG &t
-tt29 := CALL one
-tt33 := #4 * tt29
-tt28 := &t + tt33
-nothing := tt27 * *tt28
-ARG &t
-tt34 := CALL one
-IF tt34 == #0 GOTO label2
-ARG &t
-tt37 := CALL one
-nothing := tt36 / tt37
-ARG &t
-tt39 := CALL one
-IF tt39 != #0 GOTO label5
-ARG &t
-tt41 := CALL one
-GOTO label9
-LABEL label5 :
-ARG &t
-tt43 := CALL one
-LABEL label7 :
-ARG &t
-tt48 := CALL one
-tt45 := x + tt48
-IF tt45 >= #10 GOTO label9
-ARG &t
-tt50 := CALL one
-tt53 := x + #1
-x := tt53
-GOTO label7
-LABEL label9 :
-GOTO label15
-LABEL label2 :
-ARG &t
-tt56 := CALL one
-IF tt56 == #0 GOTO label11
-ARG &t
-tt58 := CALL one
-GOTO label15
-LABEL label11 :
-ARG &t
-tt60 := CALL one
-IF tt60 == #0 GOTO label14
-ARG &t
-tt62 := CALL one
-GOTO label15
-LABEL label14 :
-ARG &t
-tt64 := CALL one
-LABEL label15 :
-ARG &t
-tt67 := CALL one
-WRITE tt67
-tt74 := #4 * #0
-tt70 := &t + tt74
-WRITE *tt70
+ARG #1
+tt4 := CALL func
 RETURN #0
 

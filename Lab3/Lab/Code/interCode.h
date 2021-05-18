@@ -151,10 +151,10 @@ argNode translateArgs(node root);
 
 // optimize InterCode
 void optimize1_mergeLABEL();
+void optimize2_deleteGOTO();
+void optimize3_deleteNONEVAR();
 LabelNode deleteContinuedLabel(InterCode* q);
 LabelNode createLabelNode(char* labelName);
 LabelNode createLabelList(InterCode code);
-void optimize2_deleteGOTO();
-void optimize3_deleteLABEL();
 void reverseCodeRELOP(InterCode* q);
 #endif

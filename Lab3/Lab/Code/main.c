@@ -21,6 +21,7 @@ int main(int argc, char** argv) {
             strcpy(fileName, argv[2]);
         optimize1_mergeLABEL();
         optimize2_deleteGOTO();
+        optimize3_deleteNONEVAR();
         if(structNum > 0)
             printf("Cannot translate: Code contains variables or paraneters of structure type\n");
         printCode(fileName);
