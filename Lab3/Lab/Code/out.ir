@@ -1,20 +1,62 @@
 FUNCTION main :
-READ tt2
-n := tt2
-IF n > #0 GOTO label1
-GOTO label2
+DEC a 72
+DEC b 72
+DEC c 72
+i := #0
 LABEL label1 :
-WRITE #1
-GOTO label6
+IF i < #18 GOTO label2
+GOTO label3
 LABEL label2 :
-IF n < #0 GOTO label4
-GOTO label5
+tt12 := #36 * #0
+tt8 := &b + tt12
+tt14 := #12 * #0
+tt6 := tt8 + tt14
+tt16 := #4 * i
+tt4 := tt6 + tt16
+*tt4 := i
+tt19 := i + #1
+i := tt19
+GOTO label1
+LABEL label3 :
+tt26 := #36 * #1
+tt22 := &a + tt26
+tt32 := #36 * #1
+tt28 := &c + tt32
+tt37 := #36 * #1
+tt33 := &b + tt37
+tt38 := tt28
+tt39 := tt33
+tt40 := tt39 + #36
 LABEL label4 :
-WRITE #-1
-GOTO label6
+IF tt39 >= tt40 GOTO label5
+*tt38 := *tt39
+tt38 := tt38 + #4
+tt39 := tt39 + #4
+GOTO label4
 LABEL label5 :
-WRITE #0
+tt41 := tt22
+tt42 := tt28
+tt43 := tt42 + #36
 LABEL label6 :
+IF tt42 >= tt43 GOTO label7
+*tt41 := *tt42
+tt41 := tt41 + #4
+tt42 := tt42 + #4
+GOTO label6
+LABEL label7 :
+tt53 := #36 * #0
+tt49 := &a + tt53
+tt55 := #12 * #0
+tt47 := tt49 + tt55
+tt57 := #4 * #1
+tt45 := tt47 + tt57
+tt66 := #36 * #0
+tt62 := &b + tt66
+tt68 := #12 * #0
+tt60 := tt62 + tt68
+tt70 := #4 * #1
+tt58 := tt60 + tt70
+tt44 := *tt45 + *tt58
+WRITE tt44
 RETURN #0
 
-LABEL label7 :

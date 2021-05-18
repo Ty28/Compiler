@@ -686,6 +686,9 @@ void translateExp(node root, Operand op)
 
                 // LABEL2
                 newInterCode(MYLABEL, copyOpLabel(label2));
+
+                op->kind = op_tmp->kind;
+                strcpy(op->u.value, op_tmp->u.value);
             }
         }
         else if (strcmp(n1->name, "AND") == 0 || strcmp(n1->name, "OR") == 0 || strcmp(n1->name, "RELOP") == 0)
