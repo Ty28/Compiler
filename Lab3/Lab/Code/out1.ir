@@ -1,10 +1,1829 @@
-FUNCTION func :
-PARAM a
-WRITE a
+FUNCTION safe_add :
+PARAM lhs_add
+PARAM rhs_add
+tt1 := #0
+tt2 := #0
+tt3 := #0
+IF lhs_add <= #0 GOTO label11
+tt3 := #1
+LABEL label11 :
+IF tt3 == #0 GOTO label7
+tt6 := #0
+IF rhs_add <= #0 GOTO label13
+tt6 := #1
+LABEL label13 :
+IF tt6 == #0 GOTO label7
+tt9 := #0
+tt11 := #2147483647 - rhs_add
+IF lhs_add <= tt11 GOTO label15
+tt9 := #1
+LABEL label15 :
+IF tt9 == #0 GOTO label7
+tt2 := #1
+LABEL label7 :
+IF tt2 != #0 GOTO label3
+tt14 := #0
+tt15 := #0
+IF lhs_add >= #0 GOTO label21
+tt15 := #1
+LABEL label21 :
+IF tt15 == #0 GOTO label17
+tt18 := #0
+IF rhs_add >= #0 GOTO label23
+tt18 := #1
+LABEL label23 :
+IF tt18 == #0 GOTO label17
+tt21 := #0
+tt23 := #-2147483648 - rhs_add
+IF lhs_add >= tt23 GOTO label25
+tt21 := #1
+LABEL label25 :
+IF tt21 == #0 GOTO label17
+tt14 := #1
+LABEL label17 :
+IF tt14 == #0 GOTO label4
+LABEL label3 :
+tt1 := #1
+LABEL label4 :
+IF tt1 == #0 GOTO label2
+RETURN lhs_add
+
+LABEL label2 :
+tt28 := lhs_add + rhs_add
+RETURN tt28
+
+FUNCTION safe_sub :
+PARAM lhs_sub
+PARAM rhs_sub
+tt31 := #0
+tt32 := #0
+IF lhs_sub <= #0 GOTO label34
+tt32 := #1
+LABEL label34 :
+IF tt32 == #0 GOTO label30
+tt35 := #0
+IF rhs_sub >= #0 GOTO label36
+tt35 := #1
+LABEL label36 :
+IF tt35 == #0 GOTO label30
+tt38 := #0
+tt40 := #2147483647 + rhs_sub
+IF lhs_sub <= tt40 GOTO label38
+tt38 := #1
+LABEL label38 :
+IF tt38 == #0 GOTO label30
+tt31 := #1
+LABEL label30 :
+IF tt31 != #0 GOTO label26
+tt43 := #0
+tt44 := #0
+IF lhs_sub >= #0 GOTO label44
+tt44 := #1
+LABEL label44 :
+IF tt44 == #0 GOTO label40
+tt47 := #0
+IF rhs_sub <= #0 GOTO label46
+tt47 := #1
+LABEL label46 :
+IF tt47 == #0 GOTO label40
+tt50 := #0
+tt52 := #-2147483648 + rhs_sub
+IF lhs_sub >= tt52 GOTO label48
+tt50 := #1
+LABEL label48 :
+IF tt50 == #0 GOTO label40
+tt43 := #1
+LABEL label40 :
+IF tt43 == #0 GOTO label27
+LABEL label26 :
+RETURN lhs_sub
+
+LABEL label27 :
+tt57 := lhs_sub - rhs_sub
+RETURN tt57
+
+FUNCTION safe_mul :
+PARAM lhs_mul
+PARAM rhs_mul
+tt60 := #0
+tt61 := #0
+tt62 := #0
+IF lhs_mul <= #0 GOTO label61
+tt62 := #1
+LABEL label61 :
+IF tt62 == #0 GOTO label57
+tt65 := #0
+IF rhs_mul <= #0 GOTO label63
+tt65 := #1
+LABEL label63 :
+IF tt65 == #0 GOTO label57
+tt68 := #0
+tt70 := #2147483647 / rhs_mul
+IF lhs_mul <= tt70 GOTO label65
+tt68 := #1
+LABEL label65 :
+IF tt68 == #0 GOTO label57
+tt61 := #1
+LABEL label57 :
+IF tt61 != #0 GOTO label51
+tt73 := #0
+tt74 := #0
+IF lhs_mul <= #0 GOTO label71
+tt74 := #1
+LABEL label71 :
+IF tt74 == #0 GOTO label67
+tt77 := #0
+IF rhs_mul > #0 GOTO label73
+tt77 := #1
+LABEL label73 :
+IF tt77 == #0 GOTO label67
+tt80 := #0
+tt82 := #-2147483648 / lhs_mul
+IF rhs_mul >= tt82 GOTO label75
+tt80 := #1
+LABEL label75 :
+IF tt80 == #0 GOTO label67
+tt73 := #1
+LABEL label67 :
+IF tt73 != #0 GOTO label51
+tt86 := #0
+tt87 := #0
+IF lhs_mul > #0 GOTO label81
+tt87 := #1
+LABEL label81 :
+IF tt87 == #0 GOTO label77
+tt90 := #0
+IF rhs_mul <= #0 GOTO label83
+tt90 := #1
+LABEL label83 :
+IF tt90 == #0 GOTO label77
+tt93 := #0
+tt95 := #-2147483648 / rhs_mul
+IF lhs_mul >= tt95 GOTO label85
+tt93 := #1
+LABEL label85 :
+IF tt93 == #0 GOTO label77
+tt86 := #1
+LABEL label77 :
+IF tt86 != #0 GOTO label51
+tt99 := #0
+tt100 := #0
+IF lhs_mul > #0 GOTO label92
+tt100 := #1
+LABEL label92 :
+IF tt100 == #0 GOTO label87
+tt103 := #0
+IF rhs_mul > #0 GOTO label94
+tt103 := #1
+LABEL label94 :
+IF tt103 == #0 GOTO label87
+tt106 := #0
+IF lhs_mul == #0 GOTO label96
+tt106 := #1
+LABEL label96 :
+IF tt106 == #0 GOTO label87
+tt109 := #0
+tt111 := #2147483647 / lhs_mul
+IF rhs_mul >= tt111 GOTO label98
+tt109 := #1
+LABEL label98 :
+IF tt109 == #0 GOTO label87
+tt99 := #1
+LABEL label87 :
+IF tt99 == #0 GOTO label52
+LABEL label51 :
+tt60 := #1
+LABEL label52 :
+IF tt60 == #0 GOTO label50
+RETURN lhs_mul
+
+LABEL label50 :
+tt115 := lhs_mul * rhs_mul
+RETURN tt115
+
+FUNCTION safe_div :
+PARAM lhs_div
+PARAM rhs_div
+tt118 := #0
+tt119 := #0
+IF rhs_div != #0 GOTO label105
+tt119 := #1
+LABEL label105 :
+IF tt119 != #0 GOTO label101
+tt122 := #0
+tt123 := #0
+IF lhs_div != #-2147483648 GOTO label110
+tt123 := #1
+LABEL label110 :
+IF tt123 == #0 GOTO label107
+tt127 := #0
+IF rhs_div != #-1 GOTO label112
+tt127 := #1
+LABEL label112 :
+IF tt127 == #0 GOTO label107
+tt122 := #1
+LABEL label107 :
+IF tt122 == #0 GOTO label102
+LABEL label101 :
+tt118 := #1
+LABEL label102 :
+IF tt118 == #0 GOTO label100
+RETURN lhs_div
+
+LABEL label100 :
+tt132 := lhs_div / rhs_div
+RETURN tt132
+
+FUNCTION safe_index :
+PARAM i
+PARAM size
+IF i < #0 GOTO label113
+IF i < size GOTO label114
+LABEL label113 :
 RETURN #0
 
-FUNCTION main :
+LABEL label114 :
+RETURN i
+
+FUNCTION i_func_129 :
+PARAM i_func_129_i_0
+DEC a2_i_L224 8
+DEC a2_i_L225 8
+IF i_func_129_i_0 > #0 GOTO label117
+RETURN #1538018028
+
+GOTO label118
+LABEL label117 :
+tt145 := i_func_129_i_0 - #1
+i_func_129_i_0 := tt145
+LABEL label118 :
+i_L2080 := #-1163700144
+i_L2081 := #-1826507952
+tt155 := i_L2080 - i_L2081
+i_L2079 := tt155
+tt159 := i_func_129_i_0 - #1
+i_func_129_i_0 := tt159
+tt166 := #4 * #1
+tt162 := &a2_i_L224 + tt166
+ARG i_func_129_i_0
+tt169 := CALL i_func_129
+i_L2079 := tt169
+*tt162 := i_L2079
+tt172 := i_func_129_i_0 - #1
+i_func_129_i_0 := tt172
+tt179 := #4 * #0
+tt175 := &a2_i_L224 + tt179
+ARG i_func_129_i_0
+tt182 := CALL i_func_129
+i_L2080 := tt182
+*tt175 := i_L2080
+ARG #2
+ARG i_L2080
+tt187 := CALL safe_index
+tt192 := #4 * tt187
+tt186 := &a2_i_L224 + tt192
+ARG i_L2079
+ARG i_L2081
+tt193 := CALL safe_sub
+*tt186 := tt193
+i_L2082 := *tt186
+tt200 := #4 * #1
+tt196 := &a2_i_L225 + tt200
+ARG #2
+ARG i_L2080
+tt203 := CALL safe_index
+tt208 := #4 * tt203
+tt202 := &a2_i_L224 + tt208
+*tt202 := #-368003963
+*tt196 := *tt202
+tt212 := i_func_129_i_0 - #1
+i_func_129_i_0 := tt212
+tt219 := #4 * #0
+tt215 := &a2_i_L225 + tt219
+ARG #2
+ARG i_L2080
+tt222 := CALL safe_index
+tt227 := #4 * tt222
+tt221 := &a2_i_L224 + tt227
+ARG i_func_129_i_0
+tt228 := CALL i_func_129
+*tt221 := tt228
+*tt215 := *tt221
+tt239 := #4 * #0
+tt232 := &a2_i_L225 + tt239
+ARG #2
+ARG *tt232
+tt231 := CALL safe_index
+tt243 := #4 * tt231
+tt230 := &a2_i_L224 + tt243
+tt244 := #0
+IF i_L2080 < i_L2081 GOTO label120
+tt244 := #1
+LABEL label120 :
+*tt230 := tt244
+tt256 := #4 * #1
+tt249 := &a2_i_L225 + tt256
+ARG #2
+ARG *tt249
+tt248 := CALL safe_index
+tt260 := #4 * tt248
+tt247 := &a2_i_L224 + tt260
+tt261 := #0
+IF #-1106763503 != #0 GOTO label121
+IF i_L2080 == #0 GOTO label122
+LABEL label121 :
+tt261 := #1
+LABEL label122 :
+*tt247 := tt261
+tt274 := #4 * #1
+tt267 := &a2_i_L225 + tt274
+ARG #2
+ARG *tt267
+tt266 := CALL safe_index
+tt278 := #4 * tt266
+tt265 := &a2_i_L224 + tt278
+*tt265 := i_L2080
+tt289 := #4 * #1
+tt282 := &a2_i_L225 + tt289
+ARG #2
+ARG *tt282
+tt281 := CALL safe_index
+tt293 := #4 * tt281
+tt280 := &a2_i_L224 + tt293
+tt294 := #0
+IF i_L2080 != #0 GOTO label125
+tt294 := #1
+LABEL label125 :
+*tt280 := tt294
+tt305 := #4 * #1
+tt298 := &a2_i_L225 + tt305
+ARG #2
+ARG *tt298
+tt297 := CALL safe_index
+tt309 := #4 * tt297
+tt296 := &a2_i_L224 + tt309
+ARG i_L2081
+ARG i_L2080
+tt310 := CALL safe_sub
+*tt296 := tt310
+WRITE i_L2080
+WRITE i_L2081
+WRITE i_L2079
+WRITE i_L2082
+tt322 := i_func_129_i_0 - #1
+i_func_129_i_0 := tt322
+tt335 := #4 * #1
+tt328 := &a2_i_L225 + tt335
+ARG #2
+ARG *tt328
+tt327 := CALL safe_index
+tt339 := #4 * tt327
+tt326 := &a2_i_L224 + tt339
+ARG i_func_129_i_0
+tt340 := CALL i_func_129
+*tt326 := tt340
+RETURN *tt326
+
+FUNCTION i_func_130 :
+PARAM i_func_130_i_0
+PARAM i_func_130_i_1
+PARAM i_func_130_i_2
+DEC a1_i_L213 4
+DEC a1_i_L214 4
+DEC a2_i_L226 8
+IF i_func_130_i_2 > #0 GOTO label127
+RETURN #-859603289
+
+GOTO label128
+LABEL label127 :
+tt347 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt347
+LABEL label128 :
+i_L2083 := #876837695
+tt353 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt353
+tt360 := #4 * #0
+tt356 := &a1_i_L213 + tt360
+ARG i_func_130_i_2
+ARG i_L2083
+ARG i_func_130_i_1
+tt363 := CALL i_func_130
+i_func_130_i_0 := tt363
+*tt356 := i_func_130_i_0
+tt368 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt368
+tt375 := #4 * #0
+tt371 := &a1_i_L214 + tt375
+tt384 := #4 * #0
+tt377 := &a1_i_L213 + tt384
+ARG i_func_130_i_2
+ARG i_func_130_i_1
+ARG i_func_130_i_0
+tt385 := CALL i_func_130
+*tt377 := tt385
+*tt371 := *tt377
+tt393 := #4 * #1
+tt389 := &a2_i_L226 + tt393
+tt404 := #4 * #0
+tt397 := &a1_i_L214 + tt404
 ARG #1
-tt4 := CALL func
+ARG *tt397
+tt396 := CALL safe_index
+tt408 := #4 * tt396
+tt395 := &a1_i_L213 + tt408
+tt409 := #0
+IF i_func_130_i_0 > i_func_130_i_1 GOTO label130
+tt409 := #1
+LABEL label130 :
+*tt395 := tt409
+*tt389 := *tt395
+tt416 := #4 * #0
+tt412 := &a2_i_L226 + tt416
+tt427 := #4 * #0
+tt420 := &a1_i_L214 + tt427
+ARG #1
+ARG *tt420
+tt419 := CALL safe_index
+tt431 := #4 * tt419
+tt418 := &a1_i_L213 + tt431
+ARG #1582126098
+ARG i_func_130_i_0
+tt432 := CALL safe_sub
+*tt418 := tt432
+*tt412 := *tt418
+i_L2084 := #0
+tt446 := #4 * #0
+tt439 := &a1_i_L213 + tt446
+ARG #2
+ARG *tt439
+tt438 := CALL safe_index
+tt450 := #4 * tt438
+tt437 := &a2_i_L226 + tt450
+tt451 := #0
+tt460 := #4 * #0
+tt452 := &a1_i_L214 + tt460
+IF *tt452 == #1591801428 GOTO label132
+tt451 := #1
+LABEL label132 :
+*tt437 := tt451
+tt462 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt462
+ARG i_func_130_i_2
+tt465 := CALL i_func_129
+tt476 := #4 * #0
+tt469 := &a1_i_L213 + tt476
+ARG #2
+ARG *tt469
+tt468 := CALL safe_index
+tt480 := #4 * tt468
+tt467 := &a2_i_L226 + tt480
+tt481 := #0
+tt489 := #4 * #0
+tt482 := &a1_i_L214 + tt489
+IF *tt482 != #0 GOTO label134
+tt481 := #1
+LABEL label134 :
+*tt467 := tt481
+tt491 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt491
+LABEL label135 :
+tt504 := #4 * #0
+tt497 := &a1_i_L213 + tt504
+ARG #2
+ARG *tt497
+tt496 := CALL safe_index
+tt508 := #4 * tt496
+tt495 := &a2_i_L226 + tt508
+tt517 := #4 * #0
+tt510 := &a1_i_L214 + tt517
+ARG i_func_130_i_2
+ARG i_func_130_i_0
+ARG *tt510
+tt509 := CALL i_func_130
+*tt495 := tt509
+IF *tt495 == #0 GOTO label137
+tt520 := #0
+IF i_L2084 >= #4 GOTO label140
+tt520 := #1
+LABEL label140 :
+IF tt520 == #0 GOTO label137
+tt534 := #4 * #0
+tt527 := &a1_i_L213 + tt534
+ARG #2
+ARG *tt527
+tt526 := CALL safe_index
+tt538 := #4 * tt526
+tt525 := &a2_i_L226 + tt538
+tt539 := #0
+tt547 := #4 * #0
+tt540 := &a1_i_L214 + tt547
+IF *tt540 != #0 GOTO label141
+IF i_func_130_i_0 == #0 GOTO label142
+LABEL label141 :
+tt539 := #1
+LABEL label142 :
+*tt525 := tt539
+i_L2085 := *tt525
+tt558 := #4 * #1
+tt551 := &a2_i_L226 + tt558
+tt559 := #0
+tt567 := #4 * #0
+tt560 := &a1_i_L213 + tt567
+IF *tt560 != #0 GOTO label144
+tt575 := #4 * #0
+tt568 := &a1_i_L214 + tt575
+IF *tt568 == #0 GOTO label145
+LABEL label144 :
+tt559 := #1
+LABEL label145 :
+*tt551 := tt559
+i_L2086 := *tt551
+tt587 := #4 * #0
+tt580 := &a1_i_L213 + tt587
+ARG #2
+ARG *tt580
+tt579 := CALL safe_index
+tt591 := #4 * tt579
+tt578 := &a2_i_L226 + tt591
+tt600 := #4 * #0
+tt593 := &a1_i_L214 + tt600
+tt592 := *tt593 / i_func_130_i_0
+*tt578 := tt592
+i_L2087 := *tt578
+i_L2088 := #0
+i_L2090 := #0
+i_L2092 := #0
+tt609 := i_L2084 + #1
+i_L2084 := tt609
+tt613 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt613
+tt625 := #4 * #0
+tt618 := &a1_i_L213 + tt625
+ARG #2
+ARG *tt618
+tt617 := CALL safe_index
+tt629 := #4 * tt617
+tt616 := &a2_i_L226 + tt629
+tt638 := #4 * #0
+tt631 := &a1_i_L214 + tt638
+ARG i_func_130_i_2
+ARG i_func_130_i_0
+ARG *tt631
+tt630 := CALL i_func_130
+*tt616 := tt630
+tt642 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt642
+LABEL label147 :
+tt655 := #4 * #0
+tt648 := &a1_i_L213 + tt655
+ARG #2
+ARG *tt648
+tt647 := CALL safe_index
+tt659 := #4 * tt647
+tt646 := &a2_i_L226 + tt659
+tt669 := #4 * #0
+tt662 := &a1_i_L214 + tt669
+ARG i_func_130_i_2
+ARG *tt662
+ARG #80696305
+tt660 := CALL i_func_130
+*tt646 := tt660
+IF *tt646 == #0 GOTO label149
+tt671 := #0
+IF i_L2088 >= #4 GOTO label152
+tt671 := #1
+LABEL label152 :
+IF tt671 == #0 GOTO label149
+DEC a2_i_L227 8
+DEC a2_i_L228 8
+tt675 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt675
+tt682 := #4 * #1
+tt678 := &a2_i_L227 + tt682
+tt693 := #4 * #0
+tt686 := &a1_i_L213 + tt693
+ARG #2
+ARG *tt686
+tt685 := CALL safe_index
+tt697 := #4 * tt685
+tt684 := &a2_i_L226 + tt697
+tt706 := #4 * #0
+tt699 := &a1_i_L214 + tt706
+ARG i_func_130_i_2
+ARG i_func_130_i_0
+ARG *tt699
+tt698 := CALL i_func_130
+*tt684 := tt698
+*tt678 := *tt684
+tt710 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt710
+tt717 := #4 * #0
+tt713 := &a2_i_L227 + tt717
+tt728 := #4 * #0
+tt721 := &a1_i_L213 + tt728
+ARG #2
+ARG *tt721
+tt720 := CALL safe_index
+tt732 := #4 * tt720
+tt719 := &a2_i_L226 + tt732
+tt741 := #4 * #0
+tt734 := &a1_i_L214 + tt741
+ARG i_func_130_i_2
+ARG #1976266685
+ARG *tt734
+tt733 := CALL i_func_130
+*tt719 := tt733
+*tt713 := *tt719
+tt745 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt745
+tt752 := #4 * #1
+tt748 := &a2_i_L228 + tt752
+tt763 := #4 * #1
+tt756 := &a2_i_L226 + tt763
+ARG #1
+ARG *tt756
+tt755 := CALL safe_index
+tt767 := #4 * tt755
+tt754 := &a1_i_L213 + tt767
+ARG i_func_130_i_2
+tt768 := CALL i_func_129
+*tt754 := tt768
+*tt748 := *tt754
+tt774 := #4 * #0
+tt770 := &a2_i_L228 + tt774
+tt785 := #4 * #0
+tt778 := &a1_i_L214 + tt785
+ARG #1
+ARG *tt778
+tt777 := CALL safe_index
+tt789 := #4 * tt777
+tt776 := &a1_i_L213 + tt789
+tt790 := #0
+tt798 := #4 * #1
+tt791 := &a2_i_L226 + tt798
+IF *tt791 == #0 GOTO label154
+tt806 := #4 * #1
+tt799 := &a2_i_L227 + tt806
+IF *tt799 == #0 GOTO label154
+tt790 := #1
+LABEL label154 :
+*tt776 := tt790
+*tt770 := *tt776
+tt816 := #4 * #1
+tt809 := &a2_i_L226 + tt816
+tt817 := #0
+tt825 := #4 * #0
+tt818 := &a1_i_L213 + tt825
+IF *tt818 != #0 GOTO label156
+IF #-2147483647 == #0 GOTO label157
+LABEL label156 :
+tt817 := #1
+LABEL label157 :
+*tt809 := tt817
+i_L2089 := *tt809
+tt829 := i_L2088 + #1
+i_L2088 := tt829
+tt839 := #4 * #0
+tt832 := &a1_i_L213 + tt839
+tt840 := #0
+tt848 := #4 * #0
+tt841 := &a1_i_L214 + tt848
+IF *tt841 == #0 GOTO label160
+tt856 := #4 * #1
+tt849 := &a2_i_L226 + tt856
+IF *tt849 == #0 GOTO label160
+tt840 := #1
+LABEL label160 :
+*tt832 := tt840
+tt858 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt858
+tt870 := #4 * #0
+tt863 := &a2_i_L227 + tt870
+ARG #2
+ARG *tt863
+tt862 := CALL safe_index
+tt874 := #4 * tt862
+tt861 := &a2_i_L226 + tt874
+tt883 := #4 * #0
+tt876 := &a2_i_L228 + tt883
+tt891 := #4 * #0
+tt884 := &a1_i_L213 + tt891
+ARG i_func_130_i_2
+ARG *tt884
+ARG *tt876
+tt875 := CALL i_func_130
+*tt861 := tt875
+tt902 := #4 * #0
+tt895 := &a2_i_L226 + tt902
+ARG #1
+ARG *tt895
+tt894 := CALL safe_index
+tt906 := #4 * tt894
+tt893 := &a1_i_L213 + tt906
+tt907 := #0
+IF #99754806 == #0 GOTO label163
+IF #1720706272 == #0 GOTO label163
+tt907 := #1
+LABEL label163 :
+*tt893 := tt907
+WRITE i_L2089
+GOTO label147
+LABEL label149 :
+tt921 := #4 * #0
+tt914 := &a1_i_L213 + tt921
+tt924 := #4 * *tt914
+tt913 := &a2_i_L226 + tt924
+tt925 := #0
+tt934 := #4 * #0
+tt926 := &a1_i_L214 + tt934
+IF *tt926 <= #-1029753476 GOTO label170
+tt925 := #1
+LABEL label170 :
+*tt913 := tt925
+IF *tt913 == #0 GOTO label167
+tt936 := #0
+IF i_L2090 >= #4 GOTO label172
+tt936 := #1
+LABEL label172 :
+IF tt936 == #0 GOTO label167
+DEC a1_i_L215 4
+DEC a1_i_L216 4
+tt943 := #4 * #0
+tt939 := &a1_i_L215 + tt943
+tt954 := #4 * #1
+tt947 := &a2_i_L226 + tt954
+ARG #1
+ARG *tt947
+tt946 := CALL safe_index
+tt958 := #4 * tt946
+tt945 := &a1_i_L213 + tt958
+tt967 := #4 * #0
+tt960 := &a1_i_L214 + tt967
+tt959 := *tt960 / i_func_130_i_0
+*tt945 := tt959
+*tt939 := *tt945
+tt979 := #4 * #0
+tt972 := &a1_i_L213 + tt979
+tt982 := #4 * *tt972
+tt971 := &a2_i_L226 + tt982
+tt983 := #0
+tt992 := #4 * #0
+tt985 := &a1_i_L214 + tt992
+IF #1523159502 >= *tt985 GOTO label174
+tt983 := #1
+LABEL label174 :
+*tt971 := tt983
+i_L2091 := *tt971
+tt994 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt994
+tt1001 := #4 * #0
+tt997 := &a1_i_L216 + tt1001
+ARG i_func_130_i_2
+tt1002 := CALL i_func_129
+*tt997 := tt1002
+tt1005 := i_L2090 + #1
+i_L2090 := tt1005
+tt1015 := #4 * #0
+tt1008 := &a2_i_L226 + tt1015
+*tt1008 := #1546278926
+tt1025 := #4 * #0
+tt1018 := &a1_i_L213 + tt1025
+tt1028 := #4 * *tt1018
+tt1017 := &a2_i_L226 + tt1028
+tt1036 := #4 * #0
+tt1029 := &a1_i_L214 + tt1036
+*tt1017 := *tt1029
+tt1046 := #4 * #0
+tt1039 := &a1_i_L214 + tt1046
+ARG #1
+ARG *tt1039
+tt1038 := CALL safe_index
+tt1050 := #4 * tt1038
+tt1037 := &a1_i_L213 + tt1050
+tt1051 := #0
+tt1059 := #4 * #0
+tt1052 := &a1_i_L215 + tt1059
+IF *tt1052 != #0 GOTO label176
+tt1051 := #1
+LABEL label176 :
+*tt1037 := tt1051
+WRITE i_L2091
+GOTO label149
+LABEL label167 :
+tt1063 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt1063
+LABEL label177 :
+tt1076 := #4 * #1
+tt1069 := &a2_i_L226 + tt1076
+ARG #1
+ARG *tt1069
+tt1068 := CALL safe_index
+tt1080 := #4 * tt1068
+tt1067 := &a1_i_L213 + tt1080
+tt1089 := #4 * #0
+tt1082 := &a1_i_L214 + tt1089
+ARG i_func_130_i_2
+ARG i_func_130_i_0
+ARG *tt1082
+tt1081 := CALL i_func_130
+*tt1067 := tt1081
+IF *tt1067 == #0 GOTO label179
+tt1092 := #0
+IF i_L2092 >= #4 GOTO label182
+tt1092 := #1
+LABEL label182 :
+IF tt1092 == #0 GOTO label179
+DEC a1_i_L217 4
+DEC a2_i_L229 8
+tt1106 := #4 * #0
+tt1099 := &a1_i_L214 + tt1106
+ARG #1
+ARG *tt1099
+tt1098 := CALL safe_index
+tt1110 := #4 * tt1098
+tt1097 := &a1_i_L213 + tt1110
+tt1111 := #0
+IF #681682131 == #-63820204 GOTO label184
+tt1111 := #1
+LABEL label184 :
+*tt1097 := tt1111
+i_L2093 := *tt1097
+tt1119 := #4 * #0
+tt1115 := &a1_i_L217 + tt1119
+tt1129 := #4 * #0
+tt1122 := &a1_i_L213 + tt1129
+tt1132 := #4 * *tt1122
+tt1121 := &a2_i_L226 + tt1132
+tt1141 := #4 * #0
+tt1134 := &a1_i_L214 + tt1141
+*tt1134 := i_func_130_i_0
+*tt1121 := *tt1134
+*tt1115 := *tt1121
+tt1147 := #4 * #1
+tt1143 := &a2_i_L229 + tt1147
+tt1157 := #4 * #0
+tt1150 := &a1_i_L213 + tt1157
+tt1160 := #4 * *tt1150
+tt1149 := &a2_i_L226 + tt1160
+tt1161 := #0
+tt1169 := #4 * #0
+tt1162 := &a1_i_L214 + tt1169
+IF *tt1162 == #0 GOTO label186
+IF #859637432 == #0 GOTO label186
+tt1161 := #1
+LABEL label186 :
+*tt1149 := tt1161
+*tt1143 := *tt1149
+tt1172 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt1172
+tt1179 := #4 * #0
+tt1175 := &a2_i_L229 + tt1179
+tt1189 := #4 * #0
+tt1182 := &a1_i_L213 + tt1189
+tt1192 := #4 * *tt1182
+tt1181 := &a2_i_L226 + tt1192
+tt1203 := #4 * #0
+tt1196 := &a1_i_L214 + tt1203
+ARG i_func_130_i_2
+ARG *tt1196
+ARG #-1732062016
+tt1193 := CALL i_func_130
+*tt1181 := tt1193
+*tt1175 := *tt1181
+tt1206 := i_L2092 + #1
+i_L2092 := tt1206
+tt1218 := #4 * #0
+tt1211 := &a2_i_L229 + tt1218
+ARG #2
+ARG *tt1211
+tt1210 := CALL safe_index
+tt1222 := #4 * tt1210
+tt1209 := &a2_i_L226 + tt1222
+*tt1209 := #-1711202300
+tt1232 := #4 * #0
+tt1225 := &a2_i_L226 + tt1232
+tt1233 := #0
+tt1242 := #4 * #1
+tt1234 := &a2_i_L229 + tt1242
+tt1249 := #4 * #0
+tt1235 := &a1_i_L213 + tt1249
+IF *tt1234 == *tt1235 GOTO label189
+tt1233 := #1
+LABEL label189 :
+*tt1225 := tt1233
+tt1258 := #4 * #0
+tt1251 := &a1_i_L213 + tt1258
+tt1261 := #4 * *tt1251
+tt1250 := &a2_i_L226 + tt1261
+tt1262 := #0
+tt1270 := #4 * #0
+tt1263 := &a2_i_L229 + tt1270
+IF *tt1263 != #0 GOTO label190
+tt1278 := #4 * #0
+tt1271 := &a1_i_L214 + tt1278
+IF *tt1271 == #0 GOTO label191
+LABEL label190 :
+tt1262 := #1
+LABEL label191 :
+*tt1250 := tt1262
+tt1287 := #4 * #0
+tt1280 := &a2_i_L226 + tt1287
+tt1290 := #4 * *tt1280
+tt1279 := &a1_i_L213 + tt1290
+tt1299 := #4 * #0
+tt1292 := &a1_i_L214 + tt1299
+tt1307 := #4 * #0
+tt1300 := &a1_i_L217 + tt1307
+tt1291 := *tt1292 + *tt1300
+*tt1279 := tt1291
+tt1316 := #4 * #1
+tt1309 := &a2_i_L229 + tt1316
+tt1319 := #4 * *tt1309
+tt1308 := &a2_i_L226 + tt1319
+tt1328 := #4 * #0
+tt1321 := &a1_i_L213 + tt1328
+tt1336 := #4 * #0
+tt1329 := &a1_i_L214 + tt1336
+tt1320 := *tt1321 - *tt1329
+*tt1308 := tt1320
+WRITE i_L2093
+GOTO label177
+LABEL label179 :
+tt1348 := #4 * #1
+tt1341 := &a2_i_L226 + tt1348
+ARG #1
+ARG *tt1341
+tt1340 := CALL safe_index
+tt1352 := #4 * tt1340
+tt1339 := &a1_i_L213 + tt1352
+tt1361 := #4 * #0
+tt1354 := &a1_i_L214 + tt1361
+tt1353 := *tt1354 + i_func_130_i_0
+*tt1339 := tt1353
+WRITE i_L2085
+WRITE i_L2086
+WRITE i_L2087
+GOTO label135
+LABEL label137 :
+tt1370 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt1370
+tt1382 := #4 * #0
+tt1375 := &a1_i_L214 + tt1382
+ARG #1
+ARG *tt1375
+tt1374 := CALL safe_index
+tt1386 := #4 * tt1374
+tt1373 := &a1_i_L213 + tt1386
+tt1395 := #4 * #0
+tt1388 := &a2_i_L226 + tt1395
+ARG i_func_130_i_2
+ARG i_func_130_i_0
+ARG *tt1388
+tt1387 := CALL i_func_130
+*tt1373 := tt1387
+WRITE i_L2083
+tt1401 := i_func_130_i_2 - #1
+i_func_130_i_2 := tt1401
+tt1414 := #4 * #0
+tt1407 := &a1_i_L213 + tt1414
+ARG #2
+ARG *tt1407
+tt1406 := CALL safe_index
+tt1418 := #4 * tt1406
+tt1405 := &a2_i_L226 + tt1418
+tt1427 := #4 * #0
+tt1420 := &a1_i_L214 + tt1427
+ARG i_func_130_i_2
+ARG #1672981414
+ARG *tt1420
+tt1419 := CALL i_func_130
+*tt1405 := tt1419
+RETURN *tt1405
+
+FUNCTION i_func_131 :
+PARAM i_func_131_i_0
+PARAM i_func_131_i_1
+PARAM i_func_131_i_2
+PARAM i_func_131_i_3
+PARAM i_func_131_i_4
+IF i_func_131_i_4 > #0 GOTO label194
+RETURN #-1633744165
+
+GOTO label195
+LABEL label194 :
+tt1435 := i_func_131_i_4 - #1
+i_func_131_i_4 := tt1435
+LABEL label195 :
+i_func_131_i_1 := i_func_131_i_2
+i_func_131_i_0 := i_func_131_i_1
+i_L2094 := i_func_131_i_0
+tt1447 := #592992618 - i_func_131_i_1
+i_func_131_i_0 := tt1447
+i_L2095 := i_func_131_i_0
+tt1451 := i_func_131_i_4 - #1
+i_func_131_i_4 := tt1451
+ARG i_func_131_i_1
+ARG i_func_131_i_0
+tt1458 := CALL safe_sub
+ARG i_func_131_i_4
+ARG tt1458
+ARG #-1432932287
+tt1455 := CALL i_func_130
+i_L2096 := tt1455
+tt1463 := i_func_131_i_4 - #1
+i_func_131_i_4 := tt1463
+ARG i_func_131_i_4
+tt1467 := CALL i_func_129
+i_func_131_i_0 := tt1467
+tt1470 := i_func_131_i_1 - i_func_131_i_2
+i_func_131_i_0 := tt1470
+tt1474 := #0
+IF i_func_131_i_1 != i_func_131_i_2 GOTO label197
+tt1474 := #1
+LABEL label197 :
+i_func_131_i_0 := tt1474
+tt1478 := i_func_131_i_4 - #1
+i_func_131_i_4 := tt1478
+ARG i_func_131_i_4
+ARG i_func_131_i_3
+ARG i_func_131_i_2
+ARG #1931795591
+ARG i_func_131_i_1
+tt1482 := CALL i_func_131
+i_func_131_i_0 := tt1482
+WRITE i_L2094
+WRITE i_L2095
+WRITE i_L2096
+tt1495 := i_func_131_i_4 - #1
+i_func_131_i_4 := tt1495
+ARG i_func_131_i_4
+tt1500 := CALL i_func_129
+i_func_131_i_0 := tt1500
+RETURN i_func_131_i_0
+
+FUNCTION i_func_132 :
+PARAM i_func_132_i_0
+PARAM i_func_132_i_1
+PARAM i_func_132_i_2
+IF i_func_132_i_2 > #0 GOTO label199
+RETURN #-903902684
+
+GOTO label200
+LABEL label199 :
+tt1507 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1507
+LABEL label200 :
+tt1513 := #-211782836 / i_func_132_i_1
+i_func_132_i_0 := tt1513
+i_L2097 := i_func_132_i_0
+i_func_132_i_0 := #395288290
+i_L2098 := i_func_132_i_0
+i_func_132_i_1 := i_L2097
+i_func_132_i_0 := i_func_132_i_1
+i_L2099 := i_func_132_i_0
+i_L2111 := #-178267933
+i_L2112 := #242005622
+i_L2113 := #682667230
+i_L2114 := #1125820289
+i_L2100 := #0
+tt1539 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1539
+ARG i_func_132_i_2
+tt1543 := CALL i_func_129
+i_func_132_i_0 := tt1543
+LABEL label201 :
+tt1547 := #0
+IF i_func_132_i_1 != #0 GOTO label204
+IF i_L2097 == #0 GOTO label205
+LABEL label204 :
+tt1547 := #1
+LABEL label205 :
+i_func_132_i_0 := tt1547
+IF i_func_132_i_0 == #0 GOTO label203
+DEC a2_i_L230 8
+tt1554 := #4 * #1
+tt1550 := &a2_i_L230 + tt1554
+tt1557 := i_func_132_i_1 + i_L2097
+i_func_132_i_0 := tt1557
+*tt1550 := i_func_132_i_0
+tt1561 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1561
+tt1568 := #4 * #0
+tt1564 := &a2_i_L230 + tt1568
+ARG i_func_132_i_2
+ARG #-1736349983
+ARG i_func_132_i_1
+tt1571 := CALL i_func_132
+i_func_132_i_0 := tt1571
+*tt1564 := i_func_132_i_0
+tt1577 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1577
+tt1586 := #4 * i_func_132_i_0
+tt1582 := &a2_i_L230 + tt1586
+ARG i_func_132_i_2
+ARG i_L2098
+ARG i_L2097
+ARG i_func_132_i_1
+ARG #-1117774039
+tt1587 := CALL i_func_131
+*tt1582 := tt1587
+i_L2101 := *tt1582
+tt1600 := #4 * i_func_132_i_0
+tt1596 := &a2_i_L230 + tt1600
+tt1601 := #0
+IF #-835083159 != #0 GOTO label208
+tt1601 := #1
+LABEL label208 :
+*tt1596 := tt1601
+i_L2102 := *tt1596
+i_L2103 := #0
+i_L2105 := #0
+i_L2107 := #0
+tt1611 := i_func_132_i_2 - #2
+i_func_132_i_2 := tt1611
+LABEL label209 :
+tt1615 := #0
+tt1624 := #4 * #0
+tt1617 := &a2_i_L230 + tt1624
+IF #1682869226 > *tt1617 GOTO label213
+tt1615 := #1
+LABEL label213 :
+ARG i_func_132_i_2
+ARG #119813283
+ARG i_func_132_i_1
+ARG #2131526374
+ARG i_func_132_i_0
+tt1625 := CALL i_func_131
+ARG i_func_132_i_2
+ARG tt1625
+ARG tt1615
+tt1614 := CALL i_func_130
+IF tt1614 == #0 GOTO label211
+DEC a1_i_L218 4
+DEC a2_i_L231 8
+tt1633 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1633
+tt1640 := #4 * #0
+tt1636 := &a1_i_L218 + tt1640
+tt1646 := #4 * i_func_132_i_0
+tt1642 := &a2_i_L230 + tt1646
+ARG i_func_132_i_2
+ARG #-1376647370
+ARG i_L2097
+ARG i_func_132_i_1
+ARG #-1749453181
+tt1647 := CALL i_func_131
+*tt1642 := tt1647
+*tt1636 := *tt1642
+tt1656 := i_func_132_i_2 - #2
+i_func_132_i_2 := tt1656
+tt1661 := #0
+IF #-1955489765 != #0 GOTO label214
+tt1671 := #4 * #0
+tt1664 := &a1_i_L218 + tt1671
+IF *tt1664 == #0 GOTO label215
+LABEL label214 :
+tt1661 := #1
+LABEL label215 :
+tt1672 := #0
+tt1681 := #4 * #0
+tt1673 := &a2_i_L230 + tt1681
+IF *tt1673 >= i_func_132_i_0 GOTO label218
+tt1672 := #1
+LABEL label218 :
+ARG i_func_132_i_2
+tt1683 := CALL i_func_129
+ARG i_func_132_i_2
+ARG tt1683
+ARG i_func_132_i_1
+ARG tt1672
+ARG tt1661
+tt1660 := CALL i_func_131
+i_L2104 := tt1660
+tt1690 := #4 * #1
+tt1686 := &a2_i_L231 + tt1690
+tt1699 := #4 * #1
+tt1692 := &a2_i_L230 + tt1699
+tt1700 := #0
+tt1709 := #4 * #0
+tt1701 := &a1_i_L218 + tt1709
+IF *tt1701 > i_func_132_i_0 GOTO label220
+tt1700 := #1
+LABEL label220 :
+*tt1692 := tt1700
+*tt1686 := *tt1692
+tt1711 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1711
+tt1718 := #4 * #0
+tt1714 := &a2_i_L231 + tt1718
+tt1728 := #4 * #0
+tt1721 := &a2_i_L230 + tt1728
+tt1731 := #4 * *tt1721
+tt1720 := &a1_i_L218 + tt1731
+ARG i_func_132_i_2
+ARG i_func_132_i_1
+ARG i_func_132_i_0
+tt1732 := CALL i_func_132
+*tt1720 := tt1732
+*tt1714 := *tt1720
+tt1737 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1737
+tt1748 := #4 * #1
+tt1741 := &a2_i_L230 + tt1748
+tt1751 := #4 * *tt1741
+tt1740 := &a1_i_L218 + tt1751
+tt1761 := #4 * #0
+tt1754 := &a2_i_L231 + tt1761
+ARG i_func_132_i_2
+ARG *tt1754
+ARG #1817921156
+tt1752 := CALL i_func_130
+*tt1740 := tt1752
+tt1764 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1764
+tt1775 := #4 * #0
+tt1768 := &a1_i_L218 + tt1775
+tt1778 := #4 * *tt1768
+tt1767 := &a2_i_L230 + tt1778
+tt1787 := #4 * #0
+tt1780 := &a2_i_L231 + tt1787
+ARG i_func_132_i_2
+ARG i_func_132_i_0
+ARG *tt1780
+tt1779 := CALL i_func_132
+*tt1767 := tt1779
+tt1791 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1791
+tt1802 := #4 * #0
+tt1795 := &a2_i_L231 + tt1802
+tt1805 := #4 * *tt1795
+tt1794 := &a2_i_L230 + tt1805
+tt1814 := #4 * #0
+tt1807 := &a1_i_L218 + tt1814
+ARG i_func_132_i_2
+ARG i_func_132_i_0
+ARG *tt1807
+tt1806 := CALL i_func_132
+*tt1794 := tt1806
+tt1825 := #4 * #0
+tt1818 := &a2_i_L231 + tt1825
+tt1828 := #4 * *tt1818
+tt1817 := &a2_i_L230 + tt1828
+tt1837 := #4 * #0
+tt1830 := &a1_i_L218 + tt1837
+tt1829 := *tt1830 - #-1411240527
+*tt1817 := tt1829
+tt1848 := #4 * #1
+tt1841 := &a2_i_L231 + tt1848
+tt1851 := #4 * *tt1841
+tt1840 := &a2_i_L230 + tt1851
+tt1852 := #0
+tt1861 := #4 * #0
+tt1853 := &a1_i_L218 + tt1861
+IF *tt1853 != i_func_132_i_0 GOTO label222
+tt1852 := #1
+LABEL label222 :
+*tt1840 := tt1852
+WRITE i_L2104
+GOTO label209
+LABEL label211 :
+tt1869 := #4 * i_func_132_i_0
+tt1865 := &a2_i_L230 + tt1869
+i_func_132_i_1 := i_L2097
+*tt1865 := i_func_132_i_1
+IF *tt1865 == #0 GOTO label225
+DEC a1_i_L219 4
+DEC a2_i_L232 8
+tt1874 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1874
+tt1881 := #4 * #0
+tt1877 := &a1_i_L219 + tt1881
+tt1887 := #4 * i_func_132_i_0
+tt1883 := &a2_i_L230 + tt1887
+ARG i_func_132_i_2
+ARG i_L2098
+ARG i_L2097
+ARG i_func_132_i_1
+ARG #1639197575
+tt1888 := CALL i_func_131
+*tt1883 := tt1888
+*tt1877 := *tt1883
+tt1895 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1895
+tt1902 := #4 * #1
+tt1898 := &a2_i_L232 + tt1902
+tt1912 := #4 * #0
+tt1905 := &a1_i_L219 + tt1912
+tt1915 := #4 * *tt1905
+tt1904 := &a2_i_L230 + tt1915
+ARG i_func_132_i_2
+ARG #-1998409169
+ARG i_func_132_i_0
+tt1916 := CALL i_func_130
+*tt1904 := tt1916
+*tt1898 := *tt1904
+tt1922 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1922
+tt1929 := #4 * #0
+tt1925 := &a2_i_L232 + tt1929
+tt1939 := #4 * #0
+tt1932 := &a2_i_L230 + tt1939
+tt1942 := #4 * *tt1932
+tt1931 := &a1_i_L219 + tt1942
+ARG i_func_132_i_2
+ARG i_L2097
+ARG i_func_132_i_1
+ARG #-1056364849
+ARG i_func_132_i_0
+tt1943 := CALL i_func_131
+*tt1931 := tt1943
+*tt1925 := *tt1931
+tt1959 := #4 * #0
+tt1952 := &a1_i_L219 + tt1959
+tt1968 := #4 * #1
+tt1961 := &a2_i_L230 + tt1968
+tt1976 := #4 * #1
+tt1969 := &a2_i_L232 + tt1976
+tt1960 := *tt1961 + *tt1969
+*tt1952 := tt1960
+i_L2106 := *tt1952
+tt1978 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt1978
+tt1989 := #4 * #0
+tt1982 := &a1_i_L219 + tt1989
+tt1992 := #4 * *tt1982
+tt1981 := &a2_i_L230 + tt1992
+tt2001 := #4 * #1
+tt1994 := &a2_i_L232 + tt2001
+ARG i_func_132_i_2
+ARG i_func_132_i_0
+ARG *tt1994
+tt1993 := CALL i_func_132
+*tt1981 := tt1993
+tt2012 := #4 * #0
+tt2005 := &a1_i_L219 + tt2012
+tt2015 := #4 * *tt2005
+tt2004 := &a2_i_L230 + tt2015
+tt2024 := #4 * #0
+tt2017 := &a2_i_L232 + tt2024
+tt2016 := *tt2017 - #353589935
+*tt2004 := tt2016
+tt2027 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt2027
+ARG i_func_132_i_2
+tt2030 := CALL i_func_129
+WRITE i_L2106
+GOTO label211
+LABEL label225 :
+tt2039 := #4 * i_func_132_i_0
+tt2035 := &a2_i_L230 + tt2039
+*tt2035 := #0
+IF *tt2035 == #0 GOTO label228
+tt2045 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt2045
+tt2054 := #4 * i_func_132_i_0
+tt2050 := &a2_i_L230 + tt2054
+ARG i_func_132_i_2
+ARG i_L2097
+ARG i_func_132_i_1
+tt2055 := CALL i_func_130
+*tt2050 := tt2055
+i_L2108 := *tt2050
+tt2065 := #4 * i_func_132_i_0
+tt2061 := &a2_i_L230 + tt2065
+tt2066 := i_func_132_i_1 * i_L2097
+*tt2061 := tt2066
+i_L2109 := *tt2061
+tt2070 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt2070
+tt2079 := #4 * i_func_132_i_0
+tt2075 := &a2_i_L230 + tt2079
+ARG i_func_132_i_2
+ARG i_L2097
+ARG i_func_132_i_1
+tt2080 := CALL i_func_130
+*tt2075 := tt2080
+i_L2110 := *tt2075
+tt2085 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt2085
+tt2092 := #4 * i_func_132_i_0
+tt2088 := &a2_i_L230 + tt2092
+ARG i_func_132_i_2
+tt2093 := CALL i_func_129
+*tt2088 := tt2093
+tt2096 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt2096
+tt2103 := #4 * i_func_132_i_0
+tt2099 := &a2_i_L230 + tt2103
+ARG i_func_132_i_2
+ARG i_L2097
+ARG i_func_132_i_1
+tt2104 := CALL i_func_130
+*tt2099 := tt2104
+tt2109 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt2109
+tt2116 := #4 * i_func_132_i_0
+tt2112 := &a2_i_L230 + tt2116
+ARG i_func_132_i_2
+tt2117 := CALL i_func_129
+*tt2112 := tt2117
+tt2123 := #4 * i_func_132_i_0
+tt2119 := &a2_i_L230 + tt2123
+tt2124 := #0
+IF i_func_132_i_1 == i_L2097 GOTO label230
+tt2124 := #1
+LABEL label230 :
+*tt2119 := tt2124
+tt2128 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt2128
+tt2135 := #4 * i_func_132_i_0
+tt2131 := &a2_i_L230 + tt2135
+ARG i_func_132_i_2
+ARG i_L2098
+ARG i_L2097
+ARG i_func_132_i_1
+ARG #1666404185
+tt2136 := CALL i_func_131
+*tt2131 := tt2136
+WRITE i_L2108
+WRITE i_L2109
+WRITE i_L2110
+GOTO label225
+LABEL label228 :
+tt2152 := #4 * i_func_132_i_0
+tt2148 := &a2_i_L230 + tt2152
+tt2153 := i_func_132_i_1 / #588198729
+*tt2148 := tt2153
+tt2160 := #4 * i_func_132_i_0
+tt2156 := &a2_i_L230 + tt2160
+tt2161 := #0
+IF i_func_132_i_1 >= i_L2097 GOTO label232
+tt2161 := #1
+LABEL label232 :
+*tt2156 := tt2161
+WRITE i_L2101
+WRITE i_L2102
+GOTO label201
+LABEL label203 :
+tt2169 := i_func_132_i_2 - #1
+i_func_132_i_2 := tt2169
+ARG i_func_132_i_2
+ARG i_L2097
+ARG i_func_132_i_1
+tt2173 := CALL i_func_130
+i_func_132_i_0 := tt2173
+tt2178 := i_func_132_i_1 * #1903269527
+i_func_132_i_0 := tt2178
+tt2182 := #0
+IF i_func_132_i_1 == i_L2097 GOTO label234
+tt2182 := #1
+LABEL label234 :
+i_func_132_i_0 := tt2182
+WRITE i_L2097
+WRITE i_L2098
+WRITE i_L2099
+WRITE i_L2111
+WRITE i_L2112
+WRITE i_L2113
+WRITE i_L2114
+tt2200 := i_func_132_i_2 - #3
+i_func_132_i_2 := tt2200
+tt2204 := #0
+IF i_func_132_i_0 > #-934309847 GOTO label236
+tt2204 := #1
+LABEL label236 :
+tt2208 := #0
+IF i_func_132_i_1 == i_L2097 GOTO label238
+tt2208 := #1
+LABEL label238 :
+ARG i_func_132_i_2
+ARG i_L2112
+ARG i_L2111
+ARG i_L2099
+ARG i_L2098
+tt2211 := CALL i_func_131
+ARG i_func_132_i_2
+ARG i_L2114
+ARG i_L2113
+tt2217 := CALL i_func_130
+ARG i_func_132_i_2
+ARG tt2217
+ARG tt2211
+ARG tt2208
+ARG tt2204
+tt2203 := CALL i_func_131
+RETURN tt2203
+
+FUNCTION top_caller :
+PARAM top_caller_i_107
+DEC a1_i_L220 4
+DEC a2_i_L233 8
+IF top_caller_i_107 > #0 GOTO label240
+RETURN #-614026084
+
+GOTO label241
+LABEL label240 :
+tt2227 := top_caller_i_107 - #1
+top_caller_i_107 := tt2227
+LABEL label241 :
+i_L2116 := #1254893432
+i_L2117 := #73047387
+tt2235 := #0
+IF i_L2116 == #0 GOTO label243
+IF i_L2117 == #0 GOTO label243
+tt2235 := #1
+LABEL label243 :
+i_L2115 := tt2235
+i_L2118 := #-269368092
+i_L2119 := #-1571326128
+tt2245 := top_caller_i_107 - #1
+top_caller_i_107 := tt2245
+tt2252 := #4 * #0
+tt2248 := &a1_i_L220 + tt2252
+ARG top_caller_i_107
+ARG i_L2119
+ARG i_L2118
+tt2255 := CALL i_func_132
+i_L2115 := tt2255
+*tt2248 := i_L2115
+ARG #1
+ARG i_L2116
+tt2262 := CALL safe_index
+tt2267 := #4 * tt2262
+tt2261 := &a1_i_L220 + tt2267
+tt2268 := i_L2117 + i_L2115
+*tt2261 := tt2268
+i_L2120 := *tt2261
+tt2275 := #4 * #1
+tt2271 := &a2_i_L233 + tt2275
+ARG #1
+ARG i_L2116
+tt2278 := CALL safe_index
+tt2283 := #4 * tt2278
+tt2277 := &a1_i_L220 + tt2283
+*tt2277 := #-1716944095
+*tt2271 := *tt2277
+tt2287 := top_caller_i_107 - #1
+top_caller_i_107 := tt2287
+tt2294 := #4 * #0
+tt2290 := &a2_i_L233 + tt2294
+ARG #1
+ARG i_L2116
+tt2297 := CALL safe_index
+tt2302 := #4 * tt2297
+tt2296 := &a1_i_L220 + tt2302
+ARG top_caller_i_107
+ARG i_L2119
+ARG i_L2118
+ARG i_L2115
+ARG i_L2117
+tt2303 := CALL i_func_131
+*tt2296 := tt2303
+*tt2290 := *tt2296
+i_L2124 := #836149693
+i_L2125 := #-901352842
+i_L2126 := #-24968470
+i_L2121 := #0
+tt2320 := top_caller_i_107 - #1
+top_caller_i_107 := tt2320
+LABEL label245 :
+tt2333 := #4 * #1
+tt2326 := &a2_i_L233 + tt2333
+ARG #1
+ARG *tt2326
+tt2325 := CALL safe_index
+tt2337 := #4 * tt2325
+tt2324 := &a1_i_L220 + tt2337
+ARG top_caller_i_107
+ARG i_L2118
+ARG i_L2115
+ARG i_L2117
+ARG i_L2116
+tt2338 := CALL i_func_131
+*tt2324 := tt2338
+IF *tt2324 == #0 GOTO label247
+tt2344 := #0
+IF i_L2121 >= #4 GOTO label250
+tt2344 := #1
+LABEL label250 :
+IF tt2344 == #0 GOTO label247
+DEC a2_i_L234 8
+tt2351 := #4 * #1
+tt2347 := &a2_i_L234 + tt2351
+tt2362 := #4 * #0
+tt2355 := &a2_i_L233 + tt2362
+ARG #1
+ARG *tt2355
+tt2354 := CALL safe_index
+tt2366 := #4 * tt2354
+tt2353 := &a1_i_L220 + tt2366
+tt2367 := i_L2116 / i_L2117
+*tt2353 := tt2367
+*tt2347 := *tt2353
+tt2374 := #4 * #0
+tt2370 := &a2_i_L234 + tt2374
+tt2383 := #4 * #0
+tt2376 := &a1_i_L220 + tt2383
+tt2392 := #4 * #1
+tt2385 := &a2_i_L233 + tt2392
+tt2384 := *tt2385 + i_L2116
+*tt2376 := tt2384
+*tt2370 := *tt2376
+tt2405 := #4 * #0
+tt2398 := &a1_i_L220 + tt2405
+ARG #2
+ARG *tt2398
+tt2397 := CALL safe_index
+tt2409 := #4 * tt2397
+tt2396 := &a2_i_L233 + tt2409
+tt2410 := #0
+tt2418 := #4 * #1
+tt2411 := &a2_i_L234 + tt2418
+IF *tt2411 != #0 GOTO label251
+IF #-874300365 == #0 GOTO label252
+LABEL label251 :
+tt2410 := #1
+LABEL label252 :
+*tt2396 := tt2410
+i_L2122 := *tt2396
+tt2422 := top_caller_i_107 - #1
+top_caller_i_107 := tt2422
+tt2436 := #4 * #0
+tt2429 := &a2_i_L233 + tt2436
+ARG #1
+ARG *tt2429
+tt2428 := CALL safe_index
+tt2440 := #4 * tt2428
+tt2427 := &a1_i_L220 + tt2440
+tt2449 := #4 * #0
+tt2442 := &a2_i_L234 + tt2449
+ARG top_caller_i_107
+ARG i_L2115
+ARG i_L2117
+ARG i_L2116
+ARG *tt2442
+tt2441 := CALL i_func_131
+*tt2427 := tt2441
+i_L2123 := *tt2427
+tt2455 := i_L2121 + #1
+i_L2121 := tt2455
+tt2467 := #4 * #0
+tt2460 := &a2_i_L233 + tt2467
+ARG #1
+ARG *tt2460
+tt2459 := CALL safe_index
+tt2471 := #4 * tt2459
+tt2458 := &a1_i_L220 + tt2471
+tt2472 := #0
+tt2480 := #4 * #1
+tt2473 := &a2_i_L234 + tt2480
+IF *tt2473 != #0 GOTO label254
+IF i_L2116 == #0 GOTO label255
+LABEL label254 :
+tt2472 := #1
+LABEL label255 :
+*tt2458 := tt2472
+tt2483 := top_caller_i_107 - #1
+top_caller_i_107 := tt2483
+tt2495 := #4 * #1
+tt2488 := &a2_i_L233 + tt2495
+ARG #1
+ARG *tt2488
+tt2487 := CALL safe_index
+tt2499 := #4 * tt2487
+tt2486 := &a1_i_L220 + tt2499
+tt2508 := #4 * #0
+tt2501 := &a2_i_L234 + tt2508
+ARG top_caller_i_107
+ARG i_L2115
+ARG i_L2117
+ARG i_L2116
+ARG *tt2501
+tt2500 := CALL i_func_131
+*tt2486 := tt2500
+tt2514 := top_caller_i_107 - #1
+top_caller_i_107 := tt2514
+tt2526 := #4 * #0
+tt2519 := &a2_i_L234 + tt2526
+ARG #2
+ARG *tt2519
+tt2518 := CALL safe_index
+tt2530 := #4 * tt2518
+tt2517 := &a2_i_L233 + tt2530
+ARG top_caller_i_107
+tt2531 := CALL top_caller
+*tt2517 := tt2531
+tt2542 := #4 * #0
+tt2535 := &a2_i_L233 + tt2542
+ARG #1
+ARG *tt2535
+tt2534 := CALL safe_index
+tt2546 := #4 * tt2534
+tt2533 := &a1_i_L220 + tt2546
+tt2555 := #4 * #0
+tt2548 := &a2_i_L234 + tt2555
+tt2547 := *tt2548 / i_L2116
+*tt2533 := tt2547
+tt2558 := top_caller_i_107 - #1
+top_caller_i_107 := tt2558
+tt2562 := #0
+tt2570 := #4 * #0
+tt2563 := &a1_i_L220 + tt2570
+IF *tt2563 == #0 GOTO label258
+tt2578 := #4 * #0
+tt2571 := &a2_i_L233 + tt2578
+IF *tt2571 == #0 GOTO label258
+tt2562 := #1
+LABEL label258 :
+ARG top_caller_i_107
+ARG #-892382448
+ARG tt2562
+tt2561 := CALL i_func_130
+WRITE i_L2122
+WRITE i_L2123
+GOTO label245
+LABEL label247 :
+tt2587 := top_caller_i_107 - #1
+top_caller_i_107 := tt2587
+tt2599 := #4 * #0
+tt2592 := &a2_i_L233 + tt2599
+ARG #1
+ARG *tt2592
+tt2591 := CALL safe_index
+tt2603 := #4 * tt2591
+tt2590 := &a1_i_L220 + tt2603
+ARG top_caller_i_107
+ARG i_L2116
+ARG #654638814
+tt2604 := CALL i_func_132
+*tt2590 := tt2604
+tt2615 := #4 * #0
+tt2608 := &a1_i_L220 + tt2615
+tt2616 := #0
+tt2626 := #4 * #0
+tt2618 := &a2_i_L233 + tt2626
+IF #-2082594877 < *tt2618 GOTO label261
+tt2616 := #1
+LABEL label261 :
+*tt2608 := tt2616
+tt2628 := top_caller_i_107 - #4
+top_caller_i_107 := tt2628
+tt2640 := #4 * #0
+tt2633 := &a1_i_L220 + tt2640
+tt2648 := #4 * #0
+tt2641 := &a2_i_L233 + tt2648
+ARG top_caller_i_107
+ARG *tt2641
+ARG *tt2633
+tt2632 := CALL i_func_132
+ARG top_caller_i_107
+ARG i_L2118
+ARG i_L2115
+ARG i_L2117
+ARG i_L2116
+tt2650 := CALL i_func_131
+tt2656 := #0
+IF i_L2119 == #0 GOTO label263
+IF i_L2120 == #0 GOTO label263
+tt2656 := #1
+LABEL label263 :
+ARG top_caller_i_107
+ARG i_L2126
+ARG i_L2125
+ARG #-1096942784
+ARG i_L2124
+tt2659 := CALL i_func_131
+ARG top_caller_i_107
+ARG tt2659
+ARG tt2656
+ARG tt2650
+ARG tt2632
+tt2631 := CALL i_func_131
+tt2674 := #4 * #0
+tt2667 := &a1_i_L220 + tt2674
+tt2683 := #4 * #0
+tt2676 := &a2_i_L233 + tt2683
+tt2675 := *tt2676 / i_L2116
+*tt2667 := tt2675
+WRITE i_L2116
+WRITE i_L2117
+WRITE i_L2115
+WRITE i_L2118
+WRITE i_L2119
+WRITE i_L2120
+WRITE i_L2124
+WRITE i_L2125
+WRITE i_L2126
+tt2712 := #4 * #0
+tt2705 := &a1_i_L220 + tt2712
+tt2715 := #4 * *tt2705
+tt2704 := &a2_i_L233 + tt2715
+tt2716 := i_L2116 + #-1990796607
+*tt2704 := tt2716
+RETURN *tt2704
+
+FUNCTION main :
+ARG #10
+tt2720 := CALL top_caller
 RETURN #0
 
