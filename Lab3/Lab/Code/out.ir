@@ -1,19 +1,22 @@
 FUNCTION main :
-DEC a 36
-DEC b 16
-tt5 := #12 * #0
+DEC a 12
+DEC b 8
+tt5 := #4 * #0
 tt1 := &a + tt5
-tt10 := #8 * #0
-tt6 := &b + tt10
-tt11 := tt1
-tt12 := tt6
-tt13 := tt12 + #8
-LABEL label1 :
-IF tt12 >= tt13 GOTO label2
-*tt11 := *tt12
-tt11 := tt11 + #4
-tt12 := tt12 + #4
-GOTO label1
-LABEL label2 :
+*tt1 := #0
+tt11 := #4 * #0
+tt7 := &b + tt11
+*tt7 := #0
+tt17 := #4 * #1
+tt13 := &a + tt17
+*tt13 := #1
+tt23 := #4 * #0
+tt19 := &a + tt23
+tt29 := #4 * #0
+tt25 := &b + tt29
+tt34 := #4 * #1
+tt30 := &a + tt34
+*tt25 := *tt30
+*tt19 := *tt25
 RETURN #0
 

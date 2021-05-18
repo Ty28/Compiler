@@ -12,29 +12,21 @@ int main(int argc, char **argv)
     }
     yyrestart(f);
     yyparse();
-
-    if (lexicalError == 0 && syntaxError == 0)
-    {
+    char fileName[CHARMAXSIZE];
+    if(lexicalError == 0 && syntaxError == 0){
         //preOrder(ROOT, 0);
         semanticCheck(ROOT);
         initInterCode(ROOT);
-        // for (int i = 0; i < FORMALPARAMETERSIZE; i++)
-        // {
-        //     if (FPTable[i] != NULL)
-        //     {
-        //         FPTableNode current = FPTable[i];
-        //         while (current != NULL)
-        //         {
-        //             printf("%s", current->name);
-        //             current = current->link;
-        //         }
-        //         printf("\n");
-        //     }
-        // }
-        if (argc < 3)
-            printCode("out.ir");
-        else
-            printCode(argv[2]);
+        if(argc < 3)
+            strcpy(fileName, "out.ir");
+        else 
+            strcpy(fileName, argv[2]);
+        optimize1_mergeLABEL();
+        optimize2_deleteGOTO();
+        optimize3_deleteNONEVAR();
+        if(structNum > 0)
+            printf("Cannot translate: Code contains variables or paraneters of structure type\n");
+        printCode(fileName);
     }
     return 0;
 }

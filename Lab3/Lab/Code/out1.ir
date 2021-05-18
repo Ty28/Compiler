@@ -1,0 +1,10 @@
+FUNCTION func :
+PARAM a
+WRITE a
+RETURN #0
+
+FUNCTION main :
+ARG #1
+tt4 := CALL func
+RETURN #0
+

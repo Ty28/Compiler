@@ -12,6 +12,8 @@ InterCode head;
 InterCode tail;
 int labelNum;
 int tNum;
+int structNum;
+
 struct Operand_
 {
     enum
@@ -149,7 +151,11 @@ void translateCond(node root, int label_true, int label_false);
 argNode translateArgs(node root);
 
 // optimize InterCode
-void optimize1_mergeLabel();
+void optimize1_mergeLABEL();
+void optimize2_deleteGOTO();
+void optimize3_deleteNONEVAR();
 LabelNode deleteContinuedLabel(InterCode* q);
 LabelNode createLabelNode(char* labelName);
+LabelNode createLabelList(InterCode code);
+void reverseCodeRELOP(InterCode* q);
 #endif

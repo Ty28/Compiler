@@ -293,7 +293,7 @@ int findFPMember(char *name, int _insert)
 void initInterCode(node root)
 {
     head = tail = NULL;
-    tNum = labelNum = 0;
+    tNum = labelNum = structNum = 0;
     FPTable = createFPTable();
     translateProgram(root);
 }
@@ -361,7 +361,8 @@ void translateVarDec_A(node root)
         }
         else if (findTuple->type->kind == STRUCTURE || findTuple->type->kind == STRUCTVAR)
         {
-            printf("Cannot translate: Code contains variables or paraneters of structure type\n");
+            structNum ++;
+            // printf("Cannot translate: Code contains variables or paraneters of structure type\n");
         }
     }
     else
@@ -376,7 +377,8 @@ void translateVarDec_B(node root)
         Symbol findTuple = findSymbol(n0->val);
         if (findTuple->type->kind == STRUCTURE || findTuple->type->kind == STRUCTVAR)
         {
-            printf("Cannot translate: Code contains variables or paraneters of structure type\n");
+            structNum ++;
+            // printf("Cannot translate: Code contains variables or paraneters of structure type\n");
         }
         else if (findTuple->type->kind == ARRAY)
         {
@@ -696,8 +698,9 @@ void translateExp(node root, Operand op)
             translateExpCommon(root, op);
         }
         else if (strcmp(n1->name, "DOT") == 0)
-        {
-            printf("cannot translate struct\n");
+        { 
+            structNum++;
+            // printf("cannot translate struct\n");
         }
         else if (strcmp(n0->name, "ID") == 0)
         {
@@ -747,6 +750,10 @@ void translateExpFunc(node root, Operand place)
     strcpy(name, root->child->val);
     Symbol findTuple = findSymbol(name);
     int childNum = getChildNum(root);
+    if(place->kind == NOTHING) {
+        free(place);
+        place = createOpTmp();
+    }
     if (childNum == 3)
     {
         if (strcmp(name, "read") == 0)
@@ -820,19 +827,22 @@ void translateExpMath(node root, Operand place)
     translateExp(n2, t2);
     if ((t1->kind == CONSTANT || t1->kind == COSNTVAR) && (t2->kind == CONSTANT || t2->kind == COSNTVAR))
     {
-        place->kind = COSNTVAR;
         if (strcmp(n1->name, "PLUS") == 0)
-            place->u.var_no = t1->u.var_no + t2->u.var_no;
+            place->u.var_no = t1->u.var_no + t2->u.var_no, place->kind = COSNTVAR;
         else if (strcmp(n1->name, "MINUS") == 0)
-            place->u.var_no = t1->u.var_no - t2->u.var_no;
+            place->u.var_no = t1->u.var_no - t2->u.var_no, place->kind = COSNTVAR;
         else if (strcmp(n1->name, "STAR") == 0)
-            place->u.var_no = t1->u.var_no * t2->u.var_no;
-        else if (strcmp(n1->name, "DIV") == 0)
-            place->u.var_no = t1->u.var_no / t2->u.var_no;
+            place->u.var_no = t1->u.var_no * t2->u.var_no, place->kind = COSNTVAR;
+        else if (strcmp(n1->name, "DIV") == 0) {
+            if(t2->u.var_no != 0)
+                place->u.var_no = t1->u.var_no / t2->u.var_no, place->kind = COSNTVAR;
+            else 
+                newInterCode(MYDIV, place, t1, t2);
+        }
+            
     }
     else
     {
-        InterCode code2 = createCode();
         if (strcmp(n1->name, "PLUS") == 0)
             newInterCode(MYADD, place, t1, t2);
         else if (strcmp(n1->name, "MINUS") == 0)
@@ -950,7 +960,30 @@ LabelNode deleteContinuedLabel(InterCode* q) {
     *q = p;
     return labelHead;
 }
-void optimize1_mergeLabel() {
+
+
+LabelNode createLabelList(InterCode code) {
+    LabelNode labelHead, labelTail;
+    labelHead = labelTail = NULL;
+    InterCode p = code;
+    while(p) {
+        if(p->kind == MYGOTO || p->kind == MYIFGOTO) {
+            LabelNode tmpNode= createLabelNode(p->kind == MYGOTO ? p->u.op_single.op->u.value : p->u.op_triple.label->u.value);
+            if(labelHead == NULL) {
+                labelHead = labelTail = tmpNode;
+                labelTail->link = NULL;
+            }
+            else {
+                labelTail->link = tmpNode;
+                labelTail = tmpNode;
+            }
+        }
+        p = p->next;
+    }
+    return labelHead;
+}
+
+void optimize1_mergeLABEL() {
     InterCode p = head;
     while(p) {
         if(p->kind != MYLABEL)  p = p->next;
@@ -976,5 +1009,69 @@ void optimize1_mergeLabel() {
                 }
             }   
         }
+    }
+}
+
+void optimize2_deleteGOTO() {
+    InterCode p = head;
+    while(p) {
+        if(p->kind == MYGOTO) {
+            InterCode q = p->next;
+            if(q && q->kind == MYLABEL && strcmp(p->u.op_single.op->u.value, q->u.op_single.op->u.value) == 0) 
+                deleteCode(p);
+        }
+        else if(p->kind ==  MYIFGOTO) {
+            // reverse p->u.op_triple.relop
+            InterCode q = p->next;
+            if(q && q->next && q->kind == MYGOTO && strcmp(p->u.op_triple.label->u.value, q->next->u.op_single.op->u.value) == 0) {
+                strcpy(p->u.op_triple.label->u.value, q->u.op_single.op->u.value);
+                deleteCode(q);
+                reverseCodeRELOP(&p);
+            }
+        }
+        p = p->next;
+    }
+    // delete unnecessary label
+    LabelNode labelHead = createLabelList(head);
+    p = head;
+    while(p) {
+        if(p->kind != MYLABEL) p = p->next;
+        else {
+            LabelNode q = labelHead;
+            while(q) {
+                if(strcmp(q->name, p->u.op_single.op->u.value) == 0)
+                    break;
+                q = q->link;
+            }
+            InterCode toDelete = p;
+            p = p->next;
+            if(q == NULL)
+                deleteCode(toDelete);
+        } 
+    }
+}
+
+void reverseCodeRELOP(InterCode* q) {
+    InterCode p = *q;
+    if(strcmp(p->u.op_triple.relop, "==") == 0) 
+        strcpy(p->u.op_triple.relop, "!=");
+    else if(strcmp(p->u.op_triple.relop, "!=") == 0) 
+        strcpy(p->u.op_triple.relop, "==");
+    else if(strcmp(p->u.op_triple.relop, ">") == 0) 
+        strcpy(p->u.op_triple.relop, "<=");
+    else if(strcmp(p->u.op_triple.relop, ">=") == 0) 
+        strcpy(p->u.op_triple.relop, "<");
+    else if(strcmp(p->u.op_triple.relop, "<") == 0) 
+        strcpy(p->u.op_triple.relop, ">=");
+    else if(strcmp(p->u.op_triple.relop, "<=") == 0) 
+        strcpy(p->u.op_triple.relop, ">");
+}
+
+void optimize3_deleteNONEVAR() {
+    InterCode p = head;
+    while(p) {
+        if(p->kind == MYASSIGN && p->u.op_assign.left->kind == NOTHING) 
+            deleteCode(p);
+        p = p->next;
     }
 }

@@ -3,7 +3,8 @@
     "git.ignoreLimitWarning": true
 =======
     "files.associations": {
-        "extern.h": "c"
+        "extern.h": "c",
+        "intercode.h": "c"
     }
 >>>>>>> main
 }
