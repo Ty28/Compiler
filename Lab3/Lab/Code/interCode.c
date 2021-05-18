@@ -70,21 +70,22 @@ void insertCode(InterCode code)
         tail = tail->next;
     }
 }
-void deleteCode(InterCode code) {
-    if(code == head && code== tail)
+void deleteCode(InterCode code)
+{
+    if (code == head && code == tail)
     {
         head = NULL;
-        tail=NULL;
+        tail = NULL;
     }
-    else if(code == head)
+    else if (code == head)
     {
         head = code->next;
         head->prev = NULL;
     }
-    else if(code == tail)
+    else if (code == tail)
     {
         tail = code->prev;
-        tail->next=NULL;
+        tail->next = NULL;
     }
     else
     {
@@ -217,7 +218,8 @@ void newInterCode(int kind, ...)
     va_end(args);
 }
 
-Operand createOperand(int kind, ...) {
+Operand createOperand(int kind, ...)
+{
     va_list args;
     va_start(args, kind);
     Operand op_ = (Operand)malloc(sizeof(struct Operand_));
@@ -228,10 +230,10 @@ Operand createOperand(int kind, ...) {
     case STAR__:
     case FUNCTION__:
     {
-        strcpy(op_->u.value, va_arg(args, char*));
+        strcpy(op_->u.value, va_arg(args, char *));
         break;
     }
-    case CONSTANT: 
+    case CONSTANT:
     {
         op_->u.var_no = va_arg(args, int);
         break;
@@ -327,7 +329,7 @@ void translateFunDec(node root)
     // Operand op_tmp = (Operand)malloc(sizeof(struct Operand_));
     // op_tmp->kind = VARIABLE;
     // strcpy(op_tmp->u.value, root->child->val);
-    Operand op_tmp = createOperand(VARIABLE,root->child->val);
+    Operand op_tmp = createOperand(VARIABLE, root->child->val);
     newInterCode(MYFUNCTION, op_tmp);
     if (getChildNum(root) == 4)
         translateVarList(getKChild(root, 2));
@@ -361,7 +363,7 @@ void translateVarDec_A(node root)
         }
         else if (findTuple->type->kind == STRUCTURE || findTuple->type->kind == STRUCTVAR)
         {
-            structNum ++;
+            structNum++;
             // printf("Cannot translate: Code contains variables or paraneters of structure type\n");
         }
     }
@@ -377,7 +379,7 @@ void translateVarDec_B(node root)
         Symbol findTuple = findSymbol(n0->val);
         if (findTuple->type->kind == STRUCTURE || findTuple->type->kind == STRUCTVAR)
         {
-            structNum ++;
+            structNum++;
             // printf("Cannot translate: Code contains variables or paraneters of structure type\n");
         }
         else if (findTuple->type->kind == ARRAY)
@@ -435,7 +437,7 @@ void translateDec_A(node root)
         translateVarDec_B(getKChild(root, 0));
     else
     {
-        Operand op_left = createOperand(VARIABLE,root->child->child->val);
+        Operand op_left = createOperand(VARIABLE, root->child->child->val);
         Operand op_right = createOpTmp();
         translateExp(getKChild(root, 2), op_right);
         newInterCode(MYASSIGN, op_left, op_right);
@@ -636,7 +638,7 @@ void translateExp(node root, Operand op)
             {
                 // i = &addr1
                 Operand addr1 = (Operand)malloc(sizeof(struct Operand_));
-                if(op_tmp->kind == ADDRESS)
+                if (op_tmp->kind == ADDRESS)
                     addr1->kind = ADDRESS;
                 else
                     addr1->kind = VARIABLE;
@@ -647,7 +649,7 @@ void translateExp(node root, Operand op)
 
                 // j = &addr2
                 Operand addr2 = (Operand)malloc(sizeof(struct Operand_));
-                if(t1->kind == ADDRESS)
+                if (t1->kind == ADDRESS)
                     addr2->kind = ADDRESS;
                 else
                     addr2->kind = VARIABLE;
@@ -698,7 +700,7 @@ void translateExp(node root, Operand op)
             translateExpCommon(root, op);
         }
         else if (strcmp(n1->name, "DOT") == 0)
-        { 
+        {
             structNum++;
             // printf("cannot translate struct\n");
         }
@@ -750,7 +752,8 @@ void translateExpFunc(node root, Operand place)
     strcpy(name, root->child->val);
     Symbol findTuple = findSymbol(name);
     int childNum = getChildNum(root);
-    if(place->kind == NOTHING) {
+    if (place->kind == NOTHING)
+    {
         free(place);
         place = createOpTmp();
     }
@@ -790,20 +793,23 @@ void translateExpFunc(node root, Operand place)
 
 argNode translateArgs(node root)
 {
+    // argNode argListHead = NULL;
+    // while (getChildNum(root) > 1)
+    // {
+    //     Operand t1 = createOpTmp();
+    //     node n0 = getKChild(root, 0);
+    //     translateExp(n0, t1);
+    //     if (t1->kind == ADDRESS && findFPMember(t1->u.value, 0))
+    //         t1->kind = VARIABLE;
+    //     argNode node1 = (argNode)malloc(sizeof(struct argNode_));
+    //     node1->op = t1;
+    //     node1->next = argListHead;
+    //     argListHead = node1;
+    //     root = getKChild(root, 2);
+    // }
     argNode argListHead = NULL;
-    while (getChildNum(root) > 1)
-    {
-        Operand t1 = createOpTmp();
-        node n0 = getKChild(root, 0);
-        translateExp(n0, t1);
-        if (t1->kind == ADDRESS && findFPMember(t1->u.value, 0))
-            t1->kind = VARIABLE;
-        argNode node1 = (argNode)malloc(sizeof(struct argNode_));
-        node1->op = t1;
-        node1->next = argListHead;
-        argListHead = node1;
-        root = getKChild(root, 2);
-    }
+    if (getChildNum(root) > 1)
+        argListHead = translateArgs(getKChild(root, 2)); //argListHead represents the head of the args after current Exp
     Operand t1 = createOpTmp();
     node n0 = getKChild(root, 0);
     translateExp(n0, t1);
@@ -811,8 +817,15 @@ argNode translateArgs(node root)
         t1->kind = VARIABLE;
     argNode node1 = (argNode)malloc(sizeof(struct argNode_));
     node1->op = t1;
-    node1->next = argListHead;
-    argListHead = node1;
+    if (argListHead == NULL)
+        argListHead = node1;
+    else
+    {
+        argNode argListTail = argListHead;
+        while (argListTail->next != NULL)
+            argListTail = argListTail->next;
+        argListTail->next = node1;
+    }
     return argListHead;
 }
 
@@ -833,13 +846,13 @@ void translateExpMath(node root, Operand place)
             place->u.var_no = t1->u.var_no - t2->u.var_no, place->kind = COSNTVAR;
         else if (strcmp(n1->name, "STAR") == 0)
             place->u.var_no = t1->u.var_no * t2->u.var_no, place->kind = COSNTVAR;
-        else if (strcmp(n1->name, "DIV") == 0) {
-            if(t2->u.var_no != 0)
+        else if (strcmp(n1->name, "DIV") == 0)
+        {
+            if (t2->u.var_no != 0)
                 place->u.var_no = t1->u.var_no / t2->u.var_no, place->kind = COSNTVAR;
-            else 
+            else
                 newInterCode(MYDIV, place, t1, t2);
         }
-            
     }
     else
     {
@@ -926,29 +939,31 @@ void translateCond(node root, int label_true, int label_false)
         Operand t1 = createOpTmp();
         translateExp(root, t1);
         Operand t2 = createOperand(CONSTANT, 0);
-        
+
         newInterCode(MYIFGOTO, t1, "!=", t2, copyOpLabel(label_true));
 
         newInterCode(MYGOTO, copyOpLabel(label_false));
     }
 }
 
-LabelNode createLabelNode(char* labelName) {
+LabelNode createLabelNode(char *labelName)
+{
     LabelNode lnode = (LabelNode)malloc(sizeof(struct LabelNode_));
     strcpy(lnode->name, labelName);
     lnode->link = NULL;
     return lnode;
 }
 
-LabelNode deleteContinuedLabel(InterCode* q) {
+LabelNode deleteContinuedLabel(InterCode *q)
+{
     LabelNode labelHead, labelTail;
     labelHead = labelTail = NULL;
     InterCode p = *q;
     LabelNode label_ = createLabelNode(p->u.op_single.op->u.value);
     labelHead = labelTail = label_;
-    labelTail->link=NULL;
+    labelTail->link = NULL;
     p = p->next;
-    while(p && p->kind == MYLABEL)
+    while (p && p->kind == MYLABEL)
     {
         LabelNode label_ = createLabelNode(p->u.op_single.op->u.value);
         labelTail->link = label_;
@@ -961,19 +976,23 @@ LabelNode deleteContinuedLabel(InterCode* q) {
     return labelHead;
 }
 
-
-LabelNode createLabelList(InterCode code) {
+LabelNode createLabelList(InterCode code)
+{
     LabelNode labelHead, labelTail;
     labelHead = labelTail = NULL;
     InterCode p = code;
-    while(p) {
-        if(p->kind == MYGOTO || p->kind == MYIFGOTO) {
-            LabelNode tmpNode= createLabelNode(p->kind == MYGOTO ? p->u.op_single.op->u.value : p->u.op_triple.label->u.value);
-            if(labelHead == NULL) {
+    while (p)
+    {
+        if (p->kind == MYGOTO || p->kind == MYIFGOTO)
+        {
+            LabelNode tmpNode = createLabelNode(p->kind == MYGOTO ? p->u.op_single.op->u.value : p->u.op_triple.label->u.value);
+            if (labelHead == NULL)
+            {
                 labelHead = labelTail = tmpNode;
                 labelTail->link = NULL;
             }
-            else {
+            else
+            {
                 labelTail->link = tmpNode;
                 labelTail = tmpNode;
             }
@@ -983,22 +1002,31 @@ LabelNode createLabelList(InterCode code) {
     return labelHead;
 }
 
-void optimize1_mergeLABEL() {
+void optimize1_mergeLABEL()
+{
     InterCode p = head;
-    while(p) {
-        if(p->kind != MYLABEL)  p = p->next;
-        else {
+    while (p)
+    {
+        if (p->kind != MYLABEL)
+            p = p->next;
+        else
+        {
             LabelNode labelHead = deleteContinuedLabel(&p);
             // delete continued label and store into a list called labelHead
-            if(labelHead->link) {
+            if (labelHead->link)
+            {
                 InterCode tmp = head;
-                while(tmp) {
-                    if(tmp->kind == MYGOTO || tmp->kind == MYIFGOTO) {
+                while (tmp)
+                {
+                    if (tmp->kind == MYGOTO || tmp->kind == MYIFGOTO)
+                    {
                         char name[CHARMAXSIZE];
                         strcpy(name, (tmp->kind == MYGOTO) ? tmp->u.op_single.op->u.value : tmp->u.op_triple.label->u.value);
                         LabelNode q = labelHead;
-                        while(q) {
-                            if(strcmp(q->name, name) == 0) {
+                        while (q)
+                        {
+                            if (strcmp(q->name, name) == 0)
+                            {
                                 strcpy((tmp->kind == MYGOTO) ? tmp->u.op_single.op->u.value : tmp->u.op_triple.label->u.value, labelHead->name);
                                 break;
                             }
@@ -1007,23 +1035,28 @@ void optimize1_mergeLABEL() {
                     }
                     tmp = tmp->next;
                 }
-            }   
+            }
         }
     }
 }
 
-void optimize2_deleteGOTO() {
+void optimize2_deleteGOTO()
+{
     InterCode p = head;
-    while(p) {
-        if(p->kind == MYGOTO) {
+    while (p)
+    {
+        if (p->kind == MYGOTO)
+        {
             InterCode q = p->next;
-            if(q && q->kind == MYLABEL && strcmp(p->u.op_single.op->u.value, q->u.op_single.op->u.value) == 0) 
+            if (q && q->kind == MYLABEL && strcmp(p->u.op_single.op->u.value, q->u.op_single.op->u.value) == 0)
                 deleteCode(p);
         }
-        else if(p->kind ==  MYIFGOTO) {
+        else if (p->kind == MYIFGOTO)
+        {
             // reverse p->u.op_triple.relop
             InterCode q = p->next;
-            if(q && q->next && q->kind == MYGOTO && strcmp(p->u.op_triple.label->u.value, q->next->u.op_single.op->u.value) == 0) {
+            if (q && q->next && q->kind == MYGOTO && strcmp(p->u.op_triple.label->u.value, q->next->u.op_single.op->u.value) == 0)
+            {
                 strcpy(p->u.op_triple.label->u.value, q->u.op_single.op->u.value);
                 deleteCode(q);
                 reverseCodeRELOP(&p);
@@ -1034,43 +1067,50 @@ void optimize2_deleteGOTO() {
     // delete unnecessary label
     LabelNode labelHead = createLabelList(head);
     p = head;
-    while(p) {
-        if(p->kind != MYLABEL) p = p->next;
-        else {
+    while (p)
+    {
+        if (p->kind != MYLABEL)
+            p = p->next;
+        else
+        {
             LabelNode q = labelHead;
-            while(q) {
-                if(strcmp(q->name, p->u.op_single.op->u.value) == 0)
+            while (q)
+            {
+                if (strcmp(q->name, p->u.op_single.op->u.value) == 0)
                     break;
                 q = q->link;
             }
             InterCode toDelete = p;
             p = p->next;
-            if(q == NULL)
+            if (q == NULL)
                 deleteCode(toDelete);
-        } 
+        }
     }
 }
 
-void reverseCodeRELOP(InterCode* q) {
+void reverseCodeRELOP(InterCode *q)
+{
     InterCode p = *q;
-    if(strcmp(p->u.op_triple.relop, "==") == 0) 
+    if (strcmp(p->u.op_triple.relop, "==") == 0)
         strcpy(p->u.op_triple.relop, "!=");
-    else if(strcmp(p->u.op_triple.relop, "!=") == 0) 
+    else if (strcmp(p->u.op_triple.relop, "!=") == 0)
         strcpy(p->u.op_triple.relop, "==");
-    else if(strcmp(p->u.op_triple.relop, ">") == 0) 
+    else if (strcmp(p->u.op_triple.relop, ">") == 0)
         strcpy(p->u.op_triple.relop, "<=");
-    else if(strcmp(p->u.op_triple.relop, ">=") == 0) 
+    else if (strcmp(p->u.op_triple.relop, ">=") == 0)
         strcpy(p->u.op_triple.relop, "<");
-    else if(strcmp(p->u.op_triple.relop, "<") == 0) 
+    else if (strcmp(p->u.op_triple.relop, "<") == 0)
         strcpy(p->u.op_triple.relop, ">=");
-    else if(strcmp(p->u.op_triple.relop, "<=") == 0) 
+    else if (strcmp(p->u.op_triple.relop, "<=") == 0)
         strcpy(p->u.op_triple.relop, ">");
 }
 
-void optimize3_deleteNONEVAR() {
+void optimize3_deleteNONEVAR()
+{
     InterCode p = head;
-    while(p) {
-        if(p->kind == MYASSIGN && p->u.op_assign.left->kind == NOTHING) 
+    while (p)
+    {
+        if (p->kind == MYASSIGN && p->u.op_assign.left->kind == NOTHING)
             deleteCode(p);
         p = p->next;
     }
