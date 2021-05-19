@@ -19,9 +19,9 @@ int main(int argc, char** argv) {
             strcpy(fileName, "out.ir");
         else 
             strcpy(fileName, argv[2]);
-        optimize1_mergeLABEL();
-        optimize2_deleteGOTO();
-        optimize3_deleteNONEVAR();
+        optimize_deleteGOTO();
+        optimize_deleteNONEVAR();
+        optimize_mergeLABEL();
         if(structNum > 0)
             printf("Cannot translate: Code contains variables or paraneters of structure type\n");
         printCode(fileName);

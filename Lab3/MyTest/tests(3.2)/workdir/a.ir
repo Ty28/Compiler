@@ -8,9 +8,8 @@ IF a != #0 GOTO label1
 tt17 := #4 * #2
 tt13 := &b + tt17
 tt12 := *tt13 + #9
-IF tt12 == #0 GOTO label2
+IF tt12 == #0 GOTO label1
 LABEL label1 :
-LABEL label2 :
 tt20 := #0
 IF #2 <= #1 GOTO label5
 tt20 := #1

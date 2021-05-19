@@ -150,11 +150,20 @@ void translateCond(node root, int label_true, int label_false);
 argNode translateArgs(node root);
 
 // optimize InterCode
-void optimize1_mergeLABEL();
-void optimize2_deleteGOTO();
-void optimize3_deleteNONEVAR();
+void optimize_mergeLABEL();
+void optimize_deleteGOTO();
+void optimize_deleteNONEVAR();
 LabelNode deleteContinuedLabel(InterCode* q);
 LabelNode createLabelNode(char* labelName);
 LabelNode createLabelList(InterCode code);
 void reverseCodeRELOP(InterCode* q);
+// void optimize_delete();
+// InterCode nextInterCode(InterCode code);
+// Operand getLeftOperand(InterCode code);
+// int isArrayAddress(InterCode code);
+// int isLeftOperand(InterCode code);
+// int isLeftOperandTemp(InterCode code);
+// int isOperandEqual(Operand op1, Operand op2);
+// int isCodeEqual(InterCode code1, InterCode code2);
+// int isCandidate(InterCode candidate, InterCode code);
 #endif
