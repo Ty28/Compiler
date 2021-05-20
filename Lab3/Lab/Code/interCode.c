@@ -1116,3 +1116,81 @@ void optimize_deleteNONEVAR()
         p = p->next;
     }
 }
+
+void optimize_deleteCONST() {
+    InterCode p = head;
+    while(p) 
+    {
+        if(p->kind == MYASSIGN && (p->u.op_assign.right->kind == CONSTANT || p->u.op_assign.right->kind == COSNTVAR) && (p->u.op_assign.left->kind == VARIABLE || p->u.op_assign.right->kind == TEMPVAR)) {
+
+            int insteadConst = p->u.op_assign.right->u.var_no;
+            char insteadName[CHARMAXSIZE];
+            strcpy(insteadName, p->u.op_assign.left->u.value);
+            InterCode q = p->next;
+            InterCode final = nextInterCode(p);
+            while(q != final) 
+            {
+                if(q->kind == MYREAD) {
+                    if(strcmp(q->u.op_single.op->u.value, insteadName) == 0)
+                    {
+                        break;
+                    }
+                }
+                if(q->kind == MYRETURN || q->kind == MYWRITE) 
+                {
+                    if(strcmp(q->u.op_single.op->u.value, insteadName) == 0)
+                    {
+                        q->u.op_single.op->kind = COSNTVAR;
+                        q->u.op_single.op->u.var_no = insteadConst;
+                    }
+                }
+                else if(q->kind == MYASSIGN) {
+                    if(strcmp(q->u.op_assign.right->u.value, insteadName) == 0) {
+                        q->u.op_assign.right->kind = COSNTVAR;
+                        q->u.op_assign.right->u.var_no = insteadConst;
+                    }
+                    if(strcmp(q->u.op_assign.left->u.value, insteadName) == 0)
+                        break;
+                }
+                else if(q->kind == MYADD || q->kind == MYSUB || q->kind == MYMUL || q->kind == MYDIV) {
+                    if(strcmp(q->u.op_binary.op1->u.value, insteadName) == 0) {
+                        q->u.op_binary.op1->kind = COSNTVAR;
+                        q->u.op_binary.op1->u.var_no = insteadConst;
+                    }
+                    if(strcmp(q->u.op_binary.op2->u.value, insteadName) == 0) {
+                        q->u.op_binary.op2->kind = COSNTVAR;
+                        q->u.op_binary.op2->u.var_no = insteadConst;
+                    }
+                    if(strcmp(q->u.op_binary.result->u.value, insteadName) == 0) {
+                        break;
+                    }
+                }
+                q = q->next;
+            }
+            if(q == final)
+                p = p->next;
+            else
+            {
+                InterCode toDelete = p;
+                p = p->next;
+                deleteCode(toDelete);
+            }
+            
+        }
+        else 
+            p = p->next;
+    }
+}
+
+InterCode nextInterCode(InterCode code) {
+    if(code == NULL || code->next)
+        return NULL;
+    InterCode cur = code->next, pre = code;
+    while(cur) {
+        if(cur->kind == MYLABEL || cur->kind == MYFUNCTION ||pre->kind == MYGOTO || pre->kind == MYIFGOTO)
+            return cur;
+        pre = cur;
+        cur = cur->next;
+    }
+    return NULL;
+}

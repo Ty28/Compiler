@@ -22,9 +22,11 @@ int main(int argc, char** argv) {
         optimize_deleteGOTO();
         optimize_deleteNONEVAR();
         optimize_mergeLABEL();
+        // optimize_deleteCONST();
         if(structNum > 0)
             printf("Cannot translate: Code contains variables or paraneters of structure type\n");
-        printCode(fileName);
+        else
+            printCode(fileName);
     }
     return 0;
 }

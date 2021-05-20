@@ -157,4 +157,6 @@ LabelNode deleteContinuedLabel(InterCode* q);
 LabelNode createLabelNode(char* labelName);
 LabelNode createLabelList(InterCode code);
 void reverseCodeRELOP(InterCode* q);
+void optimize_deleteCONST();
+InterCode nextInterCode(InterCode code);
 #endif
