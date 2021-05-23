@@ -1,1 +1,1 @@
-RUN=../../Lab/Code/parser
+RUN=./parser
