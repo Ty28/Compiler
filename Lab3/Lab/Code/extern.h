@@ -6,6 +6,7 @@
 #include "semantic.h"
 #include "interCode.h"
 #include "interCodePrint.h"
+#include <ctype.h>
 
 extern int yylex(void);
 extern int yyparse(void);
@@ -29,4 +30,5 @@ extern InterCode tail;
 extern int labelNum;
 extern int tNum;
 extern int structNum;
+extern int varNum;
 #endif

@@ -296,7 +296,7 @@ int findFPMember(char *name, int _insert)
 void initInterCode(node root)
 {
     head = tail = NULL;
-    tNum = labelNum = structNum = 0;
+    tNum = labelNum = structNum = varNum =0;
     FPTable = createFPTable();
     translateProgram(root);
 }
@@ -1193,4 +1193,76 @@ InterCode nextInterCode(InterCode code) {
         cur = cur->next;
     }
     return NULL;
+}
+
+void insteadUnderlineVar() {
+    InterCode p = head;
+    while(p) 
+    {
+        if(p->kind == MYPARAM || p->kind == MYREAD)  
+        {
+            if(!isalpha(p->u.op_single.op->u.value[0])) {
+                char target[CHARMAXSIZE];
+                strcpy(target, p->u.op_single.op->u.value);
+                varNum++;
+                char instead[CHARMAXSIZE];
+                strcpy(instead, "vv");
+                char str[CHARMAXSIZE];
+                int2String(varNum, str);
+                strcat(instead, str);
+                strcpy(p->u.op_single.op->u.value, instead);
+                InterCode q = p->next;
+                while(q) {
+                    switch(q->kind) 
+                    {
+                        case MYFUNCTION :
+                        case MYPARAM:
+                        case MYRETURN:
+                        case MYLABEL:
+                        case MYGOTO:
+                        case MYREAD:
+                        case MYWRITE:
+                        case MYARG:
+                            if(strcmp(q->u.op_single.op->u.value, target) == 0)
+                                strcpy(q->u.op_single.op->u.value, instead);
+                            break;
+                        case MYASSIGN:
+                        case MYCALL:
+                            if(strcmp(q->u.op_assign.left->u.value, target) == 0)
+                                strcpy(q->u.op_assign.left->u.value, instead);
+                            if(strcmp(q->u.op_assign.right->u.value, target) == 0)
+                                strcpy(q->u.op_assign.right->u.value, instead);
+                            break;
+                        case MYDEC:
+                            if(strcmp(q->u.op_dec.op->u.value, target) == 0)
+                                strcpy(q->u.op_dec.op->u.value, instead);
+                            break;
+                        case MYADD:
+                        case MYSUB:
+                        case MYMUL:
+                        case MYDIV:
+                            if(strcmp(q->u.op_binary.op1->u.value, target) == 0)
+                                strcpy(q->u.op_binary.op1->u.value, instead);
+                            if(strcmp(q->u.op_binary.op2->u.value, target) == 0)
+                                strcpy(q->u.op_binary.op2->u.value, instead);
+                            if(strcmp(q->u.op_binary.result->u.value, target) == 0)
+                                strcpy(q->u.op_binary.result->u.value, instead);
+                            break;
+                        case MYIFGOTO:
+                            if(strcmp(q->u.op_triple.x->u.value, target) == 0)
+                                strcpy(q->u.op_triple.x->u.value, instead);
+                            if(strcmp(q->u.op_triple.y->u.value, target) == 0)
+                                strcpy(q->u.op_triple.y->u.value, instead);
+                            if(strcmp(q->u.op_triple.label->u.value, target) == 0)
+                                strcpy(q->u.op_triple.label->u.value, instead);
+                            break;
+                        default:
+                            break;
+                    }
+                    q = q->next;
+                }
+            }
+        }
+        p = p->next;
+    }
 }

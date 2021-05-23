@@ -12,6 +12,7 @@ InterCode head;
 InterCode tail;
 int labelNum;
 int tNum;
+int varNum;
 int structNum;
 struct Operand_
 {
@@ -159,4 +160,5 @@ LabelNode createLabelList(InterCode code);
 void reverseCodeRELOP(InterCode* q);
 void optimize_deleteCONST();
 InterCode nextInterCode(InterCode code);
+void insteadUnderlineVar() ;
 #endif
