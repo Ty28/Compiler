@@ -45,6 +45,7 @@ struct SymbolTuple
 {
     char name[CHARMAXSIZE];
     Type type;
+    int var_no;
     Symbol hashLink;
 };
 

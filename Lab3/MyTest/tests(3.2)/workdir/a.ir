@@ -1,12 +1,12 @@
 FUNCTION main :
-DEC b 40
-a := #1
+DEC vv1 40
+vv2 := #1
 tt6 := #4 * #5
-nothing := &b + tt6
-nothing := a + #6
-IF a != #0 GOTO label1
+nothing := &vv1 + tt6
+nothing := vv2 + #6
+IF vv2 != #0 GOTO label1
 tt17 := #4 * #2
-tt13 := &b + tt17
+tt13 := &vv1 + tt17
 tt12 := *tt13 + #9
 IF tt12 == #0 GOTO label1
 LABEL label1 :

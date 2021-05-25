@@ -355,8 +355,22 @@ void translateVarDec_A(node root)
     if (strcmp(n0->name, "ID") == 0)
     {
         Symbol findTuple = findSymbol(n0->val);
-        Operand op_tmp = createOperand(VARIABLE, n0->val);
-        findFPMember(n0->val, 1);
+        char varName[CHARMAXSIZE];
+        if(findTuple->var_no == -1) {
+            findTuple->var_no = (++varNum);
+            strcpy(varName, "vv");
+            char str[CHARMAXSIZE];
+            int2String(varNum, str);
+            strcat(varName, str);
+        }
+        else {
+            strcpy(varName, "vv");
+            char str[CHARMAXSIZE];
+            int2String(findTuple->var_no, str);
+            strcat(varName, str);
+        }
+        Operand op_tmp = createOperand(VARIABLE, varName);
+        findFPMember(varName, 1);
         newInterCode(MYPARAM, op_tmp);
         if (findTuple->type->kind == ARRAY)
         {
@@ -387,7 +401,21 @@ void translateVarDec_B(node root)
         {
             //REVISE:delete multi-dimensional array process
             int size = calculateSize(findTuple->type);
-            Operand op_tmp = createOperand(VARIABLE, n0->val);
+            char varName[CHARMAXSIZE];
+            if(findTuple->var_no == -1) {
+                findTuple->var_no = (++varNum);
+                strcpy(varName, "vv");
+                char str[CHARMAXSIZE];
+                int2String(varNum, str);
+                strcat(varName, str);
+            }
+            else {
+                strcpy(varName, "vv");
+                char str[CHARMAXSIZE];
+                int2String(findTuple->var_no, str);
+                strcat(varName, str);
+            }
+            Operand op_tmp = createOperand(VARIABLE, varName);
             newInterCode(MYDEC, op_tmp, size);
         }
     }
@@ -438,7 +466,22 @@ void translateDec_A(node root)
         translateVarDec_B(getKChild(root, 0));
     else
     {
-        Operand op_left = createOperand(VARIABLE, root->child->child->val);
+        Symbol findTuple = findSymbol(root->child->child->val);
+        char varName[CHARMAXSIZE];
+        if(findTuple->var_no == -1) {
+            findTuple->var_no = (++varNum);
+            strcpy(varName, "vv");
+            char str[CHARMAXSIZE];
+            int2String(varNum, str);
+            strcat(varName, str);
+        }
+        else {
+            strcpy(varName, "vv");
+            char str[CHARMAXSIZE];
+            int2String(findTuple->var_no, str);
+            strcat(varName, str);
+        }
+        Operand op_left = createOperand(VARIABLE, varName);
         Operand op_right = createOpTmp();
         translateExp(getKChild(root, 2), op_right);
         newInterCode(MYASSIGN, op_left, op_right);
@@ -577,7 +620,21 @@ void translateExp(node root, Operand op)
                 op->kind = ADDRESS;
             else
                 op->kind = VARIABLE;
-            strcpy(op->u.value, n0->val);
+            char varName[CHARMAXSIZE];
+            if(findTuple->var_no == -1) {
+                findTuple->var_no = (++varNum);
+                strcpy(varName, "vv");
+                char str[CHARMAXSIZE];
+                int2String(varNum, str);
+                strcat(varName, str);
+            }
+            else {
+                strcpy(varName, "vv");
+                char str[CHARMAXSIZE];
+                int2String(findTuple->var_no, str);
+                strcat(varName, str);
+            }
+            strcpy(op->u.value, varName);
         }
         else if (strcmp(n0->name, "INT") == 0)
         {
@@ -619,7 +676,22 @@ void translateExp(node root, Operand op)
             if (op_tmp->kind == COSNTVAR)
             {
                 op_tmp->kind = VARIABLE;
-                strcpy(op_tmp->u.value, n0->child->val);
+                Symbol findTuple = findSymbol(n0->child->val);
+                char varName[CHARMAXSIZE];
+                if(findTuple->var_no == -1) {
+                    findTuple->var_no = (++varNum);
+                    strcpy(varName, "vv");
+                    char str[CHARMAXSIZE];
+                    int2String(varNum, str);
+                    strcat(varName, str);
+                }
+                else {
+                    strcpy(varName, "vv");
+                    char str[CHARMAXSIZE];
+                    int2String(findTuple->var_no, str);
+                    strcat(varName, str);
+                }
+                strcpy(op_tmp->u.value, varName);
             }
             Operand t1 = createOpTmp();
             translateExp(n2, t1);
@@ -907,7 +979,7 @@ void translateCond(node root, int label_true, int label_false)
 
         translateExp(n0, t1);
         translateExp(n2, t2);
-
+        
         newInterCode(MYIFGOTO, t1, n1->val, t2, copyOpLabel(label_true));
 
         newInterCode(MYGOTO, copyOpLabel(label_false));
@@ -1117,152 +1189,152 @@ void optimize_deleteNONEVAR()
     }
 }
 
-void optimize_deleteCONST() {
-    InterCode p = head;
-    while(p) 
-    {
-        if(p->kind == MYASSIGN && (p->u.op_assign.right->kind == CONSTANT || p->u.op_assign.right->kind == COSNTVAR) && (p->u.op_assign.left->kind == VARIABLE || p->u.op_assign.right->kind == TEMPVAR)) {
+// void optimize_deleteCONST() {
+//     InterCode p = head;
+//     while(p) 
+//     {
+//         if(p->kind == MYASSIGN && (p->u.op_assign.right->kind == CONSTANT || p->u.op_assign.right->kind == COSNTVAR) && (p->u.op_assign.left->kind == VARIABLE || p->u.op_assign.right->kind == TEMPVAR)) {
 
-            int insteadConst = p->u.op_assign.right->u.var_no;
-            char insteadName[CHARMAXSIZE];
-            strcpy(insteadName, p->u.op_assign.left->u.value);
-            InterCode q = p->next;
-            InterCode final = nextInterCode(p);
-            while(q != final) 
-            {
-                if(q->kind == MYREAD) {
-                    if(strcmp(q->u.op_single.op->u.value, insteadName) == 0)
-                    {
-                        break;
-                    }
-                }
-                if(q->kind == MYRETURN || q->kind == MYWRITE) 
-                {
-                    if(strcmp(q->u.op_single.op->u.value, insteadName) == 0)
-                    {
-                        q->u.op_single.op->kind = COSNTVAR;
-                        q->u.op_single.op->u.var_no = insteadConst;
-                    }
-                }
-                else if(q->kind == MYASSIGN) {
-                    if(strcmp(q->u.op_assign.right->u.value, insteadName) == 0) {
-                        q->u.op_assign.right->kind = COSNTVAR;
-                        q->u.op_assign.right->u.var_no = insteadConst;
-                    }
-                    if(strcmp(q->u.op_assign.left->u.value, insteadName) == 0)
-                        break;
-                }
-                else if(q->kind == MYADD || q->kind == MYSUB || q->kind == MYMUL || q->kind == MYDIV) {
-                    if(strcmp(q->u.op_binary.op1->u.value, insteadName) == 0) {
-                        q->u.op_binary.op1->kind = COSNTVAR;
-                        q->u.op_binary.op1->u.var_no = insteadConst;
-                    }
-                    if(strcmp(q->u.op_binary.op2->u.value, insteadName) == 0) {
-                        q->u.op_binary.op2->kind = COSNTVAR;
-                        q->u.op_binary.op2->u.var_no = insteadConst;
-                    }
-                    if(strcmp(q->u.op_binary.result->u.value, insteadName) == 0) {
-                        break;
-                    }
-                }
-                q = q->next;
-            }
-            if(q == final)
-                p = p->next;
-            else
-            {
-                InterCode toDelete = p;
-                p = p->next;
-                deleteCode(toDelete);
-            }
+//             int insteadConst = p->u.op_assign.right->u.var_no;
+//             char insteadName[CHARMAXSIZE];
+//             strcpy(insteadName, p->u.op_assign.left->u.value);
+//             InterCode q = p->next;
+//             InterCode final = nextInterCode(p);
+//             while(q != final) 
+//             {
+//                 if(q->kind == MYREAD) {
+//                     if(strcmp(q->u.op_single.op->u.value, insteadName) == 0)
+//                     {
+//                         break;
+//                     }
+//                 }
+//                 if(q->kind == MYRETURN || q->kind == MYWRITE) 
+//                 {
+//                     if(strcmp(q->u.op_single.op->u.value, insteadName) == 0)
+//                     {
+//                         q->u.op_single.op->kind = COSNTVAR;
+//                         q->u.op_single.op->u.var_no = insteadConst;
+//                     }
+//                 }
+//                 else if(q->kind == MYASSIGN) {
+//                     if(strcmp(q->u.op_assign.right->u.value, insteadName) == 0) {
+//                         q->u.op_assign.right->kind = COSNTVAR;
+//                         q->u.op_assign.right->u.var_no = insteadConst;
+//                     }
+//                     if(strcmp(q->u.op_assign.left->u.value, insteadName) == 0)
+//                         break;
+//                 }
+//                 else if(q->kind == MYADD || q->kind == MYSUB || q->kind == MYMUL || q->kind == MYDIV) {
+//                     if(strcmp(q->u.op_binary.op1->u.value, insteadName) == 0) {
+//                         q->u.op_binary.op1->kind = COSNTVAR;
+//                         q->u.op_binary.op1->u.var_no = insteadConst;
+//                     }
+//                     if(strcmp(q->u.op_binary.op2->u.value, insteadName) == 0) {
+//                         q->u.op_binary.op2->kind = COSNTVAR;
+//                         q->u.op_binary.op2->u.var_no = insteadConst;
+//                     }
+//                     if(strcmp(q->u.op_binary.result->u.value, insteadName) == 0) {
+//                         break;
+//                     }
+//                 }
+//                 q = q->next;
+//             }
+//             if(q == final)
+//                 p = p->next;
+//             else
+//             {
+//                 InterCode toDelete = p;
+//                 p = p->next;
+//                 deleteCode(toDelete);
+//             }
             
-        }
-        else 
-            p = p->next;
-    }
-}
+//         }
+//         else 
+//             p = p->next;
+//     }
+// }
 
-InterCode nextInterCode(InterCode code) {
-    if(code == NULL || code->next)
-        return NULL;
-    InterCode cur = code->next, pre = code;
-    while(cur) {
-        if(cur->kind == MYLABEL || cur->kind == MYFUNCTION ||pre->kind == MYGOTO || pre->kind == MYIFGOTO)
-            return cur;
-        pre = cur;
-        cur = cur->next;
-    }
-    return NULL;
-}
+// InterCode nextInterCode(InterCode code) {
+//     if(code == NULL || code->next)
+//         return NULL;
+//     InterCode cur = code->next, pre = code;
+//     while(cur) {
+//         if(cur->kind == MYLABEL || cur->kind == MYFUNCTION ||pre->kind == MYGOTO || pre->kind == MYIFGOTO)
+//             return cur;
+//         pre = cur;
+//         cur = cur->next;
+//     }
+//     return NULL;
+// }
 
-void insteadUnderlineVar() {
-    InterCode p = head;
-    while(p) 
-    {
-        if(p->kind == MYPARAM || p->kind == MYREAD)  
-        {
-            if(!isalpha(p->u.op_single.op->u.value[0])) {
-                char target[CHARMAXSIZE];
-                strcpy(target, p->u.op_single.op->u.value);
-                varNum++;
-                char instead[CHARMAXSIZE];
-                strcpy(instead, "vv");
-                char str[CHARMAXSIZE];
-                int2String(varNum, str);
-                strcat(instead, str);
-                strcpy(p->u.op_single.op->u.value, instead);
-                InterCode q = p->next;
-                while(q) {
-                    switch(q->kind) 
-                    {
-                        case MYFUNCTION :
-                        case MYPARAM:
-                        case MYRETURN:
-                        case MYLABEL:
-                        case MYGOTO:
-                        case MYREAD:
-                        case MYWRITE:
-                        case MYARG:
-                            if(strcmp(q->u.op_single.op->u.value, target) == 0)
-                                strcpy(q->u.op_single.op->u.value, instead);
-                            break;
-                        case MYASSIGN:
-                        case MYCALL:
-                            if(strcmp(q->u.op_assign.left->u.value, target) == 0)
-                                strcpy(q->u.op_assign.left->u.value, instead);
-                            if(strcmp(q->u.op_assign.right->u.value, target) == 0)
-                                strcpy(q->u.op_assign.right->u.value, instead);
-                            break;
-                        case MYDEC:
-                            if(strcmp(q->u.op_dec.op->u.value, target) == 0)
-                                strcpy(q->u.op_dec.op->u.value, instead);
-                            break;
-                        case MYADD:
-                        case MYSUB:
-                        case MYMUL:
-                        case MYDIV:
-                            if(strcmp(q->u.op_binary.op1->u.value, target) == 0)
-                                strcpy(q->u.op_binary.op1->u.value, instead);
-                            if(strcmp(q->u.op_binary.op2->u.value, target) == 0)
-                                strcpy(q->u.op_binary.op2->u.value, instead);
-                            if(strcmp(q->u.op_binary.result->u.value, target) == 0)
-                                strcpy(q->u.op_binary.result->u.value, instead);
-                            break;
-                        case MYIFGOTO:
-                            if(strcmp(q->u.op_triple.x->u.value, target) == 0)
-                                strcpy(q->u.op_triple.x->u.value, instead);
-                            if(strcmp(q->u.op_triple.y->u.value, target) == 0)
-                                strcpy(q->u.op_triple.y->u.value, instead);
-                            if(strcmp(q->u.op_triple.label->u.value, target) == 0)
-                                strcpy(q->u.op_triple.label->u.value, instead);
-                            break;
-                        default:
-                            break;
-                    }
-                    q = q->next;
-                }
-            }
-        }
-        p = p->next;
-    }
-}
+// void insteadUnderlineVar() {
+//     InterCode p = head;
+//     while(p) 
+//     {
+//         if(p->kind == MYPARAM || p->kind == MYREAD)  
+//         {
+//             if(!isalpha(p->u.op_single.op->u.value[0])) {
+//                 char target[CHARMAXSIZE];
+//                 strcpy(target, p->u.op_single.op->u.value);
+//                 varNum++;
+//                 char instead[CHARMAXSIZE];
+//                 strcpy(instead, "vv");
+//                 char str[CHARMAXSIZE];
+//                 int2String(varNum, str);
+//                 strcat(instead, str);
+//                 strcpy(p->u.op_single.op->u.value, instead);
+//                 InterCode q = p->next;
+//                 while(q) {
+//                     switch(q->kind) 
+//                     {
+//                         case MYFUNCTION :
+//                         case MYPARAM:
+//                         case MYRETURN:
+//                         case MYLABEL:
+//                         case MYGOTO:
+//                         case MYREAD:
+//                         case MYWRITE:
+//                         case MYARG:
+//                             if(strcmp(q->u.op_single.op->u.value, target) == 0)
+//                                 strcpy(q->u.op_single.op->u.value, instead);
+//                             break;
+//                         case MYASSIGN:
+//                         case MYCALL:
+//                             if(strcmp(q->u.op_assign.left->u.value, target) == 0)
+//                                 strcpy(q->u.op_assign.left->u.value, instead);
+//                             if(strcmp(q->u.op_assign.right->u.value, target) == 0)
+//                                 strcpy(q->u.op_assign.right->u.value, instead);
+//                             break;
+//                         case MYDEC:
+//                             if(strcmp(q->u.op_dec.op->u.value, target) == 0)
+//                                 strcpy(q->u.op_dec.op->u.value, instead);
+//                             break;
+//                         case MYADD:
+//                         case MYSUB:
+//                         case MYMUL:
+//                         case MYDIV:
+//                             if(strcmp(q->u.op_binary.op1->u.value, target) == 0)
+//                                 strcpy(q->u.op_binary.op1->u.value, instead);
+//                             if(strcmp(q->u.op_binary.op2->u.value, target) == 0)
+//                                 strcpy(q->u.op_binary.op2->u.value, instead);
+//                             if(strcmp(q->u.op_binary.result->u.value, target) == 0)
+//                                 strcpy(q->u.op_binary.result->u.value, instead);
+//                             break;
+//                         case MYIFGOTO:
+//                             if(strcmp(q->u.op_triple.x->u.value, target) == 0)
+//                                 strcpy(q->u.op_triple.x->u.value, instead);
+//                             if(strcmp(q->u.op_triple.y->u.value, target) == 0)
+//                                 strcpy(q->u.op_triple.y->u.value, instead);
+//                             if(strcmp(q->u.op_triple.label->u.value, target) == 0)
+//                                 strcpy(q->u.op_triple.label->u.value, instead);
+//                             break;
+//                         default:
+//                             break;
+//                     }
+//                     q = q->next;
+//                 }
+//             }
+//         }
+//         p = p->next;
+//     }
+// }

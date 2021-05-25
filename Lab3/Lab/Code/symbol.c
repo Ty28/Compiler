@@ -167,6 +167,7 @@ Symbol createTupleWithType(char *name, Type _type)
 {
     Symbol newTuple = createBlankTuple(name);
     newTuple->type = _type;
+    newTuple->var_no = -1;
     return newTuple;
 }
 
