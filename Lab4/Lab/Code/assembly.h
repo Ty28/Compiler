@@ -3,11 +3,26 @@
 #include "interCode.h"
 #include "assert.h"
 #define MEMADDRESSSIZE 0x3fff
+#define LI_ 0
+#define MOVE_ 1
+#define ADDI_ 2
+#define ADD_ 3
+#define SUB_ 4
+#define MUL_ 5
+#define DIV_ 6
+#define LW_ 7
+#define SW_ 8
+#define BEQ_ 9
+#define BNE_ 10
+#define BGT_ 11
+#define BLT_ 12
+#define BGE_ 13
+#define BLE_ 14
 
 int stack_sp;
 int stack_fp;
 int used[32]; //to represent whether a register is being used;
-char *regName(int registerID);
+char *regName(int registerID, char str[]);
 typedef struct VarMemAddress_ *VarMemAddress;
 struct VarMemAddress_
 {
@@ -28,6 +43,7 @@ void loadTextCode(FILE *fp);
 int getIdleReg();
 int easyGetRightReg(FILE *fp, Operand op);
 int easyGetLeftReg(FILE *fp, Operand op);
+void gen(FILE *fp, int codeType, int _arg1, int _arg2, int _arg3);
 void assembleASSIGN(FILE *fp, InterCode current);
 void assembleIFGOTO(FILE *fp, InterCode current);
 void assembleSingleCode(FILE *fp, InterCode current);

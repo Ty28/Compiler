@@ -63,18 +63,14 @@ void initAssembly()
         memAddressTable[i] = NULL;
 }
 
-char *regName(int registerID)
+char *regName(int registerID, char str[])
 {
-    char *str;
-    str=(char*)malloc(10);
     switch (registerID)
     {
     case 0:
-        strcpy(str, "$zero");
-        return str;
+        return "$zero";
     case 1:
-        strcpy(str, "$at");
-        return str;
+        return "$at";
     case 2 ... 3:
         strcpy(str, "$v0");
         str[2] += registerID - 2;
@@ -100,17 +96,15 @@ char *regName(int registerID)
         str[2] += registerID - 26;
         return str;
     case 28:
-        strcpy(str, "$gp");
-        return str;
+        return "$gp";
     case 29:
-        strcpy(str, "$sp");
-        return str;
+        return "$sp";
     case 30:
-        strcpy(str, "$fp");
-        return str;
+        return "$fp";
     case 31:
-        strcpy(str, "$ra");
-        return str;
+        return "$ra";
+    default:
+        return "NULL";
     }
 }
 
@@ -173,14 +167,14 @@ int easyGetRightReg(FILE *fp, Operand op)
     {
     case VARIABLE:
     case TEMPVAR:
-        fprintf(fp, "  lw %s, %d($fp)\n", regName(idleID), fpOffset);
+        gen(fp, LW_, idleID, fpOffset, 30);
         break;
     case ADDRESS:
-        fprintf(fp, "  addi %s, $fp, %d\n", regName(idleID), fpOffset);
+        gen(fp, ADDI_, idleID, 30, fpOffset);
         break;
     case STAR__:
-        fprintf(fp, "  lw %s, %d($fp)\n", regName(idleID), fpOffset);
-        fprintf(fp, "  lw %s, 0(%s)\n", regName(idleID), regName(idleID));
+        gen(fp, LW_, idleID, fpOffset, 30);
+        gen(fp, LW_, idleID, 0, idleID);
         break;
     default:
         codeLog("something wrong happens when dealing with getRightReg");
@@ -210,7 +204,7 @@ int easyGetLeftReg(FILE *fp, Operand op)
         break;
     case STAR__:
         assert(findMemAddress(op->u.value) != NULL);
-        fprintf(fp, "  lw %s, %d($fp)\n", regName(idleID), findMemAddress(op->u.value)->fpOffset);
+        gen(fp, LW_, findMemAddress(op->u.value)->fpOffset, 30, -1);
         break;
     default:
         codeLog("something wrong happens when dealing with getleftReg");
@@ -223,6 +217,35 @@ int easyGetLeftReg(FILE *fp, Operand op)
     return idleID;
 }
 
+void gen(FILE *fp, int codeType, int _arg1, int _arg2, int _arg3)
+{
+    char reg1[10], reg2[10], reg3[10];
+    strcpy(reg1, regName(_arg1, reg1));
+    strcpy(reg2, regName(_arg2, reg2));
+    strcpy(reg3, regName(_arg3, reg3));
+    switch (codeType)
+    {
+    case LI_:
+        fprintf(fp, "  li %s, %d\n", reg1, _arg2);
+        break;
+    case MOVE_:
+        fprintf(fp, "  move %s, %s\n", reg1, reg2);
+        break;
+    case ADDI_:
+        fprintf(fp, "  addi %s, %s, %d\n", reg1, reg2, _arg3);
+        break;
+    case ADD_:
+        fprintf(fp, "  add %s, %s, %s\n", reg1, reg2, reg3);
+        break;
+    case LW_:
+        fprintf(fp, "  lw %s, %d(%s)\n", reg1, _arg2, reg3);
+        break;
+    case SW_:
+        fprintf(fp, "  sw %s, %d(%s)\n", reg1, _arg2, reg3);
+        break;
+    }
+}
+
 void assembleASSIGN(FILE *fp, InterCode current)
 {
     if (current->kind == MYASSIGN)
@@ -231,7 +254,7 @@ void assembleASSIGN(FILE *fp, InterCode current)
         Operand right = current->u.op_assign.right;
         int leftReg = easyGetLeftReg(fp, left);
         int rightReg = easyGetRightReg(fp, right);
-        // printf("leftReg:%d,rightReg:%d", leftReg, rightReg);
+        printf("leftReg:%d,rightReg:%d", leftReg, rightReg);
         assert(left->kind == STAR__ || left->kind == TEMPVAR || left->kind == VARIABLE);
         if (left->kind == STAR__)
         {
@@ -239,22 +262,22 @@ void assembleASSIGN(FILE *fp, InterCode current)
             {
                 //since we don't allocate register for constant in function easyGetRightReg
                 //we just use leftReg + 1 when the left operand is STAR__ type
-                fprintf(fp, "  li %s, %d\n", regName(rightReg), right->u.var_no);
+                gen(fp, LI_, rightReg, right->u.var_no, -1);
                 used[rightReg] = 1;
             }
-            fprintf(fp, "  sw %s, 0(%s)\n", regName(rightReg), regName(leftReg));
+            gen(fp, SW_, rightReg, 0, leftReg);
         }
         else
         {
             if (right->kind == CONSTANT || right->kind == COSNTVAR)
             {
-                fprintf(fp, "  li %s, %d\n", regName(leftReg), right->u.var_no);
+                gen(fp, LI_, leftReg, right->u.var_no, -1);
             }
             else
             {
-                fprintf(fp, "  move %s, %s\n", regName(leftReg), regName(rightReg));
+                gen(fp, MOVE_, leftReg, rightReg, -1);
             }
-            fprintf(fp, "  sw %s, %d($fp)\n", regName(leftReg), findMemAddress(left->u.value)->fpOffset);
+            gen(fp, SW_, leftReg, findMemAddress(left->u.value)->fpOffset, 30);
         }
     }
 }
