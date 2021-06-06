@@ -512,9 +512,11 @@ void assembleFunction(FILE *fp, InterCode current)
     refreshStackPointer();
     fprintf(fp, "\n%s:\n", current->u.op_single.op->u.value);
     gen(fp, ADDI_, 29, 29, -4); //push fp
+    stack_sp = stack_sp - 4;
     gen(fp, SW_, 30, 0, 29);
     gen(fp, MOVE_, 30, 29, -1); //move fp, sp
     gen(fp, ADDI_, 29, 29, -4);
+    stack_sp = stack_sp - 4;
     gen(fp, SW_, 31, 0, 29); //save $ra
 }
 
@@ -544,7 +546,44 @@ void assembleCALL(FILE *fp, InterCode current)
 
     //restore our stack
     gen(fp, ADDI_, 29, 30, 4); //addi sp, fp, 4
-    gen(fp, LW_, 30, 0, 30);  //lw fp, 0, fp
+    gen(fp, LW_, 30, 0, 30);   //lw fp, 0, fp
+}
+
+void assembleWRITE(FILE *fp, InterCode current)
+{
+    Operand write = current->u.op_single.op;
+    if (write->kind == CONSTANT || write->kind == COSNTVAR)
+        gen(fp, LI_, 4, write->u.var_no, -1);
+    else
+    {
+        int writeReg = easyGetRightReg(fp, write);
+        gen(fp, MOVE_, 4, writeReg, -1);
+    }
+    fprintf(fp, "  jal write\n");
+}
+
+void assembleREAD(FILE *fp, InterCode current)
+{
+    Operand read = current->u.op_single.op;
+    assert(read->kind != CONSTANT && read->kind != COSNTVAR);
+    fprintf(fp, "  jal read\n");
+    int readReg = easyGetLeftReg(fp, read);
+    gen(fp, MOVE_, readReg, 2, -1);
+    gen(fp, SW_, readReg, findMemAddress(read->u.value)->fpOffset, 30);
+}
+
+void assembleRETURN(FILE *fp, InterCode current)
+{
+    Operand returnVar = current->u.op_single.op;
+    if (returnVar->kind == CONSTANT || returnVar->kind == COSNTVAR)
+        gen(fp, LI_, 2, returnVar->u.var_no, -1);
+    else
+    {
+        int returnReg = easyGetRightReg(fp, returnVar);
+        gen(fp, MOVE_, 2, returnReg, -1);
+    }
+    gen(fp, LW_, 31, -4, 30); //restore ra
+    fprintf(fp, "  jr $ra\n");
 }
 
 void assembleSingleCode(FILE *fp, InterCode current)
@@ -560,7 +599,8 @@ void assembleSingleCode(FILE *fp, InterCode current)
     case MYPARAM:
         assemblePARAM(fp, current);
         break;
-    case MYRETURN: //TODO
+    case MYRETURN:
+        assembleRETURN(fp, current);
         break;
     case MYLABEL:
         fprintf(fp, "%s:\n", current->u.op_single.op->u.value);
@@ -568,9 +608,11 @@ void assembleSingleCode(FILE *fp, InterCode current)
     case MYGOTO:
         fprintf(fp, "  j %s\n", current->u.op_single.op->u.value);
         break;
-    case MYREAD: //TODO
+    case MYREAD:
+        assembleREAD(fp, current);
         break;
-    case MYWRITE: //TODO
+    case MYWRITE:
+        assembleWRITE(fp, current);
         break;
     case MYARG:
         assembleARG(fp, current);

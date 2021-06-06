@@ -57,6 +57,9 @@ void assembleIFGOTO(FILE *fp, InterCode current);
 void assembleARG(FILE *fp, InterCode current);
 void assemblePARAM(FILE *fp, InterCode current);
 void assembleCALL(FILE *fp, InterCode current);
+void assembleWRITE(FILE *fp, InterCode current);
+void assembleREAD(FILE *fp, InterCode current);
+void assembleRETURN(FILE *fp, InterCode current);
 void assembleSingleCode(FILE *fp, InterCode current);
 void assembleCodes(char *outputFileName);
 
