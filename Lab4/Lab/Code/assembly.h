@@ -23,6 +23,7 @@ int stack_sp;
 int stack_fp;
 int used[32]; //to represent whether a register is being used;
 char *regName(int registerID, char str[]);
+void freeReg();
 typedef struct VarMemAddress_ *VarMemAddress;
 struct VarMemAddress_
 {
@@ -37,6 +38,7 @@ VarMemAddress createMemAddressNode(char *name, int _offset);
 VarMemAddress findMemAddress(char *name);
 void newMemAddress(char *name, int _offset);
 
+void refreshStackPointer();
 void initAssembly();
 void loadDataCode(FILE *fp);
 void loadTextCode(FILE *fp);
@@ -45,6 +47,9 @@ int easyGetRightReg(FILE *fp, Operand op);
 int easyGetLeftReg(FILE *fp, Operand op);
 void gen(FILE *fp, int codeType, int _arg1, int _arg2, int _arg3);
 void assembleASSIGN(FILE *fp, InterCode current);
+void assemBleAdd(FILE *fp, InterCode current);
+void assembleDEC(FILE *fp, InterCode current);
+void assembleBINARY(FILE *fp, InterCode current);
 void assembleIFGOTO(FILE *fp, InterCode current);
 void assembleSingleCode(FILE *fp, InterCode current);
 void assembleCodes(char *outputFileName);
