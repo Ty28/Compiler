@@ -66,6 +66,16 @@ void initAssembly()
         used[i] = 0;
     for (int i = 0; i < MEMADDRESSSIZE; i++)
         memAddressTable[i] = NULL;
+    argCount = 0;
+}
+
+void printAnnotation(FILE *fp, InterCode current)
+{
+    if (current->kind != MYFUNCTION && current->kind != MYLABEL)
+    {
+        fprintf(fp, "                               #");
+        printSingleCode(fp, current);
+    }
 }
 
 char *regName(int registerID, char str[])
@@ -486,11 +496,25 @@ void assembleIFGOTO(FILE *fp, InterCode current)
     fprintf(fp, "%s\n", label->u.value);
 }
 
+void assembleARG(FILE *fp, InterCode current)
+{
+    if (argCount <= 4)
+    {
+
+    }
+    else
+    {
+        
+    }
+}
+
 void assembleSingleCode(FILE *fp, InterCode current)
 {
+    printAnnotation(fp, current);
     switch (current->kind)
     {
     case MYFUNCTION:
+        refreshStackPointer();
         fprintf(fp, "\n%s:\n", current->u.op_single.op->u.value);
         break;
     case MYPARAM: //TODO
@@ -508,6 +532,7 @@ void assembleSingleCode(FILE *fp, InterCode current)
     case MYWRITE: //TODO
         break;
     case MYARG: //TODO
+        assembleARG(fp, current);
         break;
     case MYASSIGN:
         assembleASSIGN(fp, current);

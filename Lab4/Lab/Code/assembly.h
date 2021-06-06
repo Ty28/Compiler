@@ -1,6 +1,6 @@
 #ifndef _ASSEMBLY_H
 #define _ASSEMBLY_H
-#include "interCode.h"
+#include "interCodePrint.h"
 #include "assert.h"
 #define MEMADDRESSSIZE 0x3fff
 #define LI_ 0
@@ -21,9 +21,11 @@
 
 int stack_sp;
 int stack_fp;
+int argCount;
 int used[32]; //to represent whether a register is being used;
 char *regName(int registerID, char str[]);
 void freeReg();
+void printAnnotation(FILE *fp, InterCode current);
 typedef struct VarMemAddress_ *VarMemAddress;
 struct VarMemAddress_
 {
@@ -51,6 +53,7 @@ void assemBleAdd(FILE *fp, InterCode current);
 void assembleDEC(FILE *fp, InterCode current);
 void assembleBINARY(FILE *fp, InterCode current);
 void assembleIFGOTO(FILE *fp, InterCode current);
+void assembleARG(FILE *fp, InterCode current);
 void assembleSingleCode(FILE *fp, InterCode current);
 void assembleCodes(char *outputFileName);
 
