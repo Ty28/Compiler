@@ -21,7 +21,7 @@
 
 int stack_sp;
 int stack_fp;
-int argCount;
+int paramCount;
 int used[32]; //to represent whether a register is being used;
 char *regName(int registerID, char str[]);
 void freeReg();
@@ -34,8 +34,8 @@ struct VarMemAddress_
     VarMemAddress link;
 };
 
+int findRegAddress(char *name);
 VarMemAddress memAddressTable[0x3fff]; //hash table to store the memory address of the variables
-
 VarMemAddress createMemAddressNode(char *name, int _offset);
 VarMemAddress findMemAddress(char *name);
 void newMemAddress(char *name, int _offset);
@@ -48,12 +48,15 @@ int getIdleReg();
 int easyGetRightReg(FILE *fp, Operand op);
 int easyGetLeftReg(FILE *fp, Operand op);
 void gen(FILE *fp, int codeType, int _arg1, int _arg2, int _arg3);
+void assembleFunction(FILE *fp, InterCode current);
 void assembleASSIGN(FILE *fp, InterCode current);
 void assemBleAdd(FILE *fp, InterCode current);
 void assembleDEC(FILE *fp, InterCode current);
 void assembleBINARY(FILE *fp, InterCode current);
 void assembleIFGOTO(FILE *fp, InterCode current);
 void assembleARG(FILE *fp, InterCode current);
+void assemblePARAM(FILE *fp, InterCode current);
+void assembleCALL(FILE *fp, InterCode current);
 void assembleSingleCode(FILE *fp, InterCode current);
 void assembleCodes(char *outputFileName);
 

@@ -66,7 +66,7 @@ void initAssembly()
         used[i] = 0;
     for (int i = 0; i < MEMADDRESSSIZE; i++)
         memAddressTable[i] = NULL;
-    argCount = 0;
+    paramCount = 0;
 }
 
 void printAnnotation(FILE *fp, InterCode current)
@@ -157,6 +157,64 @@ void loadTextCode(FILE *fp)
     fprintf(fp, "  jr $ra\n");
 }
 
+void gen(FILE *fp, int codeType, int _arg1, int _arg2, int _arg3)
+{
+    //this function generate machine code through codeType and three args
+    char reg1[10], reg2[10], reg3[10];
+    strcpy(reg1, regName(_arg1, reg1));
+    strcpy(reg2, regName(_arg2, reg2));
+    strcpy(reg3, regName(_arg3, reg3));
+    switch (codeType)
+    {
+    case LI_:
+        fprintf(fp, "  li %s, %d\n", reg1, _arg2);
+        break;
+    case MOVE_:
+        fprintf(fp, "  move %s, %s\n", reg1, reg2);
+        break;
+    case ADDI_:
+        fprintf(fp, "  addi %s, %s, %d\n", reg1, reg2, _arg3);
+        break;
+    case ADD_:
+        fprintf(fp, "  add %s, %s, %s\n", reg1, reg2, reg3);
+        break;
+    case SUB_:
+        fprintf(fp, "  sub %s, %s, %s\n", reg1, reg2, reg3);
+        break;
+    case MUL_:
+        fprintf(fp, "  mul %s, %s, %s\n", reg1, reg2, reg3);
+        break;
+    case DIV_:
+        fprintf(fp, "  div %s, %s\n", reg2, reg3);
+        fprintf(fp, "  mflo %s\n", reg1);
+        break;
+    case LW_:
+        fprintf(fp, "  lw %s, %d(%s)\n", reg1, _arg2, reg3);
+        break;
+    case SW_:
+        fprintf(fp, "  sw %s, %d(%s)\n", reg1, _arg2, reg3);
+        break;
+    case BEQ_:
+        fprintf(fp, "  beg %s, %s ", reg1, reg2);
+        break;
+    case BNE_:
+        fprintf(fp, "  bne %s, %s ", reg1, reg2);
+        break;
+    case BGT_:
+        fprintf(fp, "  bgt %s, %s ", reg1, reg2);
+        break;
+    case BLT_:
+        fprintf(fp, "  blt %s, %s ", reg1, reg2);
+        break;
+    case BGE_:
+        fprintf(fp, "  bge %s, %s ", reg1, reg2);
+        break;
+    case BLE_:
+        fprintf(fp, "  ble %s, %s ", reg1, reg2);
+        break;
+    }
+}
+
 int getIdleReg()
 {
     //just select a idle register from $t0 - $t7
@@ -240,64 +298,6 @@ int easyGetLeftReg(FILE *fp, Operand op)
     }
     used[idleID] = 1;
     return idleID;
-}
-
-void gen(FILE *fp, int codeType, int _arg1, int _arg2, int _arg3)
-{
-    //this function generate machine code through codeType and three args
-    char reg1[10], reg2[10], reg3[10];
-    strcpy(reg1, regName(_arg1, reg1));
-    strcpy(reg2, regName(_arg2, reg2));
-    strcpy(reg3, regName(_arg3, reg3));
-    switch (codeType)
-    {
-    case LI_:
-        fprintf(fp, "  li %s, %d\n", reg1, _arg2);
-        break;
-    case MOVE_:
-        fprintf(fp, "  move %s, %s\n", reg1, reg2);
-        break;
-    case ADDI_:
-        fprintf(fp, "  addi %s, %s, %d\n", reg1, reg2, _arg3);
-        break;
-    case ADD_:
-        fprintf(fp, "  add %s, %s, %s\n", reg1, reg2, reg3);
-        break;
-    case SUB_:
-        fprintf(fp, "  sub %s, %s, %s\n", reg1, reg2, reg3);
-        break;
-    case MUL_:
-        fprintf(fp, "  mul %s, %s, %s\n", reg1, reg2, reg3);
-        break;
-    case DIV_:
-        fprintf(fp, "  div %s, %s\n", reg2, reg3);
-        fprintf(fp, "  mflo %s\n", reg1);
-        break;
-    case LW_:
-        fprintf(fp, "  lw %s, %d(%s)\n", reg1, _arg2, reg3);
-        break;
-    case SW_:
-        fprintf(fp, "  sw %s, %d(%s)\n", reg1, _arg2, reg3);
-        break;
-    case BEQ_:
-        fprintf(fp, "  beg %s, %s ", reg1, reg2);
-        break;
-    case BNE_:
-        fprintf(fp, "  bne %s, %s ", reg1, reg2);
-        break;
-    case BGT_:
-        fprintf(fp, "  bgt %s, %s ", reg1, reg2);
-        break;
-    case BLT_:
-        fprintf(fp, "  blt %s, %s ", reg1, reg2);
-        break;
-    case BGE_:
-        fprintf(fp, "  bge %s, %s ", reg1, reg2);
-        break;
-    case BLE_:
-        fprintf(fp, "  ble %s, %s ", reg1, reg2);
-        break;
-    }
 }
 
 void assembleASSIGN(FILE *fp, InterCode current)
@@ -498,26 +498,67 @@ void assembleIFGOTO(FILE *fp, InterCode current)
 
 void assembleARG(FILE *fp, InterCode current)
 {
-    if (argCount <= 4)
-    {
+    Operand arg = current->u.op_single.op;
+    int argReg = easyGetRightReg(fp, arg);
+    if (arg->kind == CONSTANT || arg->kind == COSNTVAR)
+        gen(fp, LI_, argReg, arg->u.var_no, -1);
+    gen(fp, ADDI_, 29, 29, -4); //addi sp, sp, -4
+    stack_sp = stack_sp - 4;
+    gen(fp, SW_, argReg, stack_sp - stack_fp, 30);
+}
 
-    }
+void assembleFunction(FILE *fp, InterCode current)
+{
+    refreshStackPointer();
+    fprintf(fp, "\n%s:\n", current->u.op_single.op->u.value);
+    gen(fp, ADDI_, 29, 29, -4); //push fp
+    gen(fp, SW_, 30, 0, 29);
+    gen(fp, MOVE_, 30, 29, -1); //move fp, sp
+    gen(fp, ADDI_, 29, 29, -4);
+    gen(fp, SW_, 31, 0, 29); //save $ra
+}
+
+void assemblePARAM(FILE *fp, InterCode current)
+{
+    Operand param = current->u.op_single.op;
+    assert(findMemAddress(param->u.value) == NULL);
+    paramCount++;
+    newMemAddress(param->u.value, paramCount * 4);
+}
+
+void assembleCALL(FILE *fp, InterCode current)
+{
+    //left := CALL function
+    Operand left = current->u.op_assign.left;
+    Operand function = current->u.op_assign.right;
+    int leftReg = easyGetLeftReg(fp, left);
+    fprintf(fp, "  jal %s\n", function->u.value);
+    gen(fp, MOVE_, leftReg, 2, -1);
+    if (left->kind == STAR__)
+        gen(fp, SW_, 2, 0, leftReg);
     else
     {
-        
+        assert(findMemAddress(left->u.value) != NULL);
+        gen(fp, SW_, leftReg, findMemAddress(left->u.value)->fpOffset, 30);
     }
+
+    //restore our stack
+    gen(fp, ADDI_, 29, 30, 4); //addi sp, fp, 4
+    gen(fp, LW_, 30, 0, 30);  //lw fp, 0, fp
 }
 
 void assembleSingleCode(FILE *fp, InterCode current)
 {
     printAnnotation(fp, current);
+    if (current->kind != MYPARAM && paramCount > 0)
+        paramCount = 0;
     switch (current->kind)
     {
     case MYFUNCTION:
-        refreshStackPointer();
-        fprintf(fp, "\n%s:\n", current->u.op_single.op->u.value);
+        assembleFunction(fp, current);
         break;
-    case MYPARAM: //TODO
+    case MYPARAM:
+        assemblePARAM(fp, current);
         break;
     case MYRETURN: //TODO
         break;
@@ -531,7 +572,7 @@ void assembleSingleCode(FILE *fp, InterCode current)
         break;
     case MYWRITE: //TODO
         break;
-    case MYARG: //TODO
+    case MYARG:
         assembleARG(fp, current);
         break;
     case MYASSIGN:
@@ -546,7 +587,8 @@ void assembleSingleCode(FILE *fp, InterCode current)
     case MYDEC:
         assembleDEC(fp, current);
         break;
-    case MYCALL: //TODO
+    case MYCALL:
+        assembleCALL(fp, current);
         break;
     case MYIFGOTO:
         assembleIFGOTO(fp, current);
