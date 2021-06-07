@@ -253,6 +253,7 @@ int easyGetRightReg(FILE *fp, Operand op)
         gen(fp, LW_, idleID, fpOffset, 30);
         break;
     case ADDRESS:
+        printf("offset:%d", fpOffset);
         gen(fp, ADDI_, idleID, 30, fpOffset);
         break;
     case STAR__:
@@ -329,10 +330,10 @@ void assembleDEC(FILE *fp, InterCode current)
     Operand variable = current->u.op_dec.op;
     int arraySize = current->u.op_dec.size;
     assert(!findMemAddress(variable->u.value));
-    newMemAddress(variable->u.value, stack_sp - stack_fp);
     //it means, the first element of the array is stored in current sp
     fprintf(fp, "  addi $sp, $sp, -%d\n", arraySize); //subtract stack size of the array
     stack_sp = stack_sp - arraySize;
+    newMemAddress(variable->u.value, stack_sp - stack_fp);
 }
 
 void assembleBINARY(FILE *fp, InterCode current)
@@ -604,6 +605,7 @@ void assembleSingleCode(FILE *fp, InterCode current)
         break;
     case MYLABEL:
         fprintf(fp, "%s:\n", current->u.op_single.op->u.value);
+        gen(fp, ADDI_, 29, 30, stack_sp - stack_fp);
         break;
     case MYGOTO:
         fprintf(fp, "  j %s\n", current->u.op_single.op->u.value);
