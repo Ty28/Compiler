@@ -515,6 +515,7 @@ void assembleFunction(FILE *fp, InterCode current)
     stack_sp = stack_sp - 4;
     gen(fp, SW_, 30, 0, 29);
     gen(fp, MOVE_, 30, 29, -1); //move fp, sp
+    stack_fp = stack_fp - 4;
     gen(fp, ADDI_, 29, 29, -4);
     stack_sp = stack_sp - 4;
     gen(fp, SW_, 31, 0, 29); //save $ra
@@ -533,8 +534,11 @@ void assembleCALL(FILE *fp, InterCode current)
     //left := CALL function
     Operand left = current->u.op_assign.left;
     Operand function = current->u.op_assign.right;
-    int leftReg = easyGetLeftReg(fp, left);
     fprintf(fp, "  jal %s\n", function->u.value);
+    //restore our stack
+    gen(fp, ADDI_, 29, 30, 4); //addi sp, fp, 4
+    gen(fp, LW_, 30, 0, 30);   //lw fp, 0(fp)
+    int leftReg = easyGetLeftReg(fp, left);
     gen(fp, MOVE_, leftReg, 2, -1);
     if (left->kind == STAR__)
         gen(fp, SW_, 2, 0, leftReg);
@@ -543,10 +547,6 @@ void assembleCALL(FILE *fp, InterCode current)
         assert(findMemAddress(left->u.value) != NULL);
         gen(fp, SW_, leftReg, findMemAddress(left->u.value)->fpOffset, 30);
     }
-
-    //restore our stack
-    gen(fp, ADDI_, 29, 30, 4); //addi sp, fp, 4
-    gen(fp, LW_, 30, 0, 30);   //lw fp, 0, fp
 }
 
 void assembleWRITE(FILE *fp, InterCode current)
