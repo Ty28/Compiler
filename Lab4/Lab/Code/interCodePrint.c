@@ -45,7 +45,6 @@ void printSingleCode(FILE *fp, InterCode current)
     case (MYRETURN):
         fprintf(fp, "RETURN ");
         printOpSingle(fp, current->u.op_single.op);
-        fprintf(fp, "\n");
         break;
     case (MYLABEL):
         fprintf(fp, "LABEL ");
@@ -139,6 +138,8 @@ void printCode(char *outputFileName)
     while (current != NULL)
     {
         printSingleCode(fp, current);
+        if(current->kind==MYRETURN)
+            fprintf(fp, "\n");
         current = current->next;
     }
 }

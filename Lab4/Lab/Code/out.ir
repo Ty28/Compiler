@@ -1,7 +1,40 @@
+FUNCTION func :
+PARAM a1
+PARAM a2
+PARAM a3
+PARAM a4
+PARAM a5
+WRITE a1
+WRITE a2
+RETURN a3
+
 FUNCTION main :
-a := #1
-b := #2
-c := #3
-a := c
+c := #0
+DEC ac 4028
+LABEL label1 :
+IF c >= #99 GOTO label3
+tt13 := #4 * c
+tt9 := &ac + tt13
+tt14 := c * c
+*tt9 := tt14
+tt18 := c + #1
+c := tt18
+GOTO label1
+LABEL label3 :
+READ tt22
+b := tt22
+ARG #5
+ARG #4
+ARG #3
+ARG #2
+ARG #1
+tt23 := CALL func
+IF b >= #0 GOTO label5
+tt32 := b * b
+WRITE tt32
+GOTO label6
+LABEL label5 :
+WRITE b
+LABEL label6 :
 RETURN #0
 
