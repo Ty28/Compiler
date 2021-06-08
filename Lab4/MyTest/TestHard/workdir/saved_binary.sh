@@ -1,1 +1,0 @@
-RUN=../../Lab/Code/parser

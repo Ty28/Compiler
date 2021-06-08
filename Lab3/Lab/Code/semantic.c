@@ -171,7 +171,7 @@ Symbol VarDec(node root, Type decType)
             int arraySize = atoi(getKChild(root, 2)->val);
             Type newArrayType = createArrayType(lastArrayType, lastArrayType->u.array.size);
             Type current = newArrayType;
-            while (current->u.array.elem->kind != BASIC) //a method to adjust size
+            while (current->u.array.elem && current->u.array.elem->kind != BASIC) //a method to adjust size
             {
                 current->u.array.size = current->u.array.elem->u.array.size;
                 current = current->u.array.elem;

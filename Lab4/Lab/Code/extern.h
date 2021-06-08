@@ -6,6 +6,7 @@
 #include "semantic.h"
 #include "interCode.h"
 #include "interCodePrint.h"
+#include "assembly.h"
 #include <ctype.h>
 
 extern int yylex(void);

@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "extern.h": "c",
-        "intercode.h": "c"
+        "intercode.h": "c",
+        "assembly.h": "c"
     }
 }

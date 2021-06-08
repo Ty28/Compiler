@@ -82,7 +82,7 @@ Type StructVarCopy(Type structureDecType)
 
 void initializeIO()
 {
-    FuncList paramList = createParamWithType("\0", createBasicType(1));     //the first parameter
+    FuncList paramList = createParamWithType("\0", createBasicType(1));   //the first parameter
     Type writeReturnType = createFuncType(createBasicType(1), paramList); //return value type
     Symbol writeFuncTuple = createTupleWithType("write", writeReturnType);
     insertTuple(writeFuncTuple);
@@ -267,10 +267,22 @@ FieldList StructVarDec(node root, Type decType)
         FieldList varDecField = StructVarDec(root->child, decType);
         if (varDecField != NULL)
         {
+            // Type lastArrayType = varDecField->type;
+            // int arraySize = atoi(getKChild(root, 2)->val);
+            // //printf("last size:%d\n",arraySize);
+            // Type newArrayType = createArrayType(lastArrayType, arraySize);
+            // varDecField->type = newArrayType;
+
             Type lastArrayType = varDecField->type;
             int arraySize = atoi(getKChild(root, 2)->val);
-            //printf("last size:%d\n",arraySize);
-            Type newArrayType = createArrayType(lastArrayType, arraySize);
+            Type newArrayType = createArrayType(lastArrayType, lastArrayType->u.array.size);
+            Type current = newArrayType;
+            while (current->u.array.elem->kind != BASIC) //a method to adjust size
+            {
+                current->u.array.size = current->u.array.elem->u.array.size;
+                current = current->u.array.elem;
+            }
+            current->u.array.size = arraySize;
             varDecField->type = newArrayType;
         }
         return varDecField;
@@ -863,12 +875,14 @@ Type ExpFunc(node root)
             return findTuple->type;
         }
         // FUNCTION with no Args
-        if (getChildNum(root) == 3) {
-            if(findTuple->type->u.function->tail != NULL) {
+        if (getChildNum(root) == 3)
+        {
+            if (findTuple->type->u.function->tail != NULL)
+            {
                 errorOutput(9, n0->lineno, n0->val);
             }
             return findTuple->type->u.function->type;
-        }    
+        }
         else
         {
             if (Args(n2, findTuple->type->u.function->tail))

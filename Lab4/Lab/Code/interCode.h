@@ -3,6 +3,7 @@
 #include "symbol.h"
 #define FORMALPARAMETERSIZE 0x3fff
 //#define InterCodeDebug
+void codeLog(char *msg);
 typedef struct Operand_ *Operand;
 typedef struct InterCode_ *InterCode;
 typedef struct argNode_ *argNode;
@@ -108,6 +109,8 @@ struct LabelNode_ {
     char name[CHARMAXSIZE];
     LabelNode link;
 };
+
+int isConst(Operand op);
 
 FPTableNode *FPTable;
 FPTableNode *createFPTable();
