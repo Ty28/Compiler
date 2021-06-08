@@ -376,7 +376,7 @@ void translateVarDec_A(node root)
         {
             //TODO: params of 1d-array
         }
-        else if (findTuple->type->kind == STRUCTURE || findTuple->type->kind == STRUCTVAR)
+        else if (findTuple->type->kind == STRUCTVAR)
         {
             structNum++;
             // printf("Cannot translate: Code contains variables or paraneters of structure type\n");
@@ -392,7 +392,7 @@ void translateVarDec_B(node root)
     if (strcmp(n0->name, "ID") == 0)
     {
         Symbol findTuple = findSymbol(n0->val);
-        if (findTuple->type->kind == STRUCTURE || findTuple->type->kind == STRUCTVAR)
+        if (findTuple->type->kind == STRUCTVAR)
         {
             structNum++;
             // printf("Cannot translate: Code contains variables or paraneters of structure type\n");
