@@ -5,6 +5,7 @@ VarMemAddress createMemAddressNode(char *name, int _offset)
     VarMemAddress newNode = (VarMemAddress)malloc(sizeof(struct VarMemAddress_));
     strcpy(newNode->name, name);
     newNode->fpOffset = _offset;
+    newNode->link = NULL;
     return newNode;
 }
 
@@ -22,9 +23,12 @@ VarMemAddress findMemAddress(char *name)
         while (current != NULL)
         {
             if (strcmp(current->name, name) == 0) //loop until we find that name
-                return current;                   //NOTE: this function return the node, not offset
+            {
+                return current; //NOTE: this function return the node, not offset
+            }
             current = current->link;
         }
+        codeLog("end Loop");
         return NULL;
     }
 }
@@ -244,7 +248,7 @@ int easyGetRightReg(FILE *fp, Operand op)
         used[idleID] = 1;
         return idleID;
     }
-    fprintf(stdout, "op value:%s\n", op->u.value);
+    //fprintf(stdout, "op value:%s\n", op->u.value);
     assert(findMemAddress(op->u.value) != NULL);
     int fpOffset = findMemAddress(op->u.value)->fpOffset;
     switch (op->kind)
@@ -275,10 +279,12 @@ int easyGetLeftReg(FILE *fp, Operand op)
 {
     assert(op->kind != ADDRESS);
     int idleID = getIdleReg();
+    //fprintf(stdout, "last correct left:%s\n", op->u.value);
     switch (op->kind)
     {
     case VARIABLE:
     case TEMPVAR:
+        codeLog("start doing VARIABLE\n");
         if (!findMemAddress(op->u.value)) //this branch means this variable hasn't been stored in memory
         {
             fprintf(fp, "  addi $sp, $sp, -4\n");
@@ -341,47 +347,47 @@ void assembleBINARY(FILE *fp, InterCode current)
     Operand op1 = current->u.op_binary.op1;
     Operand op2 = current->u.op_binary.op2;
     Operand result = current->u.op_binary.result;
+    assert(result->kind == STAR__ || result->kind == TEMPVAR || result->kind == VARIABLE || result->kind == NOTHING);
     int op1Reg = easyGetRightReg(fp, op1);
     int op2Reg = easyGetRightReg(fp, op2);
     int resultReg = easyGetLeftReg(fp, result);
-    assert(result->kind == STAR__ || result->kind == TEMPVAR || result->kind == VARIABLE);
     if (result->kind == STAR__)
     {
         if (current->kind == MYADD)
         {
-            if (op1->kind == CONSTANT && op2->kind == COSNTVAR)
+            if (isConst(op1) && isConst(op2))
                 gen(fp, LI_, op1Reg, op1->u.var_no + op2->u.var_no, -1);
-            else if (op1->kind == CONSTANT || op1->kind == COSNTVAR)
+            else if (isConst(op1))
                 gen(fp, ADDI_, op1Reg, op2Reg, op1->u.var_no);
-            else if (op2->kind == CONSTANT || op2->kind == COSNTVAR)
+            else if (isConst(op2))
                 gen(fp, ADDI_, op1Reg, op1Reg, op2->u.var_no);
             else
                 gen(fp, ADD_, op1Reg, op1Reg, op2Reg);
         }
         else if (current->kind == MYSUB)
         {
-            if (op1->kind == CONSTANT && op2->kind == COSNTVAR)
+            if (isConst(op1) && isConst(op2))
                 gen(fp, LI_, op1Reg, op1->u.var_no - op2->u.var_no, -1);
-            else if (op1->kind == CONSTANT || op1->kind == COSNTVAR)
+            else if (isConst(op1))
             {
                 gen(fp, LI_, op1Reg, op1->u.var_no, -1);
                 gen(fp, SUB_, op1Reg, op1Reg, op2Reg);
             }
-            else if (op2->kind == CONSTANT || op2->kind == COSNTVAR)
+            else if (isConst(op2))
                 gen(fp, ADDI_, op1Reg, op1Reg, -op2->u.var_no);
             else
                 gen(fp, SUB_, op1Reg, op1Reg, op2Reg);
         }
         else if (current->kind == MYMUL)
         {
-            if ((op1->kind == CONSTANT || op1->kind == COSNTVAR) && (op2->kind == CONSTANT || op2->kind == COSNTVAR))
+            if (isConst(op1)&& isConst(op2))
                 gen(fp, LI_, op1Reg, op1->u.var_no * op2->u.var_no, -1);
-            else if (op1->kind == CONSTANT || op1->kind == COSNTVAR)
+            else if (isConst(op1))
             {
                 gen(fp, LI_, op1Reg, op1->u.var_no, -1);
                 gen(fp, MUL_, op1Reg, op1Reg, op2Reg);
             }
-            else if (op2->kind == CONSTANT || op2->kind == COSNTVAR)
+            else if (isConst(op2))
             {
                 gen(fp, LI_, op2Reg, op2->u.var_no, -1);
                 gen(fp, MUL_, op1Reg, op1Reg, op2Reg);
@@ -391,11 +397,11 @@ void assembleBINARY(FILE *fp, InterCode current)
         }
         else if (current->kind == MYDIV)
         {
-            if (op1->kind == CONSTANT || op1->kind == COSNTVAR)
+            if (isConst(op1))
             {
                 gen(fp, LI_, op1Reg, op1->u.var_no, -1);
             }
-            if (op2->kind == CONSTANT || op2->kind == COSNTVAR)
+            if (isConst(op2))
             {
                 gen(fp, LI_, op2Reg, op2->u.var_no, -1);
             }
@@ -403,44 +409,43 @@ void assembleBINARY(FILE *fp, InterCode current)
         }
         gen(fp, SW_, op1Reg, 0, resultReg);
     }
-    else
+    else if (result->kind == TEMPVAR || result->kind == VARIABLE)
     {
         if (current->kind == MYADD)
         {
-            if (op1->kind == CONSTANT && op2->kind == COSNTVAR)
+            if (isConst(op1)&&isConst(op2))
                 gen(fp, LI_, resultReg, op1->u.var_no + op2->u.var_no, -1);
-            else if (op1->kind == CONSTANT || op1->kind == COSNTVAR)
+            else if (isConst(op1))
                 gen(fp, ADDI_, resultReg, op2Reg, op1->u.var_no);
-            else if (op2->kind == CONSTANT || op2->kind == COSNTVAR)
+            else if (isConst(op2))
                 gen(fp, ADDI_, resultReg, op1Reg, op2->u.var_no);
             else
                 gen(fp, ADD_, resultReg, op1Reg, op2Reg);
         }
         else if (current->kind == MYSUB)
         {
-            if (op1->kind == CONSTANT && op2->kind == COSNTVAR)
+            if (isConst(op1)&&isConst(op2))
                 gen(fp, LI_, resultReg, op1->u.var_no - op2->u.var_no, -1);
-            else if (op1->kind == CONSTANT || op1->kind == COSNTVAR)
+            else if (isConst(op1))
             {
                 gen(fp, LI_, op1Reg, op1->u.var_no, -1);
                 gen(fp, SUB_, resultReg, op1Reg, op2Reg);
             }
-            else if (op2->kind == CONSTANT || op2->kind == COSNTVAR)
+            else if (isConst(op2))
                 gen(fp, ADDI_, resultReg, op1Reg, -op2->u.var_no);
             else
                 gen(fp, SUB_, resultReg, op1Reg, op2Reg);
         }
         else if (current->kind == MYMUL)
         {
-            codeLog("this is myMul");
-            if ((op1->kind == CONSTANT || op1->kind == COSNTVAR) && (op2->kind == CONSTANT || op2->kind == COSNTVAR))
+            if (isConst(op1) && isConst(op2))
                 gen(fp, LI_, resultReg, op1->u.var_no * op2->u.var_no, -1);
-            else if (op1->kind == CONSTANT || op1->kind == COSNTVAR)
+            else if (isConst(op1))
             {
                 gen(fp, LI_, op1Reg, op1->u.var_no, -1);
                 gen(fp, MUL_, resultReg, op1Reg, op2Reg);
             }
-            else if (op2->kind == CONSTANT || op2->kind == COSNTVAR)
+            else if (isConst(op2))
             {
                 gen(fp, LI_, op2Reg, op2->u.var_no, -1);
                 gen(fp, MUL_, resultReg, op1Reg, op2Reg);
@@ -450,11 +455,11 @@ void assembleBINARY(FILE *fp, InterCode current)
         }
         else if (current->kind == MYDIV)
         {
-            if (op1->kind == CONSTANT || op1->kind == COSNTVAR)
+            if (isConst(op1))
             {
                 gen(fp, LI_, op1Reg, op1->u.var_no, -1);
             }
-            if (op2->kind == CONSTANT || op2->kind == COSNTVAR)
+            if (isConst(op2))
             {
                 gen(fp, LI_, op2Reg, op2->u.var_no, -1);
             }
@@ -590,6 +595,7 @@ void assembleRETURN(FILE *fp, InterCode current)
 void assembleSingleCode(FILE *fp, InterCode current)
 {
     printAnnotation(fp, current);
+    //fprintf(stdout, "fault type:%d\n", current->kind);
     if (current->kind != MYPARAM && paramCount > 0)
         paramCount = 0;
     switch (current->kind)
@@ -602,6 +608,7 @@ void assembleSingleCode(FILE *fp, InterCode current)
         break;
     case MYRETURN:
         assembleRETURN(fp, current);
+        codeLine++;
         break;
     case MYLABEL:
         fprintf(fp, "%s:\n", current->u.op_single.op->u.value);
@@ -645,6 +652,7 @@ void assembleSingleCode(FILE *fp, InterCode current)
 void assembleCodes(char *outputFileName) //main assembly procedure
 {
     FILE *fp;
+    codeLine = 1;
     fp = fopen(outputFileName, "w+");
     if (fp == NULL)
         return;
@@ -654,8 +662,10 @@ void assembleCodes(char *outputFileName) //main assembly procedure
     InterCode current = head;
     while (current != NULL)
     {
+        //fprintf(stdout, "codeLine:%d\n", codeLine); //ANNOT
         assembleSingleCode(fp, current);
         freeReg();
         current = current->next;
+        codeLine++;
     }
 }

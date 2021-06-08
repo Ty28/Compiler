@@ -32,6 +32,4 @@ extern int labelNum;
 extern int tNum;
 extern int structNum;
 extern int varNum;
-extern int sp;
-extern int fp;
 #endif

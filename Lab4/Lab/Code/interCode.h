@@ -1,9 +1,9 @@
 #ifndef _INTERCODE_H
 #define _INTERCODE_H
 #include "symbol.h"
-void codeLog(char *msg);
 #define FORMALPARAMETERSIZE 0x3fff
-#define InterCodeDebug
+//#define InterCodeDebug
+void codeLog(char *msg);
 typedef struct Operand_ *Operand;
 typedef struct InterCode_ *InterCode;
 typedef struct argNode_ *argNode;
@@ -110,6 +110,8 @@ struct LabelNode_ {
     LabelNode link;
 };
 
+int isConst(Operand op);
+
 FPTableNode *FPTable;
 FPTableNode *createFPTable();
 FPTableNode createFPMember(char *name);
@@ -159,7 +161,7 @@ LabelNode deleteContinuedLabel(InterCode* q);
 LabelNode createLabelNode(char* labelName);
 LabelNode createLabelList(InterCode code);
 void reverseCodeRELOP(InterCode* q);
-void optimize_deleteCONST();
-InterCode nextInterCode(InterCode code);
-void insteadUnderlineVar() ;
+// void optimize_deleteCONST();
+// InterCode nextInterCode(InterCode code);
+// void insteadUnderlineVar() ;
 #endif

@@ -21,6 +21,7 @@
 
 int stack_sp;
 int stack_fp;
+int codeLine;
 int paramCount;
 int used[32]; //to represent whether a register is being used;
 char *regName(int registerID, char str[]);

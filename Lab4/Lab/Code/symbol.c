@@ -167,6 +167,7 @@ Symbol createTupleWithType(char *name, Type _type)
 {
     Symbol newTuple = createBlankTuple(name);
     newTuple->type = _type;
+    newTuple->var_no = -1;
     return newTuple;
 }
 
@@ -268,7 +269,7 @@ int findMember(char *name)
             return 1;
         else
         {
-            current->link = createMember(name);
+            current = createMember(name);
             return 0; //if that name does not exist in our table, insert it and return False
         }
     }
