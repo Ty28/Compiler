@@ -195,7 +195,7 @@ void gen(FILE *fp, int codeType, int _arg1, int _arg2, int _arg3)
         fprintf(fp, "  sw %s, %d(%s)\n", reg1, _arg2, reg3);
         break;
     case BEQ_:
-        fprintf(fp, "  beg %s, %s ", reg1, reg2);
+        fprintf(fp, "  beq %s, %s ", reg1, reg2);
         break;
     case BNE_:
         fprintf(fp, "  bne %s, %s ", reg1, reg2);
@@ -244,6 +244,7 @@ int easyGetRightReg(FILE *fp, Operand op)
         used[idleID] = 1;
         return idleID;
     }
+    fprintf(stdout, "op value:%s\n", op->u.value);
     assert(findMemAddress(op->u.value) != NULL);
     int fpOffset = findMemAddress(op->u.value)->fpOffset;
     switch (op->kind)
@@ -253,7 +254,6 @@ int easyGetRightReg(FILE *fp, Operand op)
         gen(fp, LW_, idleID, fpOffset, 30);
         break;
     case ADDRESS:
-        printf("offset:%d", fpOffset);
         gen(fp, ADDI_, idleID, 30, fpOffset);
         break;
     case STAR__:
