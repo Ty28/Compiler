@@ -1,10 +1,35 @@
-FUNCTION func :
-PARAM a
-WRITE a
-RETURN #0
+FUNCTION Josepy :
+PARAM n
+PARAM m
+PARAM k
+PARAM s
+tt2 := n + m
+tt1 := tt2 + k
+RETURN tt1
 
 FUNCTION main :
-ARG #1
-tt4 := CALL func
+DEC a 20
+DEC b 24
+DEC c 28
+tt10 := &b
+tt11 := &c
+tt12 := tt11 + #28
+LABEL label1 :
+IF tt11 >= tt12 GOTO label2
+*tt10 := *tt11
+tt10 := tt10 + #4
+tt11 := tt11 + #4
+GOTO label1
+LABEL label2 :
+tt13 := &a
+tt14 := &b
+tt15 := tt14 + #24
+LABEL label3 :
+IF tt14 >= tt15 GOTO label4
+*tt13 := *tt14
+tt13 := tt13 + #4
+tt14 := tt14 + #4
+GOTO label3
+LABEL label4 :
 RETURN #0
 

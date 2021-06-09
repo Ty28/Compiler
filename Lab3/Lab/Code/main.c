@@ -1,10 +1,8 @@
 #include "extern.h"
 
-int main(int argc, char **argv)
-{
-    if (argc <= 1)
-        return 1;
-    FILE *f = fopen(argv[1], "r");
+int main(int argc, char** argv) {
+    if (argc <= 1) return 1;
+    FILE* f = fopen(argv[1], "r");
     if (!f)
     {
         perror(argv[1]);
@@ -21,12 +19,15 @@ int main(int argc, char **argv)
             strcpy(fileName, "out.ir");
         else 
             strcpy(fileName, argv[2]);
-        optimize1_mergeLABEL();
-        optimize2_deleteGOTO();
-        optimize3_deleteNONEVAR();
+        optimize_deleteGOTO();
+        optimize_deleteNONEVAR();
+        optimize_mergeLABEL();
+        insteadUnderlineVar();
+        // optimize_deleteCONST();
         if(structNum > 0)
             printf("Cannot translate: Code contains variables or paraneters of structure type\n");
-        printCode(fileName);
+        else
+            printCode(fileName);
     }
     return 0;
 }

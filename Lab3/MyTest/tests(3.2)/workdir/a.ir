@@ -4,15 +4,22 @@ a := #1
 tt6 := #4 * #5
 nothing := &b + tt6
 nothing := a + #6
+nothing := #0
 IF a != #0 GOTO label1
+GOTO label3
+LABEL label3 :
 tt17 := #4 * #2
 tt13 := &b + tt17
 tt12 := *tt13 + #9
-IF tt12 == #0 GOTO label2
+IF tt12 != #0 GOTO label1
+GOTO label2
 LABEL label1 :
+nothing := #1
 LABEL label2 :
 tt20 := #0
-IF #2 <= #1 GOTO label5
+IF #2 > #1 GOTO label4
+GOTO label5
+LABEL label4 :
 tt20 := #1
 LABEL label5 :
 WRITE tt20
