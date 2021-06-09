@@ -32,6 +32,7 @@ int main(int argc, char **argv)
             printf("Cannot translate: Code contains variables or paraneters of structure type\n");
         else
         {
+            //printCode(fileName);  //Lab3
             printCode("out.ir");
             assembleCodes(fileName);
         }

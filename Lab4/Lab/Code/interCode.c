@@ -37,7 +37,7 @@ char *int2String(int num, char *str)
 
 int isConst(Operand op)
 {
-    if(op->kind==CONSTANT||op->kind==COSNTVAR)
+    if (op->kind == CONSTANT || op->kind == COSNTVAR)
         return 1;
     else
         return 0;
@@ -904,7 +904,8 @@ argNode translateArgs(node root)
     Operand t1 = createOpTmp();
     node n0 = getKChild(root, 0);
     translateExp(n0, t1);
-    if (t1->kind == ADDRESS && findFPMember(t1->u.value, 0))
+    ////2021/6/8 REVISE STAR
+    if (t1->kind == ADDRESS && findFPMember(t1->u.value, 0) || t1->kind == STAR__ && Exp(n0)->kind == ARRAY)
         t1->kind = VARIABLE;
     argNode node1 = (argNode)malloc(sizeof(struct argNode_));
     node1->op = t1;
