@@ -2,7 +2,7 @@
 #define _INTERCODE_H
 #include "symbol.h"
 #define FORMALPARAMETERSIZE 0x3fff
-//#define InterCodeDebug
+// #define InterCodeDebug
 void codeLog(char *msg);
 typedef struct Operand_ *Operand;
 typedef struct InterCode_ *InterCode;
@@ -89,6 +89,7 @@ struct InterCode_
             int size;
         } op_dec;
     } u;
+    int blockStart; //represent the start of a basic block
     InterCode prev;
     InterCode next;
 };
@@ -111,12 +112,15 @@ struct LabelNode_ {
 };
 
 int isConst(Operand op);
+int isVar(Operand op);
+
 
 FPTableNode *FPTable;
 FPTableNode *createFPTable();
 FPTableNode createFPMember(char *name);
 int findFPMember(char *name,int _insert);
 
+void basicBlockPartition();
 void initInterCode(node root);
 void insertCode(InterCode code);
 void deleteCode(InterCode code);

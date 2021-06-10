@@ -2,7 +2,7 @@
 #define _SEMANTIC_H
 //#define semanticdebug
 #include "symbol.h"
-
+int semanticError;
 int semanticCheck(node root);
 void errorOutput(int errorType, int line, char *msg);
 void initializeIO();

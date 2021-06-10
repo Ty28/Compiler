@@ -17,6 +17,8 @@ int main(int argc, char **argv)
     {
         //preOrder(ROOT, 0);
         semanticCheck(ROOT);
+        if (semanticError > 0)
+            return 0;
         initInterCode(ROOT);
         if (argc < 3)
             //strcpy(fileName, "out.ir");
@@ -28,13 +30,14 @@ int main(int argc, char **argv)
         optimize_mergeLABEL();
         //insteadUnderlineVar();
         //optimize_deleteCONST();
+        basicBlockPartition();
         if (structNum > 0)
             printf("Cannot translate: Code contains variables or paraneters of structure type\n");
         else
         {
             //printCode(fileName);  //Lab3
             printCode("out.ir");
-            // assembleCodes(fileName);
+            assembleCodes(fileName);
         }
         // if(!findMemAddress("apple"))
         //     printf("don't find");

@@ -20,6 +20,7 @@
 #define BLE_ 14
 
 int stack_sp;
+int blockOffset;
 int stack_fp;
 int codeLine;
 int paramCount;
@@ -27,6 +28,8 @@ int used[32]; //to represent whether a register is being used;
 char *regName(int registerID, char str[]);
 void freeReg();
 void printAnnotation(FILE *fp, InterCode current);
+int allocateMemForOp(Operand op, int currentOffset);
+int allocateMemory(FILE *fp, InterCode _current);
 typedef struct VarMemAddress_ *VarMemAddress;
 struct VarMemAddress_
 {

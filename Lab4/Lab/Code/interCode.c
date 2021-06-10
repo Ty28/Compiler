@@ -43,6 +43,49 @@ int isConst(Operand op)
         return 0;
 }
 
+int isVar(Operand op)
+{
+    if (op->kind == VARIABLE || op->kind == TEMPVAR)
+        return 1;
+    else
+        return 0;
+}
+
+void basicBlockPartition()
+{
+    InterCode current = head;
+    if (current == NULL)
+        return;
+    while (current != NULL)
+    {
+        current->blockStart = 0;
+        current = current->next;
+    }
+    current = head;
+    while (current != NULL)
+    {
+        if (current->kind == MYFUNCTION || current->kind == MYLABEL)
+            current->blockStart = 1;
+        else if (current->kind == MYARG)
+        {
+            current->blockStart = 1;
+            assert(current->next != NULL);
+            while (current != NULL && (current->kind != MYCALL))
+                current = current->next;
+            continue;
+        }
+        else if (current->kind == MYCALL)
+        {
+            current->blockStart = 1;
+            if (current->next != NULL)
+                current->next->blockStart = 1;
+        }
+        else if (current->next != NULL && (current->kind == MYIFGOTO || current->kind == MYIFGOTO))
+            current->next->blockStart = 1;
+        current = current->next;
+    }
+}
+
 int calculateSize(Type type)
 {
     if (type->kind == BASIC)
@@ -106,6 +149,7 @@ void deleteCode(InterCode code)
 InterCode createCode()
 {
     InterCode code = (InterCode)malloc(sizeof(struct InterCode_));
+    code->blockStart = 0;
     code->next = code->prev = NULL;
     return code;
 }

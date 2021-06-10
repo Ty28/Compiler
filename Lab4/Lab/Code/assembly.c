@@ -68,7 +68,7 @@ void initAssembly()
 
 void printAnnotation(FILE *fp, InterCode current)
 {
-    if (current->kind != MYFUNCTION && current->kind != MYLABEL)
+    if (current->kind != MYFUNCTION) // && current->kind != MYLABEL)
     {
         fprintf(fp, "                               #");
         printSingleCode(fp, current);
@@ -251,24 +251,17 @@ int easyGetRightReg(FILE *fp, Operand op)
         return idleID;
     }
     // fprintf(stdout, "op value:%s\n", op->u.value);
+    assert(findMemAddress(op->u.value) != NULL);
     switch (op->kind)
     {
     case VARIABLE:
     case TEMPVAR:
-        if (findMemAddress(op->u.value) == NULL)
-        {
-            fprintf(fp, "  addi $sp, $sp, -4\n");
-            stack_sp = stack_sp - 4;
-            newMemAddress(op->u.value, stack_sp - stack_fp);
-        }
         gen(fp, LW_, idleID, findMemAddress(op->u.value)->fpOffset, 30);
         break;
     case ADDRESS:
-        assert(findMemAddress(op->u.value) != NULL);
         gen(fp, ADDI_, idleID, 30, findMemAddress(op->u.value)->fpOffset);
         break;
     case STAR__:
-        assert(findMemAddress(op->u.value) != NULL);
         gen(fp, LW_, idleID, findMemAddress(op->u.value)->fpOffset, 30);
         gen(fp, LW_, idleID, 0, idleID);
         break;
@@ -288,17 +281,13 @@ int easyGetLeftReg(FILE *fp, Operand op)
     assert(op->kind != ADDRESS);
     int idleID = getIdleReg();
     // fprintf(stdout, "last correct left:%s\n", op->u.value);
+
     switch (op->kind)
     {
     case VARIABLE:
     case TEMPVAR:
+        assert(findMemAddress(op->u.value) != NULL);
         codeLog("start doing VARIABLE\n");
-        if (!findMemAddress(op->u.value)) //this branch means this variable hasn't been stored in memory
-        {
-            fprintf(fp, "  addi $sp, $sp, -4\n");
-            stack_sp = stack_sp - 4;
-            newMemAddress(op->u.value, stack_sp - stack_fp);
-        }
         break;
     case STAR__:
         assert(findMemAddress(op->u.value) != NULL);
@@ -328,9 +317,9 @@ void assembleASSIGN(FILE *fp, InterCode current)
             gen(fp, LI_, rightReg, right->u.var_no, -1);
         gen(fp, SW_, rightReg, 0, leftReg);
     }
-    else
+    else if (isVar(left))
     {
-        if (right->kind == CONSTANT || right->kind == COSNTVAR)
+        if (isConst(right))
             gen(fp, LI_, leftReg, right->u.var_no, -1);
         else
             gen(fp, MOVE_, leftReg, rightReg, -1);
@@ -338,17 +327,16 @@ void assembleASSIGN(FILE *fp, InterCode current)
     }
 }
 
-void assembleDEC(FILE *fp, InterCode current)
-{
-    Operand variable = current->u.op_dec.op;
-    int arraySize = current->u.op_dec.size;
-    assert(!findMemAddress(variable->u.value));
-    //it means, the first element of the array is stored in current sp
-    gen(fp, ADDI_, 29, 29, -arraySize); //subtract stack size of the array
-    //fprintf(fp, "  addi $sp, $sp, -%d\n", arraySize);
-    stack_sp = stack_sp - arraySize;
-    newMemAddress(variable->u.value, stack_sp - stack_fp);
-}
+// void assembleDEC(FILE *fp, InterCode current)
+// {
+//     Operand variable = current->u.op_dec.op;
+//     int arraySize = current->u.op_dec.size;
+//     assert(findMemAddress(variable->u.value));
+//     //it means, the first element of the array is stored in current sp
+//     gen(fp, ADDI_, 29, 29, -arraySize); //subtract stack size of the array
+//     stack_sp = stack_sp - arraySize;
+//     newMemAddress(variable->u.value, stack_sp - stack_fp);
+// }
 
 void assembleBINARY(FILE *fp, InterCode current)
 {
@@ -382,7 +370,7 @@ void assembleBINARY(FILE *fp, InterCode current)
     }
     if (result->kind == STAR__)
         gen(fp, SW_, op1Reg, 0, resultReg);
-    else if (result->kind == TEMPVAR || result->kind == VARIABLE)
+    else if (isVar(result))
     {
         assert(findMemAddress(result->u.value) != NULL);
         gen(fp, SW_, resultReg, findMemAddress(result->u.value)->fpOffset, 30);
@@ -429,7 +417,7 @@ void assembleARG(FILE *fp, InterCode current)
         gen(fp, LI_, argReg, arg->u.var_no, -1);
     gen(fp, ADDI_, 29, 29, -4); //addi sp, sp, -4
     stack_sp = stack_sp - 4;
-    gen(fp, SW_, argReg, stack_sp - stack_fp, 30);
+    gen(fp, SW_, argReg, 0, 29);
 }
 
 void assembleFunction(FILE *fp, InterCode current)
@@ -449,9 +437,9 @@ void assembleFunction(FILE *fp, InterCode current)
 void assemblePARAM(FILE *fp, InterCode current)
 {
     Operand param = current->u.op_single.op;
-    assert(findMemAddress(param->u.value) == NULL);
+    assert(findMemAddress(param->u.value) != NULL);
     paramCount++;
-    newMemAddress(param->u.value, paramCount * 4);
+    findMemAddress(param->u.value)->fpOffset = (paramCount + 1) * 4;
 }
 
 void assembleCALL(FILE *fp, InterCode current)
@@ -459,6 +447,8 @@ void assembleCALL(FILE *fp, InterCode current)
     //left := CALL function
     Operand left = current->u.op_assign.left;
     Operand function = current->u.op_assign.right;
+    gen(fp, ADDI_, 29, 29, -4);
+    stack_sp -= 4;
     fprintf(fp, "  jal %s\n", function->u.value);
     //restore our stack
     gen(fp, ADDI_, 29, 30, 4); //addi sp, fp, 4
@@ -467,11 +457,13 @@ void assembleCALL(FILE *fp, InterCode current)
     gen(fp, MOVE_, leftReg, 2, -1);
     if (left->kind == STAR__)
         gen(fp, SW_, 2, 0, leftReg);
-    else
+    else if (isVar(left))
     {
         assert(findMemAddress(left->u.value) != NULL);
         gen(fp, SW_, leftReg, findMemAddress(left->u.value)->fpOffset, 30);
     }
+    else
+        codeLog("operand is nothing");
 }
 
 void assembleWRITE(FILE *fp, InterCode current)
@@ -494,6 +486,7 @@ void assembleREAD(FILE *fp, InterCode current)
     fprintf(fp, "  jal read\n");
     int readReg = easyGetLeftReg(fp, read);
     gen(fp, MOVE_, readReg, 2, -1);
+    assert(findMemAddress(read->u.value) != NULL);
     gen(fp, SW_, readReg, findMemAddress(read->u.value)->fpOffset, 30);
 }
 
@@ -511,16 +504,105 @@ void assembleRETURN(FILE *fp, InterCode current)
     fprintf(fp, "  jr $ra\n");
 }
 
+int allocateMemForOp(Operand op, int currentOffset)
+{
+    if (isVar(op) && !findMemAddress(op->u.value))
+    {
+        currentOffset -= 4;
+        newMemAddress(op->u.value, stack_sp + currentOffset - stack_fp);
+        return 4;
+    }
+    else
+        return 0;
+}
+
+int allocateMemory(FILE *fp, InterCode _current)
+{
+    InterCode current = _current;
+    if (current == NULL)
+    {
+        codeLog("no code for allocating memory");
+        return 0;
+    }
+    int currentOffset = 0;
+    Operand op = NULL;
+    if (current->kind == MYFUNCTION && current->next != NULL)
+    {
+        //gen(fp, ADDI_, 29, 30, stack_sp - stack_fp);
+        current = current->next;
+        do
+        {
+            switch (current->kind)
+            {
+            case MYPARAM:
+                codeLog("myPARAM");
+                allocateMemForOp(current->u.op_single.op, currentOffset);
+                break;
+            case MYREAD:
+            case MYWRITE:
+                codeLog("myread");
+                currentOffset -= allocateMemForOp(current->u.op_single.op, currentOffset);
+                break;
+            case MYASSIGN:
+                codeLog("myassign");
+                currentOffset -= allocateMemForOp(current->u.op_assign.left, currentOffset);
+                currentOffset -= allocateMemForOp(current->u.op_assign.right, currentOffset);
+                break;
+            case MYDEC:
+                codeLog("mydec");
+                op = current->u.op_dec.op;
+                if (isVar(op) && !findMemAddress(op->u.value))
+                {
+                    currentOffset -= current->u.op_dec.size;
+                    newMemAddress(current->u.op_single.op->u.value, stack_sp + currentOffset - stack_fp);
+                }
+                break;
+            case MYCALL:
+                codeLog("mycall");
+                currentOffset -= allocateMemForOp(current->u.op_assign.left, currentOffset);
+                break;
+            case MYADD:
+            case MYSUB:
+            case MYMUL:
+            case MYDIV:
+                codeLog("binary");
+                currentOffset -= allocateMemForOp(current->u.op_binary.result, currentOffset);
+                currentOffset -= allocateMemForOp(current->u.op_binary.op1, currentOffset);
+                currentOffset -= allocateMemForOp(current->u.op_binary.op2, currentOffset);
+                break;
+            case MYIFGOTO:
+                codeLog("ifgoto");
+                currentOffset -= allocateMemForOp(current->u.op_triple.x, currentOffset);
+                currentOffset -= allocateMemForOp(current->u.op_triple.y, currentOffset);
+            default:
+                break;
+            }
+            current = current->next;
+        } while (current != NULL && current->kind != MYFUNCTION);
+
+        if (currentOffset < 0)
+        {
+            gen(fp, ADDI_, 29, 29, currentOffset);
+            stack_sp = stack_sp + currentOffset;
+            return currentOffset;
+        }
+    }
+    return 0;
+}
+
 void assembleSingleCode(FILE *fp, InterCode current)
 {
     printAnnotation(fp, current);
     // fprintf(stdout, "fault type:%d\n", current->kind);
     if (current->kind != MYPARAM && paramCount > 0)
         paramCount = 0;
+    // if (current->kind != MYFUNCTION && current->kind != MYLABEL)
+    // allocateMemory(fp, current);
     switch (current->kind)
     {
     case MYFUNCTION:
         assembleFunction(fp, current);
+        allocateMemory(fp, current);
         break;
     case MYPARAM:
         assemblePARAM(fp, current);
@@ -531,7 +613,8 @@ void assembleSingleCode(FILE *fp, InterCode current)
         break;
     case MYLABEL:
         fprintf(fp, "%s:\n", current->u.op_single.op->u.value);
-        gen(fp, ADDI_, 29, 30, stack_sp - stack_fp);
+        // allocateMemory(fp, current);
+        // gen(fp, ADDI_, 29, 30, stack_sp - stack_fp);
         break;
     case MYGOTO:
         fprintf(fp, "  j %s\n", current->u.op_single.op->u.value);
@@ -555,7 +638,7 @@ void assembleSingleCode(FILE *fp, InterCode current)
         assembleBINARY(fp, current);
         break;
     case MYDEC:
-        assembleDEC(fp, current);
+        //assembleDEC(fp, current);
         break;
     case MYCALL:
         assembleCALL(fp, current);

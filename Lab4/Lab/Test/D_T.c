@@ -1,3 +1,4 @@
+#include <stdio.h>
 int process(int x) 
 {
 	int y = 4, z;
@@ -31,37 +32,32 @@ int main () {
 		array[i] = j;
 		i = i + 1;
 	}
-	while (i < f) 
+	while (i < 7) 
 	{
 		k = g2 * g2;
 		g1 = g1 + k + i * 12 - 4 * g2 + 5 + 7 / 3;
 		g = process(f) + 2 * a  - f + c * d;
 		if (mod(f,2) > 0)
 		{
-			h = i + 3;
-			h = h - 1;
-			h = h + 3;
-			h = h - 3 * 2;
+			h = i -1;
+			printf("h:%d\n",h);
 		}
 		if (process(a) == process(a + 3 - 2 - 1)) 
 		{
+			printf("f--->h:%d\n",h);
 			f = f - 2 + 1;
+			printf("before h:%d\n",h);
 			array[mod(f, 4)] = array[mod(f, 4)] + h + g - e;
+			printf("after h:%d\n",h);
 		}
 		a = a + 2 + 1;
 		i = i + 1;
 		i = i + 1;
 	}
-	a = a + b;
-	b = a + b;
-	c = a + b;
-	f = a + b;
-	g = a + b;
-	write(c + f + g);
-	write(array[0]);
-	write(array[1]);
-	write(array[2]);
-	write(array[3]);
+	printf("%d\n",array[0]);
+	printf("%d\n",array[1]);
+	printf("%d\n",array[2]);
+	printf("%d\n",array[3]);
 	return 0;
 }
 
