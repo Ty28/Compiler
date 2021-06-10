@@ -45,7 +45,7 @@ int isConst(Operand op)
 
 int isVar(Operand op)
 {
-    if(op->kind==VARIABLE || op->kind == TEMPVAR)
+    if (op->kind == VARIABLE || op->kind == TEMPVAR)
         return 1;
     else
         return 0;
@@ -66,6 +66,21 @@ void basicBlockPartition()
     {
         if (current->kind == MYFUNCTION || current->kind == MYLABEL)
             current->blockStart = 1;
+        else if (current->kind == MYARG)
+        {
+            current->blockStart = 1;
+            assert(current->next != NULL);
+            InterCode p = current->next;
+            while (p != NULL && (p->kind == MYCALL || p->kind == MYARG))
+                p = p->next;
+            if (p != NULL)
+            {
+                p->blockStart = 1;
+                current = p->next;
+                continue;
+            }
+            break;
+        }
         else if (current->next != NULL && (current->kind == MYIFGOTO || current->kind == MYIFGOTO))
             current->next->blockStart = 1;
         current = current->next;

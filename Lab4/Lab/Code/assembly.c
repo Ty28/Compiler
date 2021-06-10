@@ -251,24 +251,17 @@ int easyGetRightReg(FILE *fp, Operand op)
         return idleID;
     }
     // fprintf(stdout, "op value:%s\n", op->u.value);
+    assert(findMemAddress(op->u.value) != NULL);
     switch (op->kind)
     {
     case VARIABLE:
     case TEMPVAR:
-        if (findMemAddress(op->u.value) == NULL)
-        {
-            fprintf(fp, "  addi $sp, $sp, -4\n");
-            stack_sp = stack_sp - 4;
-            newMemAddress(op->u.value, stack_sp - stack_fp);
-        }
         gen(fp, LW_, idleID, findMemAddress(op->u.value)->fpOffset, 30);
         break;
     case ADDRESS:
-        assert(findMemAddress(op->u.value) != NULL);
         gen(fp, ADDI_, idleID, 30, findMemAddress(op->u.value)->fpOffset);
         break;
     case STAR__:
-        assert(findMemAddress(op->u.value) != NULL);
         gen(fp, LW_, idleID, findMemAddress(op->u.value)->fpOffset, 30);
         gen(fp, LW_, idleID, 0, idleID);
         break;
@@ -288,20 +281,14 @@ int easyGetLeftReg(FILE *fp, Operand op)
     assert(op->kind != ADDRESS);
     int idleID = getIdleReg();
     // fprintf(stdout, "last correct left:%s\n", op->u.value);
+    assert(findMemAddress(op->u.value) != NULL);
     switch (op->kind)
     {
     case VARIABLE:
     case TEMPVAR:
         codeLog("start doing VARIABLE\n");
-        if (!findMemAddress(op->u.value)) //this branch means this variable hasn't been stored in memory
-        {
-            fprintf(fp, "  addi $sp, $sp, -4\n");
-            stack_sp = stack_sp - 4;
-            newMemAddress(op->u.value, stack_sp - stack_fp);
-        }
         break;
     case STAR__:
-        assert(findMemAddress(op->u.value) != NULL);
         gen(fp, LW_, idleID, findMemAddress(op->u.value)->fpOffset, 30);
         break;
     default:
@@ -338,16 +325,16 @@ void assembleASSIGN(FILE *fp, InterCode current)
     }
 }
 
-void assembleDEC(FILE *fp, InterCode current)
-{
-    Operand variable = current->u.op_dec.op;
-    int arraySize = current->u.op_dec.size;
-    assert(!findMemAddress(variable->u.value));
-    //it means, the first element of the array is stored in current sp
-    gen(fp, ADDI_, 29, 29, -arraySize); //subtract stack size of the array
-    stack_sp = stack_sp - arraySize;
-    newMemAddress(variable->u.value, stack_sp - stack_fp);
-}
+// void assembleDEC(FILE *fp, InterCode current)
+// {
+//     Operand variable = current->u.op_dec.op;
+//     int arraySize = current->u.op_dec.size;
+//     assert(findMemAddress(variable->u.value));
+//     //it means, the first element of the array is stored in current sp
+//     gen(fp, ADDI_, 29, 29, -arraySize); //subtract stack size of the array
+//     stack_sp = stack_sp - arraySize;
+//     newMemAddress(variable->u.value, stack_sp - stack_fp);
+// }
 
 void assembleBINARY(FILE *fp, InterCode current)
 {
@@ -541,7 +528,6 @@ int allocateMemory(FILE *fp, InterCode _current)
             case MYARG:
                 currentOffset -= 4;
                 break;
-            case MYPARAM:
             case MYREAD:
             case MYWRITE:
                 codeLog("myread");
@@ -583,6 +569,7 @@ int allocateMemory(FILE *fp, InterCode _current)
         if (currentOffset < 0)
         {
             gen(fp, ADDI_, 29, 29, currentOffset);
+            stack_sp = stack_sp + currentOffset;
             return currentOffset;
         }
     }
@@ -596,55 +583,55 @@ void assembleSingleCode(FILE *fp, InterCode current)
     if (current->kind != MYPARAM && paramCount > 0)
         paramCount = 0;
     allocateMemory(fp, current);
-    // switch (current->kind)
-    // {
-    // case MYFUNCTION:
-    //     assembleFunction(fp, current);
-    //     break;
-    // case MYPARAM:
-    //     assemblePARAM(fp, current);
-    //     break;
-    // case MYRETURN:
-    //     assembleRETURN(fp, current);
-    //     codeLine++;
-    //     break;
-    // case MYLABEL:
-    //     fprintf(fp, "%s:\n", current->u.op_single.op->u.value);
-    //     gen(fp, ADDI_, 29, 30, stack_sp - stack_fp);
-    //     break;
-    // case MYGOTO:
-    //     fprintf(fp, "  j %s\n", current->u.op_single.op->u.value);
-    //     break;
-    // case MYREAD:
-    //     assembleREAD(fp, current);
-    //     break;
-    // case MYWRITE:
-    //     assembleWRITE(fp, current);
-    //     break;
-    // case MYARG:
-    //     assembleARG(fp, current);
-    //     break;
-    // case MYASSIGN:
-    //     assembleASSIGN(fp, current);
-    //     break;
-    // case MYADD:
-    // case MYSUB:
-    // case MYMUL:
-    // case MYDIV:
-    //     assembleBINARY(fp, current);
-    //     break;
-    // case MYDEC:
-    //     assembleDEC(fp, current);
-    //     break;
-    // case MYCALL:
-    //     assembleCALL(fp, current);
-    //     break;
-    // case MYIFGOTO:
-    //     assembleIFGOTO(fp, current);
-    //     break;
-    // default:
-    //     break;
-    // }
+    switch (current->kind)
+    {
+    case MYFUNCTION:
+        assembleFunction(fp, current);
+        break;
+    case MYPARAM:
+        assemblePARAM(fp, current);
+        break;
+    case MYRETURN:
+        assembleRETURN(fp, current);
+        codeLine++;
+        break;
+    case MYLABEL:
+        fprintf(fp, "%s:\n", current->u.op_single.op->u.value);
+        gen(fp, ADDI_, 29, 30, stack_sp - stack_fp);
+        break;
+    case MYGOTO:
+        fprintf(fp, "  j %s\n", current->u.op_single.op->u.value);
+        break;
+    case MYREAD:
+        assembleREAD(fp, current);
+        break;
+    case MYWRITE:
+        assembleWRITE(fp, current);
+        break;
+    case MYARG:
+        assembleARG(fp, current);
+        break;
+    case MYASSIGN:
+        assembleASSIGN(fp, current);
+        break;
+    case MYADD:
+    case MYSUB:
+    case MYMUL:
+    case MYDIV:
+        assembleBINARY(fp, current);
+        break;
+    case MYDEC:
+        //assembleDEC(fp, current);
+        break;
+    case MYCALL:
+        assembleCALL(fp, current);
+        break;
+    case MYIFGOTO:
+        assembleIFGOTO(fp, current);
+        break;
+    default:
+        break;
+    }
 }
 
 void assembleCodes(char *outputFileName) //main assembly procedure

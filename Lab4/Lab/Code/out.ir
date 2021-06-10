@@ -1,104 +1,104 @@
-FUNCTION process :
-PARAM vv1
-vv2 := #34
-tt7 := vv1 * vv2
-tt6 := tt7 - vv1
-tt11 := vv2 * vv1
-tt5 := tt6 + tt11
-tt14 := vv2 * vv2
-tt4 := tt5 + tt14
-tt3 := tt4 + #18
-vv2 := tt3
-tt21 := vv2 * #3
-tt24 := vv1 * #3
-tt20 := tt21 - tt24
-tt19 := tt20 + #335
-vv2 := tt19
-RETURN vv2
+FUNCTION process :    1
+PARAM vv1    0
+vv2 := #34    0
+tt7 := vv1 * vv2    0
+tt6 := tt7 - vv1    0
+tt11 := vv2 * vv1    0
+tt5 := tt6 + tt11    0
+tt14 := vv2 * vv2    0
+tt4 := tt5 + tt14    0
+tt3 := tt4 + #18    0
+vv2 := tt3    0
+tt21 := vv2 * #3    0
+tt24 := vv1 * #3    0
+tt20 := tt21 - tt24    0
+tt19 := tt20 + #335    0
+vv2 := tt19    0
+RETURN vv2    0
 
-FUNCTION mod :
-PARAM vv3
-PARAM vv4
-tt32 := vv3 / vv4
-tt31 := tt32 * vv4
-tt29 := vv3 - tt31
-RETURN tt29
+FUNCTION mod :    1
+PARAM vv3    0
+PARAM vv4    0
+tt32 := vv3 / vv4    0
+tt31 := tt32 * vv4    0
+tt29 := vv3 - tt31    0
+RETURN tt29    0
 
-FUNCTION main :
-vv5 := #5
-vv6 := #7
-vv7 := #11
-tt58 := vv5 + vv6
-vv8 := tt58
-tt62 := vv5 + vv6
-tt65 := vv7 / #1
-tt61 := tt62 + tt65
-vv9 := tt61
-tt69 := vv5 * vv6
-tt68 := tt69 - vv7
-vv10 := tt68
-vv11 := #42
-vv12 := #4
-vv13 := #0
-vv14 := #0
-DEC vv15 16
-tt81 := vv5 + vv6
-tt80 := tt81 + vv7
-tt79 := tt80 + #1500
-tt78 := tt79 - vv10
-vv10 := tt78
-LABEL label1 :
-IF vv13 >= #4 GOTO label3
-tt90 := #15 * vv13
-vv14 := tt90
-tt97 := #4 * vv13
-tt93 := &vv15 + tt97
-*tt93 := vv14
-tt100 := vv13 + #1
-vv13 := tt100
-GOTO label1
-LABEL label3 :
-IF vv13 >= #7 GOTO label6
-WRITE vv10
-ARG #2
-ARG vv10
-tt107 := CALL mod
-IF tt107 <= #0 GOTO label8
-tt112 := vv13 - #1
-vv16 := tt112
-LABEL label8 :
-ARG vv5
-tt115 := CALL process
-tt120 := vv5 + #3
-tt119 := tt120 - #2
-tt118 := tt119 - #1
-ARG tt118
-tt116 := CALL process
-IF tt115 != tt116 GOTO label10
-tt127 := vv10 - #2
-tt126 := tt127 + #1
-vv10 := tt126
-LABEL label10 :
-tt133 := vv5 + #2
-tt132 := tt133 + #1
-vv5 := tt132
-tt138 := vv13 + #1
-vv13 := tt138
-tt142 := vv13 + #1
-vv13 := tt142
-GOTO label3
-LABEL label6 :
-tt150 := #4 * #0
-tt146 := &vv15 + tt150
-WRITE *tt146
-tt156 := #4 * #1
-tt152 := &vv15 + tt156
-WRITE *tt152
-tt162 := #4 * #2
-tt158 := &vv15 + tt162
-WRITE *tt158
-tt168 := #4 * #3
-tt164 := &vv15 + tt168
-WRITE *tt164
-RETURN #0
+FUNCTION main :    1
+vv5 := #5    0
+vv6 := #7    0
+vv7 := #11    0
+tt58 := vv5 + vv6    0
+vv8 := tt58    0
+tt62 := vv5 + vv6    0
+tt65 := vv7 / #1    0
+tt61 := tt62 + tt65    0
+vv9 := tt61    0
+tt69 := vv5 * vv6    0
+tt68 := tt69 - vv7    0
+vv10 := tt68    0
+vv11 := #42    0
+vv12 := #4    0
+vv13 := #0    0
+vv14 := #0    0
+DEC vv15 16    0
+tt81 := vv5 + vv6    0
+tt80 := tt81 + vv7    0
+tt79 := tt80 + #1500    0
+tt78 := tt79 - vv10    0
+vv10 := tt78    0
+LABEL label1 :    1
+IF vv13 >= #4 GOTO label3    0
+tt90 := #15 * vv13    1
+vv14 := tt90    0
+tt97 := #4 * vv13    0
+tt93 := &vv15 + tt97    0
+*tt93 := vv14    0
+tt100 := vv13 + #1    0
+vv13 := tt100    0
+GOTO label1    0
+LABEL label3 :    1
+IF vv13 >= #7 GOTO label6    0
+WRITE vv10    1
+ARG #2    1
+ARG vv10    0
+tt107 := CALL mod    0
+IF tt107 <= #0 GOTO label8    1
+tt112 := vv13 - #1    0
+vv16 := tt112    0
+LABEL label8 :    1
+ARG vv5    1
+tt115 := CALL process    0
+tt120 := vv5 + #3    1
+tt119 := tt120 - #2    0
+tt118 := tt119 - #1    0
+ARG tt118    1
+tt116 := CALL process    0
+IF tt115 != tt116 GOTO label10    1
+tt127 := vv10 - #2    0
+tt126 := tt127 + #1    0
+vv10 := tt126    0
+LABEL label10 :    1
+tt133 := vv5 + #2    0
+tt132 := tt133 + #1    0
+vv5 := tt132    0
+tt138 := vv13 + #1    0
+vv13 := tt138    0
+tt142 := vv13 + #1    0
+vv13 := tt142    0
+GOTO label3    0
+LABEL label6 :    1
+tt150 := #4 * #0    0
+tt146 := &vv15 + tt150    0
+WRITE *tt146    0
+tt156 := #4 * #1    0
+tt152 := &vv15 + tt156    0
+WRITE *tt152    0
+tt162 := #4 * #2    0
+tt158 := &vv15 + tt162    0
+WRITE *tt158    0
+tt168 := #4 * #3    0
+tt164 := &vv15 + tt168    0
+WRITE *tt164    0
+RETURN #0    0
 

@@ -125,6 +125,7 @@ void printSingleCode(FILE *fp, InterCode current)
         fprintf(fp, "others");
         break;
     }
+    fprintf(fp, "    %d", current->blockStart);
     fprintf(fp, "\n");
 }
 
@@ -138,7 +139,7 @@ void printCode(char *outputFileName)
     while (current != NULL)
     {
         printSingleCode(fp, current);
-        if(current->kind==MYRETURN)
+        if (current->kind == MYRETURN)
             fprintf(fp, "\n");
         current = current->next;
     }
