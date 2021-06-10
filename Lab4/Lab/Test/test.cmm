@@ -37,8 +37,8 @@ int main () {
 			h = i -1;
 			//write(h);
 		}
-		//write(333333333);
-		//write(h);
+		write(333333333);
+		write(h);
 		if (process(a) == process(a + 3 - 2 - 1)) 
 		{
 			//write(555555555);
