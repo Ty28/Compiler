@@ -1,0 +1,63 @@
+int process(int x) 
+{
+	int y = 34;
+	y = x * y  - x + y * x + y * y + 18;
+	y  = y * 3 - x * 3 + 335;	
+	return y;
+}
+
+int mod(int a1, int b1)
+{
+	return a1 - (a1 / b1) * b1;
+}
+
+int main () {
+	int a = (-4 * 2 + 108) / 17, b = 32 / 8 * 2 - 1, c = 13 - 1 * 4 / 2;
+	int d = a + b;
+	int e = a + b + c / 1;
+	int f = a * b - c;
+	int g1 = 42, g2 = 4, i = 0, j = 0, array[4];
+	int g, h, k;
+	f = a + b + c + 1500 - f;
+	while (i < 4)
+	{
+		j = 15 * i;
+		array[i] = j;
+		i = i + 1;
+	}
+	while (i < 7) 
+	{
+		//write(111111111);
+		//k = g2 * g2;
+		//g1 = g1 + k + i * 12 - 4 * g2 + 5 + 7 / 3;
+		//g = process(f) + 2 * a  - f + c * d;
+		write(f);
+		if (mod(f,2) > 0)
+		{
+			h = i -1;
+			//write(h);
+		}
+		//write(333333333);
+		//write(h);
+		if (process(a) == process(a + 3 - 2 - 1)) 
+		{
+			//write(555555555);
+			//write(h);
+			f = f - 2 + 1;
+			//write(h);
+			//array[mod(f, 4)] = array[mod(f, 4)] + h + g - e;
+			//write(h);
+		}
+		a = a + 2 + 1;
+		i = i + 1;
+		i = i + 1;
+		//write(h);
+		//write(746746746);
+	}
+	write(array[0]);
+	write(array[1]);
+	write(array[2]);
+	write(array[3]);
+	return 0;
+}
+

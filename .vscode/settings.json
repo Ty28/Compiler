@@ -1,0 +1,10 @@
+{
+<<<<<<< HEAD
+    "git.ignoreLimitWarning": true
+=======
+    "files.associations": {
+        "extern.h": "c",
+        "intercode.h": "c"
+    }
+>>>>>>> main
+}
