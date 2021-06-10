@@ -4,7 +4,7 @@ int semanticCheck(node root)
 {
     // printf("HAHA, Let's begin the semantic check\n");
     // printNode(root);
-    semanticError=0;
+    semanticError = 0;
     symbolTable = createSymbolTable();
     structSymbolTable = createStructTable();
     Program(root);
@@ -173,7 +173,7 @@ Symbol VarDec(node root, Type decType)
             int arraySize = atoi(getKChild(root, 2)->val);
             Type newArrayType = createArrayType(lastArrayType, lastArrayType->u.array.size);
             Type current = newArrayType;
-            while (current->u.array.elem->kind != BASIC) //a method to adjust size
+            while (current->u.array.elem != NULL && current->u.array.elem->kind != BASIC) //a method to adjust size
             {
                 current->u.array.size = current->u.array.elem->u.array.size;
                 current = current->u.array.elem;
@@ -222,7 +222,7 @@ FuncList FuncVarDec(node root, Type decType)
             int arraySize = atoi(getKChild(root, 2)->val);
             Type newArrayType = createArrayType(lastArrayType, lastArrayType->u.array.size);
             Type current = newArrayType;
-            while (current->u.array.elem->kind != BASIC) //a method to adjust size
+            while (current->u.array.elem != NULL && current->u.array.elem->kind != BASIC) //a method to adjust size
             {
                 current->u.array.size = current->u.array.elem->u.array.size;
                 current = current->u.array.elem;
@@ -279,7 +279,7 @@ FieldList StructVarDec(node root, Type decType)
             int arraySize = atoi(getKChild(root, 2)->val);
             Type newArrayType = createArrayType(lastArrayType, lastArrayType->u.array.size);
             Type current = newArrayType;
-            while (current->u.array.elem->kind != BASIC) //a method to adjust size
+            while (current->u.array.elem != NULL && current->u.array.elem->kind != BASIC) //a method to adjust size
             {
                 current->u.array.size = current->u.array.elem->u.array.size;
                 current = current->u.array.elem;
