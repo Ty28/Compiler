@@ -70,16 +70,15 @@ void basicBlockPartition()
         {
             current->blockStart = 1;
             assert(current->next != NULL);
-            InterCode p = current->next;
-            while (p != NULL && (p->kind == MYCALL || p->kind == MYARG))
-                p = p->next;
-            if (p != NULL)
-            {
-                p->blockStart = 1;
-                current = p->next;
-                continue;
-            }
-            break;
+            while (current != NULL && (current->kind != MYCALL))
+                current = current->next;
+            continue;
+        }
+        else if (current->kind == MYCALL)
+        {
+            current->blockStart = 1;
+            if (current->next != NULL)
+                current->next->blockStart = 1;
         }
         else if (current->next != NULL && (current->kind == MYIFGOTO || current->kind == MYIFGOTO))
             current->next->blockStart = 1;

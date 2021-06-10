@@ -4,6 +4,7 @@ int semanticCheck(node root)
 {
     // printf("HAHA, Let's begin the semantic check\n");
     // printNode(root);
+    semanticError=0;
     symbolTable = createSymbolTable();
     structSymbolTable = createStructTable();
     Program(root);
@@ -70,6 +71,7 @@ void errorOutput(int errorType, int line, char *msg)
         printf("Error type UNKNOWN at Line %d\n", line);
         break;
     }
+    semanticError++;
 }
 
 Type StructVarCopy(Type structureDecType)

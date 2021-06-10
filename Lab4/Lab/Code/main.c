@@ -17,6 +17,8 @@ int main(int argc, char **argv)
     {
         //preOrder(ROOT, 0);
         semanticCheck(ROOT);
+        if (semanticError > 0)
+            return 0;
         initInterCode(ROOT);
         if (argc < 3)
             //strcpy(fileName, "out.ir");
@@ -35,7 +37,7 @@ int main(int argc, char **argv)
         {
             //printCode(fileName);  //Lab3
             printCode("out.ir");
-            //assembleCodes(fileName);
+            assembleCodes(fileName);
         }
         // if(!findMemAddress("apple"))
         //     printf("don't find");

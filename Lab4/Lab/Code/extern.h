@@ -19,6 +19,7 @@ extern node ROOT;
 extern int lexicalError;
 extern int syntaxError;
 extern int preErrorLine;
+extern int semanticError;
 
 extern Symbol* symbolTable;
 extern StructSymbol* structSymbolTable;
