@@ -20,6 +20,7 @@
 #define BLE_ 14
 
 int stack_sp;
+int blockOffset;
 int stack_fp;
 int codeLine;
 int paramCount;

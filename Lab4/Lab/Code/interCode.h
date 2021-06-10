@@ -2,7 +2,7 @@
 #define _INTERCODE_H
 #include "symbol.h"
 #define FORMALPARAMETERSIZE 0x3fff
-//#define InterCodeDebug
+// #define InterCodeDebug
 void codeLog(char *msg);
 typedef struct Operand_ *Operand;
 typedef struct InterCode_ *InterCode;

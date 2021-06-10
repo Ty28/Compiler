@@ -437,7 +437,7 @@ void assembleFunction(FILE *fp, InterCode current)
 void assemblePARAM(FILE *fp, InterCode current)
 {
     Operand param = current->u.op_single.op;
-    //assert(findMemAddress(param->u.value) == NULL);
+    assert(findMemAddress(param->u.value) != NULL);
     paramCount++;
     findMemAddress(param->u.value)->fpOffset = (paramCount + 1) * 4;
 }
@@ -447,6 +447,8 @@ void assembleCALL(FILE *fp, InterCode current)
     //left := CALL function
     Operand left = current->u.op_assign.left;
     Operand function = current->u.op_assign.right;
+    gen(fp, ADDI_, 29, 29, -4);
+    stack_sp -= 4;
     fprintf(fp, "  jal %s\n", function->u.value);
     //restore our stack
     gen(fp, ADDI_, 29, 30, 4); //addi sp, fp, 4
@@ -524,8 +526,10 @@ int allocateMemory(FILE *fp, InterCode _current)
     }
     int currentOffset = 0;
     Operand op = NULL;
-    if (current->blockStart == 1)
+    if (current->kind == MYFUNCTION && current->next != NULL)
     {
+        //gen(fp, ADDI_, 29, 30, stack_sp - stack_fp);
+        current = current->next;
         do
         {
             switch (current->kind)
@@ -574,7 +578,7 @@ int allocateMemory(FILE *fp, InterCode _current)
                 break;
             }
             current = current->next;
-        } while (current != NULL && current->blockStart == 0);
+        } while (current != NULL && current->kind != MYFUNCTION);
 
         if (currentOffset < 0)
         {
@@ -592,8 +596,8 @@ void assembleSingleCode(FILE *fp, InterCode current)
     // fprintf(stdout, "fault type:%d\n", current->kind);
     if (current->kind != MYPARAM && paramCount > 0)
         paramCount = 0;
-    if (current->kind != MYFUNCTION)
-        allocateMemory(fp, current);
+    // if (current->kind != MYFUNCTION && current->kind != MYLABEL)
+    // allocateMemory(fp, current);
     switch (current->kind)
     {
     case MYFUNCTION:
@@ -609,6 +613,7 @@ void assembleSingleCode(FILE *fp, InterCode current)
         break;
     case MYLABEL:
         fprintf(fp, "%s:\n", current->u.op_single.op->u.value);
+        // allocateMemory(fp, current);
         // gen(fp, ADDI_, 29, 30, stack_sp - stack_fp);
         break;
     case MYGOTO:
