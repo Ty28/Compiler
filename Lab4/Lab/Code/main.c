@@ -34,7 +34,7 @@ int main(int argc, char **argv)
         {
             //printCode(fileName);  //Lab3
             printCode("out.ir");
-            assembleCodes(fileName);
+            // assembleCodes(fileName);
         }
         // if(!findMemAddress("apple"))
         //     printf("don't find");
